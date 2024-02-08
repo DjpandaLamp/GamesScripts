@@ -12,6 +12,7 @@ public class Scroller : MonoBehaviour
     public float sinY;
 
     public float time;
+    public float timeOffset;
     public float rot;
     public float rotOffset;
     public float speedMult;
@@ -33,6 +34,7 @@ public class Scroller : MonoBehaviour
     void Update()
     {
         time += .5f * Time.deltaTime;
+        time = time - timeOffset;
         rot += 1f * Time.deltaTime;
         sinX = Mathf.Sin(time*speedMult);
         sinY = Mathf.Sin(time*speedMult);

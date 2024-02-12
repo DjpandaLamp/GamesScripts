@@ -101,4 +101,16 @@ public class BattleAgent : MonoBehaviour
         agentHealthText.text = "Health: " + agentHPCurrent.ToString() + "/" + agentHPMax.ToString();
         agentEnergyText.text = "Energy: " + agentENCurrent.ToString() + "/" + agentENMax.ToString();
     }
+
+    public bool TakeDamage(int attackValue)
+    {
+        agentHPCurrent -= attackValue - agentDEF;
+        if(agentHPCurrent <= 0)
+        {
+            Debug.Log("fuck");
+            return true;
+        }
+        return false;
+    }
+
 }

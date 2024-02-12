@@ -6,11 +6,11 @@ public class EnemyData : MonoBehaviour
 {
     private int count = 2;
 
-    
+
     public string[] agentName; //Name of Enemy
     public int[] agentType; //Basic or Boss Enemy
     public Sprite[] agentSprite; //Sprite of the Enemy
-    
+
     public int[] agentLV; //EnemyLevel, used for scaling
     public int[] agentHPMax; //Enemy Max HP
     public int[] agentHPCurrent; //Enemy Current HP
@@ -20,13 +20,14 @@ public class EnemyData : MonoBehaviour
     public int[] agentDEF; //Enemy defense stat
     public int[] agentSPD; //Enemy speed stat
 
+
     private void Awake()
     {
-        
+
         agentName = new string[count]; //Name of Enemy
         agentType = new int[count]; //Basic or Boss Enemy
-      //  agentSprite = new Sprite[count]; //Sprite of the Enemy
-        
+                                    //  agentSprite = new Sprite[count]; //Sprite of the Enemy
+
 
         agentLV = new int[count];//EnemyLevel, used for scaling
         agentHPMax = new int[count]; //Enemy Max HP
@@ -36,6 +37,7 @@ public class EnemyData : MonoBehaviour
         agentATK = new int[count]; //Enemy attack stat
         agentDEF = new int[count];//Enemy defense stat
         agentSPD = new int[count];//Enemy speed stat
+
 
 
         //Testy - 0
@@ -63,7 +65,7 @@ public class EnemyData : MonoBehaviour
         agentHPCurrent[1] = 250;
         agentENMax[1] = 100;
         agentENCurrent[1] = 100;
-        agentATK[1] = 100;
+        agentATK[1] = 150;
         agentDEF[1] = 75;
         agentSPD[1] = 20;
         #endregion
@@ -78,5 +80,17 @@ public class EnemyData : MonoBehaviour
 
     }
 
+    public void CallSkill(int skillIndex)
+    {
+        switch(skillIndex) { 
+            
+            case 0: break;
+        
+            case 1: 
+                
+                return;
+        }
 
+    
+    }
 }

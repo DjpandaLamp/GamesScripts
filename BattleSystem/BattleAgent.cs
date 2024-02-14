@@ -48,7 +48,7 @@ public class BattleAgent : MonoBehaviour
         agentImage = GetComponentInChildren<Image>();
 
         //Grabs Unit Data according to its ID from database
-        agentName = data.agentName[agentId];
+        agentName = data.agentName[agentId] + agentCount.ToString(); ;
         agentLV = data.agentLV[agentId];
         agentImage.sprite = data.agentSprite[agentId];
         agentHPMax= data.agentHPMax[agentId];

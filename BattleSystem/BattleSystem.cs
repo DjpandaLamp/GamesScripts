@@ -42,15 +42,20 @@ public class BattleSystem : MonoBehaviour
     public GameObject currentActiveAgent;
     public BattleAgent targetedAgent;
 
-    
+    public int BasePlayerCount;
+    public int BaseEnemyCount;
     public int PlayerCount;
     public int EnemyCount; //Number of Enemies to be Generated
+
 
     // Start is called before the first frame update
     void Start()
     {
         PlayerArray = new GameObject[PlayerCount];
         EnemyArray= new GameObject[EnemyCount];
+
+        BasePlayerCount = PlayerCount;
+        BaseEnemyCount = EnemyCount;
 
         state = battleStateMachine.Start;
         StartCoroutine(BattleInitalize());
@@ -66,6 +71,7 @@ public class BattleSystem : MonoBehaviour
         yield return new WaitForSeconds(5);
 
         state = battleStateMachine.PlayerTurn;
+        Debug.Log("Battle Loaded");
         PlayerTurn();
 
 
@@ -89,17 +95,21 @@ public class BattleSystem : MonoBehaviour
             BattleAgent battleAgent = NewEnemy.GetComponent<BattleAgent>();
             battleAgent.agentCount = i;
             battleAgent.agentId = 0;
+            
             EnemyArray[i] = NewEnemy;
+            
         }
         
     }
     void PlayerTurn()
     {
+        targetedAgent = null;
         baseMenuFlavorText.text = "What's Your Move?";
     }
 
     public void OnAttackButton()
     {
+        Debug.Log("AttackButtonPressed");
         if (state != battleStateMachine.PlayerTurn)
         {
             return;
@@ -111,6 +121,15 @@ public class BattleSystem : MonoBehaviour
 
     IEnumerator BasicAttack(BattleAgent attackingAgent, bool attackDirection)
     {
+        Debug.Log("Attack");
+        if (attackDirection)
+        {
+            Debug.Log("PlayerAttack");
+        }
+        else
+        {
+            Debug.Log("EnemyAttack");
+        }
         //attackDirection = true means player is attacking
         //attackDirection = false means Enemy is attacking
 
@@ -118,12 +137,16 @@ public class BattleSystem : MonoBehaviour
         //Temp code, replace with enemy picker in near future//
         if (attackDirection == true)
         {
-            targetedAgent = EnemyArray[Random.Range(0, EnemyCount)].GetComponent<BattleAgent>();
+            //targetedAgent = EnemyArray[Random.Range(0, BaseEnemyCount)].GetComponent<BattleAgent>();
+            targetedAgent = EnemyArray[1].GetComponent<BattleAgent>();
             while (targetedAgent.gameObject.activeSelf == false) //ensures that the targeted enemy is not defeated
             {
-                targetedAgent = EnemyArray[Random.Range(0, EnemyCount)].GetComponent<BattleAgent>();
+                targetedAgent = EnemyArray[Random.Range(0, BaseEnemyCount)].GetComponent<BattleAgent>();
             }
-        }
+         }
+
+
+        Debug.Log("AgentTargeted: " + targetedAgent.agentName);
 
         //Temp code, replace with enemy picker in near future//
 
@@ -139,6 +162,7 @@ public class BattleSystem : MonoBehaviour
         {
             state = battleStateMachine.Text;
             yield return new WaitForSeconds(2);
+            state = battleStateMachine.Text;
             if (isDefeated)
             {
                 targetedAgent.gameObject.SetActive(false);
@@ -187,6 +211,7 @@ public class BattleSystem : MonoBehaviour
         {
             state = battleStateMachine.Text;
             yield return new WaitForSeconds(2);
+            state = battleStateMachine.Text;
             if (isDefeated)
             {
                 targetedAgent.gameObject.SetActive(false);
@@ -204,6 +229,7 @@ public class BattleSystem : MonoBehaviour
                     }
                     if (PlayerCount == 0)
                     {
+                        
                         baseMenuFlavorText.text = targetedAgent.agentName.ToString() + " took " + (agentPreDamageHealth - targetedAgent.agentHPCurrent).ToString() + " damage!";
                         yield return new WaitForSeconds(2);
                         state = battleStateMachine.Lose;
@@ -222,7 +248,7 @@ public class BattleSystem : MonoBehaviour
             else
             {
                 
-                baseMenuFlavorText.text = targetedAgent.agentName.ToString() + " took " + (agentPreDamageHealth - targetedAgent.agentHPCurrent).ToString() + " damage!";
+                baseMenuFlavorText.text = targetedAgent.agentName.ToString() + " rtrttook " + (agentPreDamageHealth - targetedAgent.agentHPCurrent).ToString() + " damage!";
                 yield return new WaitForSeconds(2);
                 ChangeCurrentAgent();
             }
@@ -233,15 +259,25 @@ public class BattleSystem : MonoBehaviour
 
     IEnumerator EnemyTurn(int enemyIndex)
     {
-        //Enemy Basic Attack
-        #region
-        baseMenuFlavorText.text = EnemyArray[enemyIndex].name.ToString() + "attacks!";
+        Debug.Log("EnemyTurn");
+        if (EnemyArray[enemyIndex].activeSelf ==true)
+        {
+            //Enemy Basic Attack
+            #region
+            string agentName = "";
 
-        yield return new WaitForSeconds(1);
+            agentName = EnemyArray[enemyIndex].GetComponent<BattleAgent>().agentName;
+            baseMenuFlavorText.text = agentName + " attacks!";
+            yield return new WaitForSeconds(3);
 
-        targetedAgent = PlayerArray[0].GetComponent<BattleAgent>();
-        StartCoroutine(BasicAttack(EnemyArray[enemyIndex].GetComponent<BattleAgent>(), false));
-        #endregion 
+            targetedAgent = PlayerArray[0].GetComponent<BattleAgent>();
+            StartCoroutine(BasicAttack(EnemyArray[enemyIndex].GetComponent<BattleAgent>(), false));
+            #endregion
+        }
+        else
+        {
+            ChangeCurrentAgent();
+        }
     }
 
     private void Update()
@@ -264,18 +300,18 @@ public class BattleSystem : MonoBehaviour
 
     void ChangeCurrentAgent()
     {
-        Debug.Log("0");
+        
         for (int i = 0; i < PlayerCount;i++)
         {
             if (currentActiveAgent == PlayerArray[i] )
             {
-                Debug.Log("1");
-                if (PlayerArray.Length > i+1)
+                
+                if (PlayerCount > i+1)
                 {
                     currentActiveAgent = PlayerArray[i+1];
                     state = battleStateMachine.PlayerTurn;
                     PlayerTurn();
-                    Debug.Log("1a");
+                    Debug.Log("PlayerTurnToPlayerTurn");
                     break;
                     
                 }
@@ -284,23 +320,28 @@ public class BattleSystem : MonoBehaviour
                     currentActiveAgent = EnemyArray[0];
                     state = battleStateMachine.EnemyTurn;
                     StartCoroutine(EnemyTurn(0));
-                    Debug.Log("1b");
+                    Debug.Log("PlayerTurnToEnemyTurn");
                     break;
                     
                 }
-
             }
-            for (int j = 0; j < EnemyCount;j++)
+            for (int j = 1; j <= EnemyCount;j++)
             {
-                if (currentActiveAgent == EnemyArray[j])
+
+                if (currentActiveAgent == EnemyArray[j-1])
                 {
-                    Debug.Log("2");
-                    if (EnemyArray.Length > j + 1) 
+                    
+                    if (EnemyCount > j)
                     {
-                        currentActiveAgent = EnemyArray[j + 1];
+                        currentActiveAgent = EnemyArray[j];
+                        if (currentActiveAgent.gameObject.activeSelf == false)
+                        {
+                            Debug.Log("Enemy Not Active, Continuing to next");
+                            continue;
+                        }
                         state = battleStateMachine.EnemyTurn;
-                        StartCoroutine(EnemyTurn(j + 1));
-                        Debug.Log("2a");
+                        StartCoroutine(EnemyTurn(j));
+                        Debug.Log("EnemyTurnToEnemyTurn");
                         break;
                         
                     }
@@ -309,11 +350,13 @@ public class BattleSystem : MonoBehaviour
                         currentActiveAgent = PlayerArray[0];
                         state = battleStateMachine.PlayerTurn;
                         PlayerTurn();
-                        Debug.Log("2b");
+                        Debug.Log("EnemyTurnToPlayerTurn");
                         break;
-                        
                     }
-
+                }
+                else
+                {
+                    continue;
                 }
             }
         }

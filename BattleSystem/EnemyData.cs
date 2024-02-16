@@ -17,7 +17,9 @@ public class EnemyData : MonoBehaviour
     public int[] agentENMax; //Enemy Max Energy
     public int[] agentENCurrent; //Enemy current Energy
     public int[] agentATK; //Enemy attack stat
+    public int[] agentEATK;
     public int[] agentDEF; //Enemy defense stat
+    public int[] agentEDEF;
     public int[] agentSPD; //Enemy speed stat
 
 
@@ -35,7 +37,9 @@ public class EnemyData : MonoBehaviour
         agentENMax = new int[count]; //Enemy Max Energy
         agentENCurrent = new int[count]; //Enemy current Energy
         agentATK = new int[count]; //Enemy attack stat
+        agentEATK= new int[count];
         agentDEF = new int[count];//Enemy defense stat
+        agentEDEF = new int[count];
         agentSPD = new int[count];//Enemy speed stat
 
 
@@ -51,7 +55,9 @@ public class EnemyData : MonoBehaviour
         agentENMax[0] = 100;
         agentENCurrent[0] = 100;
         agentATK[0] = 100;
+        agentEATK[0] = 100;
         agentDEF[0] = 75;
+        agentEDEF[0] = 75;
         agentSPD[0] = 20;
         #endregion
 
@@ -60,13 +66,15 @@ public class EnemyData : MonoBehaviour
         agentName[1] = "Player";
         agentType[1] = 0;
 
-        agentLV[1] = 1;
-        agentHPMax[1] = 250;
-        agentHPCurrent[1] = 250;
+        agentLV[1] = 99;
+        agentHPMax[1] = 25000;
+        agentHPCurrent[1] = 25000;
         agentENMax[1] = 100;
         agentENCurrent[1] = 100;
         agentATK[1] = 150;
+        agentEATK[1] = 150;
         agentDEF[1] = 75;
+        agentEDEF[1] = 75;
         agentSPD[1] = 20;
         #endregion
 

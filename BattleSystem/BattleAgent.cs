@@ -28,8 +28,11 @@ public class BattleAgent : MonoBehaviour
     public int agentENMax;
     public int agentENCurrent;
     public int agentATK;
+    public int agentEATK;
     public int agentDEF;
+    public int agentEDEF;
     public int agentSPD;
+    public bool agentHasGone = false;
 
     void Start()
     {
@@ -56,7 +59,9 @@ public class BattleAgent : MonoBehaviour
         agentENMax= data.agentENMax[agentId];
         agentENCurrent= data.agentENCurrent[agentId];
         agentATK= data.agentATK[agentId];
+        agentEATK= data.agentEATK[agentId];
         agentDEF= data.agentDEF[agentId];
+        agentEDEF= data.agentEDEF[agentId];
         agentSPD= data.agentSPD[agentId];
 
 
@@ -113,4 +118,8 @@ public class BattleAgent : MonoBehaviour
         return false;
     }
 
+    public void ReceiveHeal()
+    {
+        agentHPCurrent += Mathf.RoundToInt(agentEATK/2.5f)    ;
+    }
 }

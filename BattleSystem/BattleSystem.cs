@@ -13,7 +13,8 @@ public enum battleStateMachine
     Text,
     PlayerTargeting,
     Win,
-    Lose
+    Lose,
+    Flee
 }
 
 public class BattleSystem : MonoBehaviour
@@ -120,7 +121,15 @@ public class BattleSystem : MonoBehaviour
         StartCoroutine(BasicAttack(PlayerArray[0].GetComponent<BattleAgent>(), true));
     }
 
-
+    public void OnFleeButton()
+    {
+        if (state != battleStateMachine.PlayerTurn)
+        {
+            return;
+        }
+        state = battleStateMachine.Flee;
+        StartCoroutine(EndBattle());
+    }
 
     IEnumerator BasicAttack(BattleAgent attackingAgent, bool attackDirection)
     {
@@ -294,8 +303,8 @@ public class BattleSystem : MonoBehaviour
 
             //Enemy Basic Attack
             #region
+            StartCoroutine(AgentScale(currentActiveAgent,new Vector3(1f, 1f, 1f)));
             string agentName = "";
-
             agentName = EnemyArray[enemyIndex].GetComponent<BattleAgent>().agentName;
             baseMenuFlavorText.fullText = agentName + " attacks!";
             yield return StartCoroutine(TextPrinterWait());
@@ -330,6 +339,7 @@ public class BattleSystem : MonoBehaviour
 
     void ChangeCurrentAgent()
     {
+        StartCoroutine(AgentScale(currentActiveAgent,new Vector3(0.9f,0.9f,.9f)));
         state = battleStateMachine.Text;
         for (int i = 0; i < PlayerCount; i++)
         {
@@ -353,6 +363,7 @@ public class BattleSystem : MonoBehaviour
                     Debug.Log("PlayerTurnToEnemyTurn");
                     return;
                 }
+                
             }
         }
 
@@ -404,11 +415,23 @@ public class BattleSystem : MonoBehaviour
         TextArrow.gameObject.SetActive(false);
     }
 
+    IEnumerator AgentScale(GameObject agent, Vector3 desiredScale)
+    {
+        
+        while (Mathf.Abs(agent.transform.localScale.x - desiredScale.x) > 0.01f)
+        {
+            agent.transform.localScale = Vector3.Lerp(agent.transform.localScale, desiredScale, 5f * Time.deltaTime);
+            yield return null;
+        }
+        Debug.Log("Bazinga");
+    }
+
     IEnumerator EndBattle()
     {
         if (state == battleStateMachine.Win)
         {
             baseMenuFlavorText.fullText = "YOU WIN!!!!";
+            yield return StartCoroutine(TextPrinterWait());
             //return to overworld
             yield return new WaitForSeconds(3);
             SceneManager.LoadSceneAsync(0);
@@ -416,6 +439,15 @@ public class BattleSystem : MonoBehaviour
         if (state == battleStateMachine.Lose)
         {
             baseMenuFlavorText.fullText = "You have lost. Regret your actions and try again";
+            yield return StartCoroutine(TextPrinterWait());
+            //give gameover screen
+            yield return new WaitForSeconds(3);
+            SceneManager.LoadSceneAsync(0);
+        }
+        if (state == battleStateMachine.Flee)
+        {
+            baseMenuFlavorText.fullText = "You have fleed. Regret your actions and try again";
+            yield return StartCoroutine(TextPrinterWait());
             //give gameover screen
             yield return new WaitForSeconds(3);
             SceneManager.LoadSceneAsync(0);

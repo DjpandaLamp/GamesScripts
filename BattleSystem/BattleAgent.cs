@@ -14,6 +14,8 @@ public class BattleAgent : MonoBehaviour
     public TextMeshProUGUI agentHealthText;
     public TextMeshProUGUI agentEnergyText;
     public Image agentImage;
+    public Image agentBoxImage;
+    public Color agentBaseColor;
 
     public Slider agentHealthSlider;
     public Slider agentEnergySlider;
@@ -32,6 +34,9 @@ public class BattleAgent : MonoBehaviour
     public int agentDEF;
     public int agentEDEF;
     public int agentSPD;
+
+    
+
     public bool agentHasGone = false;
 
     void Start()
@@ -42,6 +47,12 @@ public class BattleAgent : MonoBehaviour
         Slider[] sliderComponents = GetComponentsInChildren<Slider>();
         agentHealthSlider = sliderComponents[0];
         agentEnergySlider = sliderComponents[1];
+
+
+        Image[] imageComponents = GetComponentsInChildren<Image>();
+        agentImage = imageComponents[0];
+        agentBoxImage = imageComponents[1];
+        agentBaseColor = imageComponents[1].color;
 
         TextMeshProUGUI[] textMeshes = GetComponentsInChildren<TextMeshProUGUI>();
         agentHeaderText = textMeshes[0];

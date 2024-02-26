@@ -37,11 +37,14 @@ public class BattleSystem : MonoBehaviour
     public GameObject[] EnemyCurrentArray;
 
 
+    public int playerCursorPos;
+
     public Transform[] PlayerTransformArray;
     public Transform[] EnemyTransformArray;
 
     public GameObject currentActiveAgent;
     public BattleAgent targetedAgent;
+    public float targetColorBlend;
 
     public int BasePlayerCount;
     public int BaseEnemyCount;
@@ -131,6 +134,82 @@ public class BattleSystem : MonoBehaviour
         StartCoroutine(EndBattle());
     }
 
+    IEnumerator PlayerTargeting()
+    {
+        bool dir = false;
+        if (Input.GetKeyDown("s") || Input.GetKeyDown("down"))
+        {
+            playerCursorPos += 1;
+            EnemyArray[playerCursorPos].GetComponent<BattleAgent>().agentBoxImage.color = EnemyArray[playerCursorPos].GetComponent<BattleAgent>().agentBaseColor;
+            dir = false;
+        }
+        if (Input.GetKeyDown("w") || Input.GetKeyDown("up"))
+        {
+            playerCursorPos -= 1;
+            EnemyArray[playerCursorPos].GetComponent<BattleAgent>().agentBoxImage.color = EnemyArray[playerCursorPos].GetComponent<BattleAgent>().agentBaseColor;
+            dir = true;
+        }
+
+        if (EnemyArray.Length-1 < playerCursorPos)
+        {
+            playerCursorPos = 0;
+            EnemyArray[playerCursorPos].GetComponent<BattleAgent>().agentBoxImage.color = EnemyArray[playerCursorPos].GetComponent<BattleAgent>().agentBaseColor;
+        }
+        if (playerCursorPos < 0)
+        {
+            playerCursorPos = EnemyArray.Length-1;
+            EnemyArray[playerCursorPos].GetComponent<BattleAgent>().agentBoxImage.color = EnemyArray[playerCursorPos].GetComponent<BattleAgent>().agentBaseColor;
+        }
+
+        while (EnemyArray[playerCursorPos].activeSelf == false)
+        {
+            if (dir == true)
+            {
+                playerCursorPos -= 1;
+                EnemyArray[playerCursorPos].GetComponent<BattleAgent>().agentBoxImage.color = EnemyArray[playerCursorPos].GetComponent<BattleAgent>().agentBaseColor;
+            }
+            else
+            {
+                playerCursorPos += 1;
+                EnemyArray[playerCursorPos].GetComponent<BattleAgent>().agentBoxImage.color = EnemyArray[playerCursorPos].GetComponent<BattleAgent>().agentBaseColor;
+            }
+            if (EnemyArray.Length - 1 < playerCursorPos)
+            {
+                playerCursorPos = 0;
+                EnemyArray[playerCursorPos].GetComponent<BattleAgent>().agentBoxImage.color = EnemyArray[playerCursorPos].GetComponent<BattleAgent>().agentBaseColor;
+            }
+            if (playerCursorPos < 0)
+            {
+                playerCursorPos = EnemyArray.Length - 1;
+                EnemyArray[playerCursorPos].GetComponent<BattleAgent>().agentBoxImage.color = EnemyArray[playerCursorPos].GetComponent<BattleAgent>().agentBaseColor;
+            }
+
+        }
+
+        EnemyArray[playerCursorPos].GetComponent<BattleAgent>().agentBoxImage.color = ColorTarget();
+
+        if (Input.GetKeyDown("z") && EnemyArray[playerCursorPos].activeSelf == true)
+        {
+            targetedAgent = EnemyArray[playerCursorPos].GetComponent<BattleAgent>();
+        }
+
+        if (targetedAgent == null)
+        {
+            yield return null;
+        }
+        EnemyArray[playerCursorPos].GetComponent<BattleAgent>().agentBoxImage.color = EnemyArray[playerCursorPos].GetComponent<BattleAgent>().agentBaseColor;
+        yield break;
+    }
+
+    Color ColorTarget()
+    {
+        targetColorBlend = Mathf.Sin(Time.time) / 2;
+        Color baseColor = EnemyArray[playerCursorPos].GetComponent<BattleAgent>().agentBaseColor;
+        Color blend = new Color(255, 255, 0, 1);
+        Color blendColor = (Vector4.Lerp(baseColor, blend, targetColorBlend));
+        return blendColor;
+    }
+
     IEnumerator BasicAttack(BattleAgent attackingAgent, bool attackDirection)
     {
         Debug.Log("Attack");
@@ -147,23 +226,24 @@ public class BattleSystem : MonoBehaviour
 
 
         //Temp code, replace with enemy picker in near future//
+
         if (attackDirection == true)
         {
+            while (targetedAgent == null)
+            {
+                yield return StartCoroutine(PlayerTargeting());
+            }
+            
+            /*
             targetedAgent = EnemyArray[Random.Range(0, BaseEnemyCount)].GetComponent<BattleAgent>();
-            //targetedAgent = EnemyArray[1].GetComponent<BattleAgent>();
-            while (targetedAgent.gameObject.activeSelf == false) //ensures that the targeted enemy is not defeated
+            while (targetedAgent.gameObject.activeSelf == false) 
             {
                 targetedAgent = EnemyArray[Random.Range(0, BaseEnemyCount)].GetComponent<BattleAgent>();
-            }
+            }*/
         }
 
 
         Debug.Log("AgentTargeted: " + targetedAgent.agentName);
-
-        //Temp code, replace with enemy picker in near future//
-
-
-        //BattleAgent attackingAgent = PlayerArray[0].GetComponent<BattleAgent>();
 
         int agentPreDamageHealth = targetedAgent.agentHPCurrent;
 
@@ -423,7 +503,7 @@ public class BattleSystem : MonoBehaviour
             agent.transform.localScale = Vector3.Lerp(agent.transform.localScale, desiredScale, 5f * Time.deltaTime);
             yield return null;
         }
-        Debug.Log("Bazinga");
+        
     }
 
     IEnumerator EndBattle()

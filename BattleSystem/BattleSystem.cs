@@ -38,6 +38,7 @@ public class BattleSystem : MonoBehaviour
 
 
     public int playerCursorPos;
+    public bool isBackPressed;
 
     public Transform[] PlayerTransformArray;
     public Transform[] EnemyTransformArray;
@@ -133,6 +134,10 @@ public class BattleSystem : MonoBehaviour
         state = battleStateMachine.Flee;
         StartCoroutine(EndBattle());
     }
+    public void OnBackButton()
+    {
+        isBackPressed = true;
+    }
 
     IEnumerator PlayerTargeting()
     {
@@ -203,10 +208,10 @@ public class BattleSystem : MonoBehaviour
 
     Color ColorTarget()
     {
-        targetColorBlend = Mathf.Sin(Time.time) / 2;
+        targetColorBlend = Mathf.Clamp01( 0.6f+Mathf.Sin(Time.time) / 2);
         Color baseColor = EnemyArray[playerCursorPos].GetComponent<BattleAgent>().agentBaseColor;
-        Color blend = new Color(255, 255, 0, 1);
-        Color blendColor = (Vector4.Lerp(baseColor, blend, targetColorBlend));
+        Color blend = new Color(1, 1, 0, 1);
+        Color blendColor = (Color.Lerp(baseColor, blend, 0.5f+Mathf.PingPong(Time.time,0.5f)));
         return blendColor;
     }
 
@@ -229,10 +234,25 @@ public class BattleSystem : MonoBehaviour
 
         if (attackDirection == true)
         {
-            while (targetedAgent == null)
+            if (targetedAgent == null)
             {
-                yield return StartCoroutine(PlayerTargeting());
+                state = battleStateMachine.PlayerTargeting;
+                baseMenuFlavorText.fullText = "Pick your Target.";
+                yield return StartCoroutine(TextPrinterWait(1));
+                while (targetedAgent == null)
+                {
+                    if (isBackPressed)
+                    {
+                        isBackPressed = false;
+                        state = battleStateMachine.PlayerTurn;
+                        PlayerTurn();
+                        yield break;
+                    }
+
+                    yield return StartCoroutine(PlayerTargeting());
+                }
             }
+
             
             /*
             targetedAgent = EnemyArray[Random.Range(0, BaseEnemyCount)].GetComponent<BattleAgent>();
@@ -271,20 +291,20 @@ public class BattleSystem : MonoBehaviour
                         if (EnemyCount == 0)
                         {
                             baseMenuFlavorText.fullText = targetedAgent.agentName.ToString() + " took " + (agentPreDamageHealth - targetedAgent.agentHPCurrent).ToString() + " damage!";
-                            yield return StartCoroutine(TextPrinterWait());
+                            yield return StartCoroutine(TextPrinterWait(0));
                             targetedAgent.gameObject.SetActive(false);
                             baseMenuFlavorText.fullText = targetedAgent.agentName.ToString() + " was Defeated.";
-                            yield return StartCoroutine(TextPrinterWait());
+                            yield return StartCoroutine(TextPrinterWait(0));
                             state = battleStateMachine.Win;
                             StartCoroutine(EndBattle());
                         }
                         else
                         {
                             baseMenuFlavorText.fullText = targetedAgent.agentName.ToString() + " took " + (agentPreDamageHealth - targetedAgent.agentHPCurrent).ToString() + " damage!";
-                            yield return StartCoroutine(TextPrinterWait());
+                            yield return StartCoroutine(TextPrinterWait(0));
                             targetedAgent.gameObject.SetActive(false);
                             baseMenuFlavorText.fullText = targetedAgent.agentName.ToString() + " was Defeated.";
-                            yield return StartCoroutine(TextPrinterWait());
+                            yield return StartCoroutine(TextPrinterWait(0));
                             ChangeCurrentAgent();
                         }
                     }
@@ -294,7 +314,7 @@ public class BattleSystem : MonoBehaviour
             {
 
                 baseMenuFlavorText.fullText = targetedAgent.agentName.ToString() + " took " + (agentPreDamageHealth - targetedAgent.agentHPCurrent).ToString() + " damage!";
-                yield return StartCoroutine(TextPrinterWait());
+                yield return StartCoroutine(TextPrinterWait(0));
                 ChangeCurrentAgent();
             }
         }
@@ -325,10 +345,10 @@ public class BattleSystem : MonoBehaviour
                         {
 
                             baseMenuFlavorText.fullText = targetedAgent.agentName.ToString() + " took " + (agentPreDamageHealth - targetedAgent.agentHPCurrent).ToString() + " damage!";
-                            yield return StartCoroutine(TextPrinterWait());
+                            yield return StartCoroutine(TextPrinterWait(0));
                             targetedAgent.gameObject.SetActive(false);
                             baseMenuFlavorText.fullText = targetedAgent.agentName.ToString() + " was Defeated.";
-                            yield return StartCoroutine(TextPrinterWait());
+                            yield return StartCoroutine(TextPrinterWait(0));
                             state = battleStateMachine.Lose;
                             StartCoroutine(EndBattle());
                         }
@@ -337,10 +357,10 @@ public class BattleSystem : MonoBehaviour
                             baseMenuFlavorText.fullText = targetedAgent.agentName.ToString() + " took " + (agentPreDamageHealth - targetedAgent.agentHPCurrent).ToString() + " damage!";
 
                             baseMenuFlavorText.fullText = targetedAgent.agentName.ToString() + " took " + (agentPreDamageHealth - targetedAgent.agentHPCurrent).ToString() + " damage!";
-                            yield return StartCoroutine(TextPrinterWait());
+                            yield return StartCoroutine(TextPrinterWait(0));
                             targetedAgent.gameObject.SetActive(false);
                             baseMenuFlavorText.fullText = targetedAgent.agentName.ToString() + " was Defeated.";
-                            yield return StartCoroutine(TextPrinterWait());
+                            yield return StartCoroutine(TextPrinterWait(0));
                             ChangeCurrentAgent();
                         }
                     }
@@ -350,7 +370,7 @@ public class BattleSystem : MonoBehaviour
             {
 
                 baseMenuFlavorText.fullText = targetedAgent.agentName.ToString() + " took " + (agentPreDamageHealth - targetedAgent.agentHPCurrent).ToString() + " damage!";
-                yield return StartCoroutine(TextPrinterWait());
+                yield return StartCoroutine(TextPrinterWait(0));
 
                 ChangeCurrentAgent();
             }
@@ -369,7 +389,7 @@ public class BattleSystem : MonoBehaviour
         yield return new WaitForSeconds(2);
 
         baseMenuFlavorText.fullText = targetedAgent.agentName.ToString() + " is healed " + (agentPreDamageHealth - targetedAgent.agentHPCurrent).ToString() + " Health!";
-        yield return StartCoroutine(TextPrinterWait());
+        yield return StartCoroutine(TextPrinterWait(0));
         ChangeCurrentAgent();
     }
 
@@ -387,7 +407,7 @@ public class BattleSystem : MonoBehaviour
             string agentName = "";
             agentName = EnemyArray[enemyIndex].GetComponent<BattleAgent>().agentName;
             baseMenuFlavorText.fullText = agentName + " attacks!";
-            yield return StartCoroutine(TextPrinterWait());
+            yield return StartCoroutine(TextPrinterWait(0));
             
             targetedAgent = PlayerArray[0].GetComponent<BattleAgent>();
             StartCoroutine(BasicAttack(EnemyArray[enemyIndex].GetComponent<BattleAgent>(), false));
@@ -403,12 +423,21 @@ public class BattleSystem : MonoBehaviour
     {
         if (state == battleStateMachine.PlayerTurn)
         {
-            for (int i = 0; i < baseMenuButtons.Length; i++)
+            for (int i = 0; i < 4; i++)
             {
                 baseMenuButtons[i].gameObject.SetActive(true);
             }
+            baseMenuButtons[4].gameObject.SetActive(false);
         }
-        else
+        if (state == battleStateMachine.PlayerTargeting)
+        {
+            for (int i = 0; i < 4; i++)
+            {
+                baseMenuButtons[i].gameObject.SetActive(false);
+            }
+            baseMenuButtons[4].gameObject.SetActive(true);
+        }
+        if (state != battleStateMachine.PlayerTurn && state != battleStateMachine.PlayerTargeting)
         {
             for (int i = 0; i < baseMenuButtons.Length; i++)
             {
@@ -479,20 +508,28 @@ public class BattleSystem : MonoBehaviour
         }
     }
 
-    IEnumerator TextPrinterWait()
+    IEnumerator TextPrinterWait(int type)
     {
-        baseMenuFlavorText.isFinished = true;
-        yield return new WaitForSeconds(0.01f);
-        while (baseMenuFlavorText.isFinished == false)
+        if (type == 0)
         {
-            yield return null;
+            baseMenuFlavorText.isFinished = true;
+            yield return new WaitForSeconds(0.01f);
+            while (baseMenuFlavorText.isFinished == false)
+            {
+                yield return null;
+            }
+            while (Input.GetMouseButtonDown(0) != true && Input.GetKeyDown("z") !=true)
+            {
+                TextArrow.gameObject.SetActive(true);
+                yield return null;
+            }
+            TextArrow.gameObject.SetActive(false);
         }
-        while (Input.GetMouseButtonDown(0) != true)
+        if (type == 1)
         {
-            TextArrow.gameObject.SetActive(true);
-            yield return null;
+
         }
-        TextArrow.gameObject.SetActive(false);
+
     }
 
     IEnumerator AgentScale(GameObject agent, Vector3 desiredScale)
@@ -511,7 +548,7 @@ public class BattleSystem : MonoBehaviour
         if (state == battleStateMachine.Win)
         {
             baseMenuFlavorText.fullText = "YOU WIN!!!!";
-            yield return StartCoroutine(TextPrinterWait());
+            yield return StartCoroutine(TextPrinterWait(0));
             //return to overworld
             yield return new WaitForSeconds(3);
             SceneManager.LoadSceneAsync(0);
@@ -519,7 +556,7 @@ public class BattleSystem : MonoBehaviour
         if (state == battleStateMachine.Lose)
         {
             baseMenuFlavorText.fullText = "You have lost. Regret your actions and try again";
-            yield return StartCoroutine(TextPrinterWait());
+            yield return StartCoroutine(TextPrinterWait(0));
             //give gameover screen
             yield return new WaitForSeconds(3);
             SceneManager.LoadSceneAsync(0);
@@ -527,7 +564,7 @@ public class BattleSystem : MonoBehaviour
         if (state == battleStateMachine.Flee)
         {
             baseMenuFlavorText.fullText = "You have fleed. Regret your actions and try again";
-            yield return StartCoroutine(TextPrinterWait());
+            yield return StartCoroutine(TextPrinterWait(0));
             //give gameover screen
             yield return new WaitForSeconds(3);
             SceneManager.LoadSceneAsync(0);

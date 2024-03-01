@@ -9,11 +9,14 @@ public class TypeWriter : MonoBehaviour
 {
     public TextMeshProUGUI textComp;
     public float delay;
+   
     public string fullText;
     public string lastFrameFullText;
-    private string currentText = "";
+    public string currentText = "";
     public bool abortText = false;
     public bool isFinished = false;
+    public bool allowSkipText = true;
+    public bool hasSkipped = false;
 
 
     private void Awake()
@@ -51,7 +54,18 @@ public class TypeWriter : MonoBehaviour
         isFinished = false;
         for (int i = 0; i < fullText.Length+1; i++) 
         {
-
+            if (Input.GetMouseButton(0) == true || Input.GetKey("z") == true)
+            {
+                if (allowSkipText == true && hasSkipped == false)
+                {
+                    i = fullText.Length;
+                }
+                hasSkipped = true;
+            }
+            else
+            {
+                hasSkipped = false;
+            }
             currentText = fullText.Substring(0, i);
             yield return new WaitForSeconds(delay);
             textComp.text = currentText;

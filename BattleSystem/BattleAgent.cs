@@ -123,14 +123,14 @@ public class BattleAgent : MonoBehaviour
         agentHPCurrent -= attackValue - agentDEF;
         if(agentHPCurrent <= 0)
         {
-            Debug.Log("fuck");
+            agentHPCurrent = 0;
             return true;
         }
         return false;
     }
 
-    public void ReceiveHeal()
+    public void ReceiveHeal(int eAttackValue)
     {
-        agentHPCurrent += Mathf.RoundToInt(agentEATK/2.5f)    ;
+        agentHPCurrent += Mathf.RoundToInt(eAttackValue/2.5f);
     }
 }

@@ -12,6 +12,7 @@ public enum battleStateMachine
     EnemyTurn,
     Text,
     PlayerTargeting,
+    PlayerSkill,
     Win,
     Lose,
     Flee
@@ -23,6 +24,7 @@ public class BattleSystem : MonoBehaviour
     public TypeWriter baseMenuFlavorText;
     public GameObject[] baseMenuButtons;
     public GameObject TextArrow;
+    public GameObject skillMenu;
 
 
     public battleStateMachine state;
@@ -39,6 +41,7 @@ public class BattleSystem : MonoBehaviour
 
     public int playerCursorPos;
     public bool isBackPressed;
+    
 
     public Transform[] PlayerTransformArray;
     public Transform[] EnemyTransformArray;
@@ -76,7 +79,7 @@ public class BattleSystem : MonoBehaviour
 
         currentActiveAgent = PlayerArray[0];
 
-        yield return new WaitForSeconds(5);
+        yield return new WaitForSeconds(1);
 
         state = battleStateMachine.PlayerTurn;
         Debug.Log("Battle Loaded");
@@ -134,9 +137,32 @@ public class BattleSystem : MonoBehaviour
         state = battleStateMachine.Flee;
         StartCoroutine(EndBattle());
     }
+
+    public void OnSkillButton()
+    {
+        
+        state = battleStateMachine.PlayerSkill;
+    }
+
     public void OnBackButton()
     {
         isBackPressed = true;
+    }
+
+    public void OnHealSkillsButton(int grade)
+    {
+        BattleAgent activeAgent = currentActiveAgent.GetComponent<BattleAgent>();
+        if (grade == 0)
+        {
+            if (activeAgent.agentENCurrent < 10)
+            {
+                baseMenuFlavorText.fullText = activeAgent.agentName.ToString() + " doesn't have enough energy!";
+                return;
+            }
+            activeAgent.agentENCurrent -= 10;
+            targetedAgent = activeAgent;
+            StartCoroutine(BasicHeal(activeAgent));
+        }
     }
 
     IEnumerator PlayerTargeting()
@@ -380,15 +406,12 @@ public class BattleSystem : MonoBehaviour
     }
 
 
-    IEnumerator BasicHeal(BattleAgent attackingAgent, bool attackDirection)
+    IEnumerator BasicHeal(BattleAgent attackingAgent)
     {
+        state = battleStateMachine.Text;
         int agentPreDamageHealth = targetedAgent.agentHPCurrent;
-
-        targetedAgent.ReceiveHeal();
-
-        yield return new WaitForSeconds(2);
-
-        baseMenuFlavorText.fullText = targetedAgent.agentName.ToString() + " is healed " + (agentPreDamageHealth - targetedAgent.agentHPCurrent).ToString() + " Health!";
+        targetedAgent.ReceiveHeal(attackingAgent.agentEATK);
+        baseMenuFlavorText.fullText = targetedAgent.agentName.ToString() + " is healed " + Mathf.Abs(agentPreDamageHealth - targetedAgent.agentHPCurrent).ToString() + " Health!";
         yield return StartCoroutine(TextPrinterWait(0));
         ChangeCurrentAgent();
     }
@@ -421,6 +444,10 @@ public class BattleSystem : MonoBehaviour
 
     private void Update()
     {
+        for (int i = 0; i < 4; i++)
+        {
+            baseMenuButtons[i].gameObject.GetComponent<Button>().interactable = true;
+        }
         if (state == battleStateMachine.PlayerTurn)
         {
             for (int i = 0; i < 4; i++)
@@ -437,11 +464,29 @@ public class BattleSystem : MonoBehaviour
             }
             baseMenuButtons[4].gameObject.SetActive(true);
         }
-        if (state != battleStateMachine.PlayerTurn && state != battleStateMachine.PlayerTargeting)
+        if (state == battleStateMachine.PlayerSkill)
+        {
+            if (isBackPressed)
+            {
+                isBackPressed = false;
+                state = battleStateMachine.PlayerTurn;
+            }
+            for (int i = 0; i < 4; i++)
+            {
+                baseMenuButtons[i].gameObject.GetComponent<Button>().interactable = false;
+            }
+            skillMenu.SetActive(true);
+        }
+        else
+        {
+            skillMenu.SetActive(false);
+        }
+        if (state != battleStateMachine.PlayerTurn && state != battleStateMachine.PlayerTargeting && state != battleStateMachine.PlayerSkill)
         {
             for (int i = 0; i < baseMenuButtons.Length; i++)
             {
                 baseMenuButtons[i].gameObject.SetActive(false);
+                skillMenu.gameObject.SetActive(false);
             }
         }
     }
@@ -483,7 +528,7 @@ public class BattleSystem : MonoBehaviour
             {
                 for (int j = 0; j < EnemyArray.Length; j++)
                 {
-                    Debug.Log("boing go");
+                    
                     EnemyArray[j].GetComponent<BattleAgent>().agentHasGone = false;
                 }
                 currentActiveAgent = PlayerArray[0];
@@ -518,6 +563,7 @@ public class BattleSystem : MonoBehaviour
             {
                 yield return null;
             }
+            yield return new WaitForSeconds(0.01f);
             while (Input.GetMouseButtonDown(0) != true && Input.GetKeyDown("z") !=true)
             {
                 TextArrow.gameObject.SetActive(true);

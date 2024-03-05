@@ -132,5 +132,9 @@ public class BattleAgent : MonoBehaviour
     public void ReceiveHeal(int eAttackValue)
     {
         agentHPCurrent += Mathf.RoundToInt(eAttackValue/2.5f);
+        if (agentHPCurrent > agentHPMax)
+        {
+            agentHPCurrent = agentHPMax;
+        }
     }
 }

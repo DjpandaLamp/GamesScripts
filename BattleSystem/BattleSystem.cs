@@ -411,7 +411,15 @@ public class BattleSystem : MonoBehaviour
         state = battleStateMachine.Text;
         int agentPreDamageHealth = targetedAgent.agentHPCurrent;
         targetedAgent.ReceiveHeal(attackingAgent.agentEATK);
-        baseMenuFlavorText.fullText = targetedAgent.agentName.ToString() + " is healed " + Mathf.Abs(agentPreDamageHealth - targetedAgent.agentHPCurrent).ToString() + " Health!";
+        if (agentPreDamageHealth - targetedAgent.agentHPCurrent == 0)
+        {
+            baseMenuFlavorText.fullText = "But the healing had no effect!";
+        }
+        else
+        {
+            baseMenuFlavorText.fullText = targetedAgent.agentName.ToString() + " is healed " + Mathf.Abs(agentPreDamageHealth - targetedAgent.agentHPCurrent).ToString() + " Health!";
+        }
+        
         yield return StartCoroutine(TextPrinterWait(0));
         ChangeCurrentAgent();
     }

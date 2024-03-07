@@ -114,8 +114,16 @@ public class BattleSystem : MonoBehaviour
     }
     void PlayerTurn()
     {
+        StatusUpdate();
         targetedAgent = null;
+        StartCoroutine(AgentScale(currentActiveAgent, new Vector3(1f, 1f, 1f)));
         baseMenuFlavorText.fullText = "What's Your Move?";
+    }
+
+    void StatusUpdate()
+    {
+        BattleAgent agent = currentActiveAgent.GetComponent<BattleAgent>();
+        agent.isDefending = false;
     }
 
     public void OnAttackButton()
@@ -163,6 +171,18 @@ public class BattleSystem : MonoBehaviour
             targetedAgent = activeAgent;
             StartCoroutine(BasicHeal(activeAgent));
         }
+    }
+    public void OnDefenseButton()
+    {
+        StartCoroutine(OnDefenseEnumberable());
+    }
+    public IEnumerator OnDefenseEnumberable()
+    {
+        BattleAgent agent = currentActiveAgent.GetComponent<BattleAgent>();
+        agent.isDefending = true;
+        baseMenuFlavorText.fullText = agent.agentName + " Defended.";
+        yield return StartCoroutine(TextPrinterWait(0));
+        ChangeCurrentAgent();
     }
 
     IEnumerator PlayerTargeting()
@@ -293,7 +313,7 @@ public class BattleSystem : MonoBehaviour
 
         int agentPreDamageHealth = targetedAgent.agentHPCurrent;
 
-        bool isDefeated = targetedAgent.TakeDamage(attackingAgent.agentATK);
+        bool isDefeated = targetedAgent.TakeDamage(attackingAgent.agentATKFull);
 
         //Player Attack
         if (attackDirection == true)
@@ -353,18 +373,14 @@ public class BattleSystem : MonoBehaviour
             {
                 PlayerCount = BasePlayerCount;
                 PlayerCount -= 1;
-                for (int i = 0; i < PlayerCount; i++)
+                for (int i = 0; i < PlayerArray.Length; i++)
                 {
 
-                    if (PlayerArray[i].activeSelf == true)
-                    {
-
-
-                    }
-                    else
+                    if (PlayerArray[i].activeSelf == false)
                     {
                         PlayerCount -= 1;
                     }
+
                     if (i == PlayerArray.Length - 1)
                     {
                         if (PlayerCount == 0)
@@ -410,7 +426,7 @@ public class BattleSystem : MonoBehaviour
     {
         state = battleStateMachine.Text;
         int agentPreDamageHealth = targetedAgent.agentHPCurrent;
-        targetedAgent.ReceiveHeal(attackingAgent.agentEATK);
+        targetedAgent.ReceiveHeal(attackingAgent.agentEATKFull);
         if (agentPreDamageHealth - targetedAgent.agentHPCurrent == 0)
         {
             baseMenuFlavorText.fullText = "But the healing had no effect!";
@@ -440,7 +456,11 @@ public class BattleSystem : MonoBehaviour
             baseMenuFlavorText.fullText = agentName + " attacks!";
             yield return StartCoroutine(TextPrinterWait(0));
             
-            targetedAgent = PlayerArray[0].GetComponent<BattleAgent>();
+            targetedAgent = PlayerArray[Random.Range(0,2)].GetComponent<BattleAgent>();
+            while (targetedAgent.gameObject.activeSelf == false)
+            {
+                targetedAgent = PlayerArray[Random.Range(0, 2)].GetComponent<BattleAgent>();
+            }
             StartCoroutine(BasicAttack(EnemyArray[enemyIndex].GetComponent<BattleAgent>(), false));
             #endregion
         }

@@ -29,13 +29,21 @@ public class BattleAgent : MonoBehaviour
     public int agentHPCurrent;
     public int agentENMax;
     public int agentENCurrent;
-    public int agentATK;
-    public int agentEATK;
-    public int agentDEF;
-    public int agentEDEF;
+    public int agentATKBase;
+    public int agentEATKBase;
+    public int agentDEFBase;
+    public int agentEDEFBase;
     public int agentSPD;
 
-    
+
+    public int agentATKFull;
+    public int agentEATKFull;
+    public int agentDEFFull;
+    public int agentEDEFFull;
+
+    public bool isDefending;
+
+
 
     public bool agentHasGone = false;
 
@@ -69,10 +77,10 @@ public class BattleAgent : MonoBehaviour
         agentHPCurrent = data.agentHPCurrent[agentId];
         agentENMax= data.agentENMax[agentId];
         agentENCurrent= data.agentENCurrent[agentId];
-        agentATK= data.agentATK[agentId];
-        agentEATK= data.agentEATK[agentId];
-        agentDEF= data.agentDEF[agentId];
-        agentEDEF= data.agentEDEF[agentId];
+        agentATKBase= data.agentATK[agentId];
+        agentEATKBase= data.agentEATK[agentId];
+        agentDEFBase= data.agentDEF[agentId];
+        agentEDEFBase= data.agentEDEF[agentId];
         agentSPD= data.agentSPD[agentId];
 
 
@@ -92,6 +100,19 @@ public class BattleAgent : MonoBehaviour
     void Update()
     {
         UIUpdate(); //Updates Visual Components
+        StatUpdate();
+    }
+    void StatUpdate()
+    {
+        agentATKFull = agentATKBase;
+
+        agentDEFFull = agentDEFBase;
+        if (isDefending)
+        {
+            agentDEFFull += 20;
+        }
+        agentEATKFull = agentEATKBase;
+        agentEDEFFull = agentEDEFBase;
     }
 
 
@@ -120,7 +141,7 @@ public class BattleAgent : MonoBehaviour
 
     public bool TakeDamage(int attackValue)
     {
-        agentHPCurrent -= attackValue - agentDEF;
+        agentHPCurrent -= attackValue - agentDEFFull;
         if(agentHPCurrent <= 0)
         {
             agentHPCurrent = 0;

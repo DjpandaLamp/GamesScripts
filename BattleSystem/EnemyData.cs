@@ -22,6 +22,10 @@ public class EnemyData : MonoBehaviour
     public int[] agentEDEF;
     public int[] agentSPD; //Enemy speed stat
 
+    public int[] agentEXPReward;
+    public int agentTotalEXP;
+    public int[] agentLevelPoint;
+
 
     private void Awake()
     {
@@ -42,6 +46,13 @@ public class EnemyData : MonoBehaviour
         agentEDEF = new int[count];
         agentSPD = new int[count];//Enemy speed stat
 
+        agentEXPReward = new int[count];
+        agentLevelPoint = new int[999];
+
+        for (int i = 0; i < 251; i++)
+        {
+            agentLevelPoint[i] = (5*i) + Mathf.RoundToInt(Mathf.Pow(i, 3.2f));
+        }
 
 
         //Testy - 0
@@ -66,7 +77,7 @@ public class EnemyData : MonoBehaviour
         agentName[1] = "Player";
         agentType[1] = 0;
 
-        agentLV[1] = 3;
+        agentLV[1] = 1;
         agentHPMax[1] = 250;
         agentHPCurrent[1] = 250;
         agentENMax[1] = 100;

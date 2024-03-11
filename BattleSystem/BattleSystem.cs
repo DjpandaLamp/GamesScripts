@@ -55,10 +55,13 @@ public class BattleSystem : MonoBehaviour
     public int PlayerCount;
     public int EnemyCount; //Number of Enemies to be Generated
 
+    public string[] SkillsDescs;
+
 
     // Start is called before the first frame update
     void Start()
     {
+        SkillsDescs = new string[20]; 
 
         PlayerArray = new GameObject[PlayerCount];
         EnemyArray = new GameObject[EnemyCount];
@@ -70,6 +73,11 @@ public class BattleSystem : MonoBehaviour
 
         state = battleStateMachine.Start;
         StartCoroutine(BattleInitalize());
+
+        SkillsDescs[0] = "THIS IS A DEBUG STRING. IF YOU ARE SEEING THIS, SOMETHING HAS GONE HORRIBLY WRONG"; //Error String
+        SkillsDescs[1] = "Through the power of self medication, you heal yourself by 40% of your Energy Attack."; //Basic Heal
+        SkillsDescs[2] = "You should thank your mom for those martal arts classes. You raise your defense by 1.25 times for this turn."; //Basic Defense
+
     }
 
     IEnumerator BattleInitalize()
@@ -176,6 +184,9 @@ public class BattleSystem : MonoBehaviour
     {
         StartCoroutine(OnDefenseEnumberable());
     }
+
+
+
     public IEnumerator OnDefenseEnumberable()
     {
         BattleAgent agent = currentActiveAgent.GetComponent<BattleAgent>();

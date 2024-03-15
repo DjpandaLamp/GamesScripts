@@ -43,12 +43,14 @@ public class BattleAgent : MonoBehaviour
 
     public bool isDefending;
 
-
+    public bool HasText = true;
 
     public bool agentHasGone = false;
 
     void Start()
     {
+        HasText = true;
+
         system = GameObject.Find("BattleSystem").GetComponent<BattleSystem>();
         data = GameObject.Find("BattleSystem").GetComponent<EnemyData>();
 
@@ -64,8 +66,16 @@ public class BattleAgent : MonoBehaviour
 
         TextMeshProUGUI[] textMeshes = GetComponentsInChildren<TextMeshProUGUI>();
         agentHeaderText = textMeshes[0];
-        agentHealthText = textMeshes[1];
-        agentEnergyText = textMeshes[2];
+        if (textMeshes.Length >= 2)
+        {
+            agentHealthText = textMeshes[1];
+            agentEnergyText = textMeshes[2];
+        }
+        else
+        {
+            HasText = false;
+        }
+
 
         agentImage = GetComponentInChildren<Image>();
 
@@ -91,10 +101,14 @@ public class BattleAgent : MonoBehaviour
         agentEnergySlider.maxValue = agentENMax;
         agentEnergySlider.value = agentENCurrent;
         agentEnergySlider.minValue = 0;
-
+        
         agentHeaderText.text = agentName + "- LV" + agentLV.ToString();
-        agentHealthText.text = "Health: " + agentHPCurrent.ToString() + "/" + agentHPMax.ToString();
-        agentEnergyText.text = "Energy: " + agentENCurrent.ToString() + "/" + agentENMax.ToString();
+        if (HasText)
+        {
+            agentHealthText.text = "Health: " + agentHPCurrent.ToString() + "/" + agentHPMax.ToString();
+            agentEnergyText.text = "Energy: " + agentENCurrent.ToString() + "/" + agentENMax.ToString();
+        }
+
 
 }
     void Update()
@@ -135,8 +149,11 @@ public class BattleAgent : MonoBehaviour
         }
         
         agentHeaderText.text = agentName + " - LV" + agentLV.ToString();
-        agentHealthText.text = "Health: " + agentHPCurrent.ToString() + "/" + agentHPMax.ToString();
-        agentEnergyText.text = "Energy: " + agentENCurrent.ToString() + "/" + agentENMax.ToString();
+        if (HasText)
+        {
+            agentHealthText.text = "Health: " + agentHPCurrent.ToString() + "/" + agentHPMax.ToString();
+            agentEnergyText.text = "Energy: " + agentENCurrent.ToString() + "/" + agentENMax.ToString();
+        }
     }
 
     public bool TakeDamage(int attackValue)

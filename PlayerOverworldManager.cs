@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class PlayerOverworldManager : MonoBehaviour
 {
@@ -13,9 +14,9 @@ public class PlayerOverworldManager : MonoBehaviour
 
     public float xVector;
     public float yVector;
-
     public float moveSpd;
 
+    public float disSinceLastEncounter;
 
     // Start is called before the first frame update
     void Start()
@@ -29,7 +30,6 @@ public class PlayerOverworldManager : MonoBehaviour
 
 
         GetInput();
-
         MovePlayer();
         
 
@@ -58,13 +58,17 @@ public class PlayerOverworldManager : MonoBehaviour
     void MovePlayer()
     {
         Vector2 movement = new Vector2(xVector, yVector);
-
         movement *= Time.deltaTime * moveSpd;
-
+        disSinceLastEncounter += Vector2.Distance(Vector2.zero, movement)/15;
 
         //playerRigidbody.AddForce(movement);
         playerRigidbody.velocity = movement;
-
-
+    }
+    void EncounterCheck()
+    {
+        if (disSinceLastEncounter > 310)
+        {
+            SceneManager.LoadSceneAsync(1);
+        }
     }
 }

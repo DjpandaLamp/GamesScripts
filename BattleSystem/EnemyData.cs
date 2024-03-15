@@ -47,12 +47,7 @@ public class EnemyData : MonoBehaviour
         agentSPD = new int[count];//Enemy speed stat
 
         agentEXPReward = new int[count];
-        agentLevelPoint = new int[999];
 
-        for (int i = 0; i < 251; i++)
-        {
-            agentLevelPoint[i] = (5*i) + Mathf.RoundToInt(Mathf.Pow(i, 3.2f));
-        }
 
 
         //Testy - 0
@@ -74,21 +69,37 @@ public class EnemyData : MonoBehaviour
 
         //Player - 1
         #region
-        agentName[1] = "Player";
+        agentName[1] = "Gale";
         agentType[1] = 0;
 
         agentLV[1] = 1;
         agentHPMax[1] = 250;
         agentHPCurrent[1] = 250;
-        agentENMax[1] = 100;
-        agentENCurrent[1] = 100;
+        agentENMax[1] = 70;
+        agentENCurrent[1] = 80;
         agentATK[1] = 150;
         agentEATK[1] = 150;
-        agentDEF[1] = 75;
+        agentDEF[1] = 85;
         agentEDEF[1] = 75;
         agentSPD[1] = 20;
         #endregion
 
+        //Player - 2
+        #region
+        agentName[2] = "Jess";
+        agentType[2] = 0;
+
+        agentLV[2] = 1;
+        agentHPMax[2] = 250;
+        agentHPCurrent[2] = 250;
+        agentENMax[2] = 110;
+        agentENCurrent[2] = 70;
+        agentATK[2] = 150;
+        agentEATK[2] = 150;
+        agentDEF[2] = 75;
+        agentEDEF[2] = 75;
+        agentSPD[2] = 20;
+        #endregion
 
 
 

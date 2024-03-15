@@ -444,6 +444,7 @@ public class BattleSystem : MonoBehaviour
         }
         else
         {
+            state = battleStateMachine.Text;
             baseMenuFlavorText.fullText = targetedAgent.agentName.ToString() + " is healed " + Mathf.Abs(agentPreDamageHealth - targetedAgent.agentHPCurrent).ToString() + " Health!";
         }
         

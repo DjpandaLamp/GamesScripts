@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class EnemyData : MonoBehaviour
 {
-    private int count = 2;
+    private int count = 3;
 
 
     public string[] agentName; //Name of Enemy
@@ -86,7 +86,7 @@ public class EnemyData : MonoBehaviour
 
         //Player - 2
         #region
-        agentName[2] = "Jess";
+        agentName[2] = "Whit";
         agentType[2] = 0;
 
         agentLV[2] = 1;

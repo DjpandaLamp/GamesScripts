@@ -8,6 +8,7 @@ public class GlobalPersistantScript : MonoBehaviour
     public Transform playerSavedTransform;
     public EnemyData data;
 
+    public string p1NM;
     public int p1HP;
     public int p1EN;
     public int p1AT;
@@ -16,7 +17,9 @@ public class GlobalPersistantScript : MonoBehaviour
     public int p1EDF;
     public int p1MHP;
     public int p1MEN;
+    public int p1LV;
 
+    public string p2NM;
     public int p2HP;
     public int p2EN;
     public int p2AT;
@@ -25,6 +28,7 @@ public class GlobalPersistantScript : MonoBehaviour
     public int p2EDF;
     public int p2MHP;
     public int p2MEN;
+    public int p2LV;
 
     public int[] agentLevelPoint;
 
@@ -33,7 +37,7 @@ public class GlobalPersistantScript : MonoBehaviour
     public float globalTimeElapsed;
 
     // Start is called before the first frame update
-    void Awake()
+    void Start()
     {
         agentLevelPoint = new int[252];
 
@@ -43,6 +47,7 @@ public class GlobalPersistantScript : MonoBehaviour
         }
 
 
+        p1NM = data.agentName[1];
         p1HP = data.agentHPCurrent[1];
         p1EN = data.agentENCurrent[1];
         p1AT = data.agentATK[1];
@@ -51,8 +56,9 @@ public class GlobalPersistantScript : MonoBehaviour
         p1EDF = data.agentEDEF[1];
         p1MHP = data.agentHPMax[1];
         p1MEN = data.agentENMax[1];
-        
+        p1LV = data.agentLV[1];
 
+        p2NM = data.agentName[2];
         p2HP = data.agentHPCurrent[2];
         p2EN = data.agentENCurrent[2];
         p2AT = data.agentATK[2];
@@ -61,7 +67,7 @@ public class GlobalPersistantScript : MonoBehaviour
         p2EDF = data.agentEDEF[2];
         p2MHP = data.agentHPMax[2];
         p2MEN = data.agentENMax[2];
-
+        p2LV = data.agentLV[2];
 
         if (GameObject.FindGameObjectsWithTag("Persistant").Length == 1)
         {

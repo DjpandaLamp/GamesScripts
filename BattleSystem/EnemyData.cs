@@ -76,7 +76,7 @@ public class EnemyData : MonoBehaviour
         agentHPMax[1] = 250;
         agentHPCurrent[1] = 250;
         agentENMax[1] = 70;
-        agentENCurrent[1] = 80;
+        agentENCurrent[1] = 65;
         agentATK[1] = 150;
         agentEATK[1] = 150;
         agentDEF[1] = 85;

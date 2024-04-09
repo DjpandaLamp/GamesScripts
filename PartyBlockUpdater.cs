@@ -9,6 +9,7 @@ public class PartyBlockUpdater : MonoBehaviour
 
     private GlobalPersistantScript data;
     private PlayerOverworldManager player;
+    public OverworldMenuManager menuManager;
 
     public Image image;
     public Image photo;
@@ -102,16 +103,9 @@ public class PartyBlockUpdater : MonoBehaviour
                     transparency -= 2.5f * Time.deltaTime;
                 }
             }
-            if (isMenu)
+            if (menuManager.isUp)
             {
-                if (transparency <= -0.5f)
-                {
-                    transparency = -0.5f;
-                }
-                else
-                {
-                    transparency -= 2.5f * Time.deltaTime;
-                }
+                transparency = -0.5f;
             }
 
             image.color = new Color(image.color.r, image.color.g, image.color.b, transparency);

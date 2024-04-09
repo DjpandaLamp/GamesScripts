@@ -41,7 +41,7 @@ public class OverworldMenuManager : MonoBehaviour
             }
 
 
-            transform.localPosition = new Vector3(transform.position.x, yPos, transform.position.z);
+            transform.localPosition = new Vector3(0, yPos, 0);
         }
         else
         {
@@ -54,7 +54,7 @@ public class OverworldMenuManager : MonoBehaviour
                 }
             }
 
-            transform.localPosition = new Vector3(transform.position.x, yPos, transform.position.z);
+            transform.localPosition = new Vector3(0, yPos, 0);
         }
     }
 }

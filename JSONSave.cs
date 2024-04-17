@@ -110,10 +110,18 @@ public class Save
 [System.Serializable]
 public class Config
 {
+    public int gameLanguage;
+
     public int masterVolume;
     public int musicVolume;
     public int sfxVolume;
 
+    public int screenResolution;
+    public bool isFullscreen;
+    public int targetFrameRate;
+
+    public int textSpeed;
+    public bool isRainDisabled;
     public int colorblindSetting;
 
 

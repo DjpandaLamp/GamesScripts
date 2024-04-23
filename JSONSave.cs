@@ -1,19 +1,29 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 
 public class JSONSave : MonoBehaviour
 {
     private PlayerOverworldManager PlayerOverworldManager;
     private GlobalPersistantScript persistantScript;
+    private OverworldMenuManager menuManager;
+    private GameObject saveContainer;
     private string persistantPath;
+
+    public GameObject loadObjectPrefab;
+    public GameObject[] loadObjects;
 
     public Config config;
     public Save Save;
     private void Start()
     {
+        menuManager = GameObject.Find("BaseMenuBlock").GetComponent<OverworldMenuManager>();
+        saveContainer = GameObject.Find("SaveContainer");
         persistantPath = Application.persistentDataPath;
         PlayerOverworldManager = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerOverworldManager>();
+
+        loadObjects = new GameObject[new DirectoryInfo(persistantPath).GetFiles().Length - 1];
     }
     private void Update()
     {
@@ -43,7 +53,7 @@ public class JSONSave : MonoBehaviour
             Save.timeElapsed += persistantScript.globalTimeElapsed;
             persistantScript.globalTimeElapsed = 0;
 
-
+            Save.playerTransform = PlayerOverworldManager.transform.position;
 
 
 
@@ -76,8 +86,50 @@ public class JSONSave : MonoBehaviour
 
         Debug.Log("Successfully Loaded");
     }
-    
+    public void LoadSavedGames()
+    {
+        if (Directory.Exists(Application.persistentDataPath))
+        {
+            
+
+            DirectoryInfo d = new DirectoryInfo(persistantPath);
+            for (int i = d.GetFiles().Length; i > 0; i--)
+            {
+                GameObject newsavebox = Instantiate(loadObjectPrefab, saveContainer.transform);
+                string filePath = persistantPath + "/SaveData" + i.ToString() + ".json";
+                if (System.IO.File.Exists(filePath))
+                {
+                    string SaveData = System.IO.File.ReadAllText(filePath);
+                    Save = JsonUtility.FromJson<Save>(SaveData);
+                    InternalSaveButtonScript ISBS = newsavebox.GetComponent<InternalSaveButtonScript>();
+                    ISBS.saveNum.text = "Save#" + i.ToString();
+                    ISBS.playtimeText.text = "Playtime" + Save.timeElapsed.ToString();
+                    ISBS.timeStampText.text = "Date" + Save.timestamp.ToString();
+                    ISBS.locationName.text = Save.playerCurrentScene.ToString();
+                    loadObjects[i] = newsavebox;
+                }
+                else
+                {
+                    Destroy(newsavebox);
+                }
+
+            }
+        }
+        else
+        {
+            File.Create(Application.persistentDataPath);
+            return;
+        }
+    }
+    public void CleanSavedGames()
+    {
+        for (int i = 0; i < loadObjects.Length;i++)
+        {
+            Destroy(loadObjects[i]);
+        }
+    }
 }
+
 
 
 [System.Serializable]
@@ -105,6 +157,15 @@ public class Save
 
     
 
+}
+
+[System.Serializable]
+public class MenuSave
+{
+    public string saveName;
+    public float timeElapsed;
+    public string timestamp;
+    public int playerCurrentScene;
 }
 
 [System.Serializable]

@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using UnityEngine.SceneManagement;
 using UnityEngine;
 
 public class JSONSave : MonoBehaviour
@@ -10,6 +11,8 @@ public class JSONSave : MonoBehaviour
     private OverworldMenuManager menuManager;
     private GameObject saveContainer;
     private string persistantPath;
+
+    public int timeSincePreviousSave;
 
     public GameObject loadObjectPrefab;
     public GameObject[] loadObjects;
@@ -22,39 +25,52 @@ public class JSONSave : MonoBehaviour
         saveContainer = GameObject.Find("SaveContainer");
         persistantPath = Application.persistentDataPath;
         PlayerOverworldManager = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerOverworldManager>();
-
+        persistantScript = GetComponent<GlobalPersistantScript>();
         loadObjects = new GameObject[new DirectoryInfo(persistantPath).GetFiles().Length - 1];
     }
     private void Update()
     {
         GetInput();
+        if (!menuManager.isUp)
+        {
+            CleanSavedGames();
+        }
     }
 
     void GetInput()
     {
         if (Input.GetKeyDown(KeyCode.O))
         {
-            SaveToJSON(2, 0);
+            SaveToJSON(2);
         }
         if (Input.GetKeyDown(KeyCode.P))
         {
-            LoadFromJSON();
+            LoadFromJSON(2,0);
+        }
+        if (Input.GetKeyDown(KeyCode.C))
+        {
+            DeleteAllSaves();
         }
     }
 
 
 
 
-    void SaveToJSON(int type, int num)
+        public void SaveToJSON(int type)
     {
         if (type == 0) //Main Save
         {
+            int num = new DirectoryInfo(persistantPath).GetFiles().Length - 1;
+
             Save.timestamp = System.DateTime.Now.ToString();
-            Save.timeElapsed += persistantScript.globalTimeElapsed;
-            persistantScript.globalTimeElapsed = 0;
+
+            //timeSincePreviousSave
+            Save.timeElapsed = Mathf.Round(persistantScript.globalTimeElapsed);
+
+            
 
             Save.playerTransform = PlayerOverworldManager.transform.position;
-
+            Save.playerCurrentScene = SceneManager.GetActiveScene().buildIndex;
 
 
 
@@ -62,6 +78,10 @@ public class JSONSave : MonoBehaviour
             string filePath = persistantPath + "/SaveData" + num.ToString() + ".json";
             Debug.Log(filePath);
             System.IO.File.WriteAllText(filePath, SaveData);
+            
+
+            CleanSavedGames();
+            LoadSavedGames();
         }
         if (type == 1) //Auto File
         {
@@ -76,16 +96,47 @@ public class JSONSave : MonoBehaviour
         }
         Debug.Log("Successfully Saved");
     }
-    void LoadFromJSON()
+    public void LoadFromJSON(int type, int num)
+    {
+
+
+        if(type == 0)
+        {
+            string filePath = persistantPath + "/SaveData" + num.ToString() + ".json";
+            string SaveData = System.IO.File.ReadAllText(filePath);
+            Save = JsonUtility.FromJson<Save>(SaveData);
+
+            LoadSave();
+            menuManager.isUp = false;
+            menuManager.yPos = -500;
+            Debug.Log("Successfully Loaded");
+        }
+        if (type == 1)
+        {
+
+        }
+        if (type == 2)
+        {
+            string filePath = persistantPath + "/ConfigData.json";
+
+            string configData = System.IO.File.ReadAllText(filePath);
+            config = JsonUtility.FromJson<Config>(configData);
+
+            Debug.Log("Successfully Loaded");
+        }
+
+    }
+
+    public void LoadSave()
     {
         
-        string filePath = persistantPath + "/ConfigData.json";
-
-        string configData = System.IO.File.ReadAllText(filePath);
-        config = JsonUtility.FromJson<Config>(configData);
-
-        Debug.Log("Successfully Loaded");
+        persistantScript.globalTimeElapsed = Save.timeElapsed;
+        SceneManager.LoadSceneAsync(Save.playerCurrentScene);
+        PlayerOverworldManager.transform.position = new Vector3(Save.playerTransform.x, Save.playerTransform.y);
+        
+        
     }
+
     public void LoadSavedGames()
     {
         if (Directory.Exists(Application.persistentDataPath))
@@ -102,6 +153,7 @@ public class JSONSave : MonoBehaviour
                     string SaveData = System.IO.File.ReadAllText(filePath);
                     Save = JsonUtility.FromJson<Save>(SaveData);
                     InternalSaveButtonScript ISBS = newsavebox.GetComponent<InternalSaveButtonScript>();
+                    ISBS.saveID = i;
                     ISBS.saveNum.text = "Save#" + i.ToString();
                     ISBS.playtimeText.text = "Playtime" + Save.timeElapsed.ToString();
                     ISBS.timeStampText.text = "Date" + Save.timestamp.ToString();
@@ -127,7 +179,24 @@ public class JSONSave : MonoBehaviour
         {
             Destroy(loadObjects[i]);
         }
+        loadObjects = new GameObject[new DirectoryInfo(persistantPath).GetFiles().Length - 1];
     }
+
+
+    void DeleteAllSaves()
+    {
+        DirectoryInfo d = new DirectoryInfo(persistantPath);
+        for (int i = d.GetFiles().Length; i > 0; i--)
+        {
+            string filePath = persistantPath + "/SaveData" + i.ToString() + ".json";
+            if (System.IO.File.Exists(filePath))
+            {
+                System.IO.File.Delete(filePath);
+            }
+
+        }
+    }
+
 }
 
 

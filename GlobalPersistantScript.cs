@@ -69,14 +69,7 @@ public class GlobalPersistantScript : MonoBehaviour
         p2MEN = data.agentENMax[2];
         p2LV = data.agentLV[2];
 
-        if (GameObject.FindGameObjectsWithTag("Persistant").Length == 1)
-        {
-            DontDestroyOnLoad(transform.gameObject);
-        }
-        else
-        {
-            GameObject.Destroy(transform.gameObject);
-        }
+
     }
 
     private void Update()

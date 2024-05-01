@@ -13,6 +13,8 @@ public class EnemyOverworldManager : MonoBehaviour
     public float movetimer;
     public float moveSpd = 100;
 
+    public int id;
+
     public string currentAnimation;
     // Start is called before the first frame update
     void Start()
@@ -75,9 +77,11 @@ public class EnemyOverworldManager : MonoBehaviour
             }
             SetAnimation();
             movetimer = 2 + (0.1f * (Random.Range(-2, 4)));
-
-
-
+            animator.ResetTrigger("down");
+            animator.ResetTrigger("left");
+            animator.ResetTrigger("up");
+            animator.ResetTrigger("right");
+            
         }
         movetimer -= 1f * Time.deltaTime;
     }
@@ -101,12 +105,14 @@ public class EnemyOverworldManager : MonoBehaviour
                 if (xVector < 0)
                 {
                     animator.SetTrigger("left");
-                    currentAnimation = "AnimationDevWalkLeft";
+                    currentAnimation = "zomb_1_left";
+                    Debug.Log("left");
                 }
                 if (xVector > 0)
                 {
                     animator.SetTrigger("right");
-                    currentAnimation = "AnimationDevWalkRight";
+                    currentAnimation = "zomb_1_right";
+                    Debug.Log("right");
                 }
             }
 
@@ -114,12 +120,14 @@ public class EnemyOverworldManager : MonoBehaviour
             if (yVector < 0)
             {
                 animator.SetTrigger("down");
-                currentAnimation = "AnimationDevWalkDown";
+                currentAnimation = "zomb_1_down";
+                Debug.Log("down");
             }
             if (yVector > 0)
             {
                 animator.SetTrigger("up");
-                currentAnimation = "AnimationDevWalkUp";
+                currentAnimation = "zomb_1_up";
+                Debug.Log("up");
             }
 
 

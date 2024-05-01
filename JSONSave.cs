@@ -19,6 +19,7 @@ public class JSONSave : MonoBehaviour
 
     public Config config;
     public Save Save;
+    public AutoSave AutoSave;
     private void Start()
     {
         menuManager = GameObject.Find("BaseMenuBlock").GetComponent<OverworldMenuManager>();
@@ -86,6 +87,18 @@ public class JSONSave : MonoBehaviour
         if (type == 1) //Auto File
         {
             
+
+       
+            AutoSave.playerTransform = PlayerOverworldManager.transform.position;
+            AutoSave.playerCurrentScene = SceneManager.GetActiveScene().buildIndex;
+
+
+
+            string AUTOSaveData = JsonUtility.ToJson(AutoSave);
+            string filePath = persistantPath + "/SaveDataAUTO.json";
+            Debug.Log(filePath);
+            System.IO.File.WriteAllText(filePath, AUTOSaveData);
+
         }
         if (type == 2) //Settings Autosave
         {
@@ -104,16 +117,23 @@ public class JSONSave : MonoBehaviour
         {
             string filePath = persistantPath + "/SaveData" + num.ToString() + ".json";
             string SaveData = System.IO.File.ReadAllText(filePath);
-            Save = JsonUtility.FromJson<Save>(SaveData);
+            AutoSave = JsonUtility.FromJson<AutoSave>(SaveData);
 
-            LoadSave();
+            LoadSave(0);
             menuManager.isUp = false;
             menuManager.yPos = -500;
             Debug.Log("Successfully Loaded");
         }
         if (type == 1)
         {
+            string filePath = persistantPath + "/SaveDataAUTO.json";
+            string AUTOSaveData = System.IO.File.ReadAllText(filePath);
+            AutoSave = JsonUtility.FromJson<AutoSave>(AUTOSaveData);
 
+            LoadSave(1);
+            menuManager.isUp = false;
+            menuManager.yPos = -500;
+            Debug.Log("Successfully Loaded");
         }
         if (type == 2)
         {
@@ -127,15 +147,23 @@ public class JSONSave : MonoBehaviour
 
     }
 
-    public void LoadSave()
+    public void LoadSave(int type)
     {
-        
-        persistantScript.globalTimeElapsed = Save.timeElapsed;
-        SceneManager.LoadSceneAsync(Save.playerCurrentScene);
-        PlayerOverworldManager.transform.position = new Vector3(Save.playerTransform.x, Save.playerTransform.y);
-        
-        
+        if (type == 0)
+        {
+            persistantScript.globalTimeElapsed = Save.timeElapsed;
+            SceneManager.LoadScene(Save.playerCurrentScene);
+            PlayerOverworldManager.transform.position = new Vector3(Save.playerTransform.x, Save.playerTransform.y);
+        }
+        if (type == 1)
+        {
+            SceneManager.LoadScene(AutoSave.playerCurrentScene);
+            PlayerOverworldManager = GameObject.FindWithTag("Player").GetComponent<PlayerOverworldManager>();
+            PlayerOverworldManager.transform.position = new Vector3(AutoSave.playerTransform.x, AutoSave.playerTransform.y);
+            
+        }
     }
+    
 
     public void LoadSavedGames()
     {
@@ -236,6 +264,14 @@ public class MenuSave
     public string timestamp;
     public int playerCurrentScene;
 }
+
+[System.Serializable]
+public class AutoSave
+{
+    public Vector2 playerTransform;
+    public int playerCurrentScene;
+}
+
 
 [System.Serializable]
 public class Config

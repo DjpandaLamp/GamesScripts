@@ -35,6 +35,7 @@ public class GlobalPersistantScript : MonoBehaviour
     public bool firstTimeLoad; //if false, load save data
 
     public float globalTimeElapsed;
+    public float worldtime;
 
     // Start is called before the first frame update
     void Start()
@@ -75,6 +76,8 @@ public class GlobalPersistantScript : MonoBehaviour
     private void Update()
     {
         globalTimeElapsed += Time.deltaTime;
+        worldtime += Time.deltaTime;
+
     }
 
     // Update is called once per frame

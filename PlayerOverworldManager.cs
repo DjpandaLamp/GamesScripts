@@ -8,7 +8,7 @@ public class PlayerOverworldManager : MonoBehaviour
     public Transform playerTransform;
     public Rigidbody2D playerRigidbody;
     public Animator animator;
-
+    public JSONSave JSONSave;
 
     public string currentAnimation;
 
@@ -22,6 +22,7 @@ public class PlayerOverworldManager : MonoBehaviour
     void Start()
     {
         animator = GetComponent<Animator>();
+        JSONSave = GameObject.Find("PersistantObject").GetComponent<JSONSave>();
     }
 
     // Update is called once per frame
@@ -111,11 +112,12 @@ public class PlayerOverworldManager : MonoBehaviour
         }
 
     }
-    void EncounterCheck()
+    private void OnCollisionEnter2D(Collision2D collision)
     {
-        if (disSinceLastEncounter > 310)
+        if (collision.gameObject.GetComponent<EnemyOverworldManager>() != null)
         {
-            SceneManager.LoadSceneAsync(1);
-        }
+            JSONSave.SaveToJSON(1);
+            SceneManager.LoadScene(1);
+        }    
     }
 }

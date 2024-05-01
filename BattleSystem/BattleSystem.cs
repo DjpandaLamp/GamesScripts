@@ -26,7 +26,7 @@ public class BattleSystem : MonoBehaviour
     public GameObject TextArrow;
     public GameObject skillMenu;
 
-
+    public JSONSave JSONSave;
     public battleStateMachine state;
     public GameObject PlayerPrefab;
     public GameObject EnemyPrefab;
@@ -68,6 +68,8 @@ public class BattleSystem : MonoBehaviour
 
         BasePlayerCount = PlayerCount;
         BaseEnemyCount = EnemyCount;
+
+        JSONSave = GameObject.Find("PersistantObject").GetComponent<JSONSave>();
 
         TextArrow.gameObject.SetActive(false);
 
@@ -637,7 +639,7 @@ public class BattleSystem : MonoBehaviour
             yield return StartCoroutine(TextPrinterWait(0));
             //return to overworld
             yield return new WaitForSeconds(3);
-            SceneManager.LoadSceneAsync(0);
+            JSONSave.LoadFromJSON(1, 0);
         }
         if (state == battleStateMachine.Lose)
         {
@@ -653,7 +655,7 @@ public class BattleSystem : MonoBehaviour
             yield return StartCoroutine(TextPrinterWait(0));
             //give gameover screen
             yield return new WaitForSeconds(3);
-            SceneManager.LoadSceneAsync(0);
+            JSONSave.LoadFromJSON(1, 0);
         }
     }
         

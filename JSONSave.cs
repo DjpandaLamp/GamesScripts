@@ -152,18 +152,25 @@ public class JSONSave : MonoBehaviour
         if (type == 0)
         {
             persistantScript.globalTimeElapsed = Save.timeElapsed;
-            SceneManager.LoadScene(Save.playerCurrentScene);
-            PlayerOverworldManager.transform.position = new Vector3(Save.playerTransform.x, Save.playerTransform.y);
+            SceneManager.LoadSceneAsync(Save.playerCurrentScene);
+            StartCoroutine(SceneValueGrabber());
         }
         if (type == 1)
         {
-            SceneManager.LoadScene(AutoSave.playerCurrentScene);
-            PlayerOverworldManager = GameObject.FindWithTag("Player").GetComponent<PlayerOverworldManager>();
-            PlayerOverworldManager.transform.position = new Vector3(AutoSave.playerTransform.x, AutoSave.playerTransform.y);
+            SceneManager.LoadSceneAsync(AutoSave.playerCurrentScene);
+            StartCoroutine(SceneValueGrabber());
+            
             
         }
     }
-    
+
+    IEnumerator SceneValueGrabber()
+    {
+        yield return new WaitForSeconds(0.02f);
+        PlayerOverworldManager = GameObject.FindWithTag("Player").GetComponent<PlayerOverworldManager>();
+        PlayerOverworldManager.transform.position = new Vector3(AutoSave.playerTransform.x, AutoSave.playerTransform.y);
+        yield break; 
+    }
 
     public void LoadSavedGames()
     {

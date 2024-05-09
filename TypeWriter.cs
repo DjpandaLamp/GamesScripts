@@ -4,12 +4,17 @@ using TMPro;
 using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class TypeWriter : MonoBehaviour
 {
     public TextMeshProUGUI textComp;
+    public AudioSource audio;
+    public Image image;
     public float delay;
-   
+    public Image[,] faces;
+
+
     public string fullText;
     public string lastFrameFullText;
     public string currentText = "";
@@ -40,6 +45,8 @@ public class TypeWriter : MonoBehaviour
         }
 
         lastFrameFullText = fullText;
+
+
     }
 
 
@@ -67,8 +74,39 @@ public class TypeWriter : MonoBehaviour
                 hasSkipped = false;
             }
             currentText = fullText.Substring(0, i);
-            yield return new WaitForSeconds(delay);
-            textComp.text = currentText;
+            audio.Play();
+            if (i > 0)
+            {
+                char[] chars = currentText.ToCharArray();
+                if (char.IsPunctuation(chars[i-1]))
+                {
+                    textComp.text = currentText;
+                    if (chars[i-1] == char.Parse("."))
+                    {
+                        yield return new WaitForSeconds(delay * 8f);
+                    }
+                    else if (chars[i - 1] == char.Parse(","))
+                    {
+                        yield return new WaitForSeconds(delay * 4f);
+                    }
+                    else
+                    {
+                        yield return new WaitForSeconds(delay);
+                    }
+                    
+                }
+                else
+                {
+                    textComp.text = currentText;
+                    yield return new WaitForSeconds(delay);
+                }
+            }
+            else
+            {
+                textComp.text = currentText;
+                yield return new WaitForSeconds(delay);
+            }
+            
         }  
         isFinished= true;
     }

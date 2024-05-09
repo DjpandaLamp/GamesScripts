@@ -40,6 +40,7 @@ public class GlobalPersistantScript : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        Application.targetFrameRate = 60;
         agentLevelPoint = new int[252];
 
         for (int i = 0; i < 251; i++)

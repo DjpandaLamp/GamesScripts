@@ -1,12 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using UnityEngine.SceneManagement;
 
 public class GlobalPersistantScript : MonoBehaviour
 {
     public Transform playerSavedTransform;
     public EnemyData data;
+    public GameObject overworldMenu;
 
     public string p1NM;
     public int p1HP;
@@ -40,7 +41,7 @@ public class GlobalPersistantScript : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        Application.targetFrameRate = 60;
+        
         agentLevelPoint = new int[252];
 
         for (int i = 0; i < 251; i++)
@@ -78,6 +79,15 @@ public class GlobalPersistantScript : MonoBehaviour
     {
         globalTimeElapsed += Time.deltaTime;
         worldtime += Time.deltaTime;
+
+        if (SceneManager.GetActiveScene().buildIndex == 1)
+        {
+            overworldMenu.SetActive(false);
+        }
+        else
+        {
+            overworldMenu.SetActive(true);
+        }
 
     }
 

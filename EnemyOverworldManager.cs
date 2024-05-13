@@ -11,7 +11,7 @@ public class EnemyOverworldManager : MonoBehaviour
     public float xVector;
     public float yVector;
     public float movetimer;
-    public float moveSpd = 100;
+    public float moveSpd = 10;
 
     public int id;
 
@@ -76,11 +76,8 @@ public class EnemyOverworldManager : MonoBehaviour
                     
             }
             SetAnimation();
-            movetimer = 2 + (0.1f * (Random.Range(-2, 4)));
-            animator.ResetTrigger("down");
-            animator.ResetTrigger("left");
-            animator.ResetTrigger("up");
-            animator.ResetTrigger("right");
+            movetimer = (2 + (0.1f * (Random.Range(-2, 4))));
+
             
         }
         movetimer -= 1f * Time.deltaTime;
@@ -104,13 +101,15 @@ public class EnemyOverworldManager : MonoBehaviour
             {
                 if (xVector < 0)
                 {
-                    animator.SetTrigger("left");
+                    animator.SetInteger("dir", 0);
+                    animator.Play(currentAnimation, -1, 0.60f);
                     currentAnimation = "zomb_1_left";
                     Debug.Log("left");
                 }
                 if (xVector > 0)
                 {
-                    animator.SetTrigger("right");
+                    animator.SetInteger("dir", 1);
+                    animator.Play(currentAnimation, -1, 0.60f);
                     currentAnimation = "zomb_1_right";
                     Debug.Log("right");
                 }
@@ -119,13 +118,14 @@ public class EnemyOverworldManager : MonoBehaviour
 
             if (yVector < 0)
             {
-                animator.SetTrigger("down");
+                animator.SetInteger("dir", 2);
+                animator.Play(currentAnimation, -1, 0.60f);
                 currentAnimation = "zomb_1_down";
                 Debug.Log("down");
             }
             if (yVector > 0)
             {
-                animator.SetTrigger("up");
+                animator.SetInteger("dir", 3);
                 currentAnimation = "zomb_1_up";
                 Debug.Log("up");
             }

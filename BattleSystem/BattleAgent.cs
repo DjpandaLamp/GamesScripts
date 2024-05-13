@@ -158,7 +158,12 @@ public class BattleAgent : MonoBehaviour
 
     public bool TakeDamage(int attackValue)
     {
+        if (attackValue - agentDEFFull <= 0)
+        {
+            agentDEFFull = attackValue-1;
+        }
         agentHPCurrent -= attackValue - agentDEFFull;
+        
         if(agentHPCurrent <= 0)
         {
             agentHPCurrent = 0;

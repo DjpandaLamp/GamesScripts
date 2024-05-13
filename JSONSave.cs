@@ -166,7 +166,7 @@ public class JSONSave : MonoBehaviour
 
     IEnumerator SceneValueGrabber()
     {
-        yield return new WaitForSeconds(0.02f);
+        yield return new WaitForSeconds(0.05f);
         PlayerOverworldManager = GameObject.FindWithTag("Player").GetComponent<PlayerOverworldManager>();
         PlayerOverworldManager.transform.position = new Vector3(AutoSave.playerTransform.x, AutoSave.playerTransform.y);
         yield break; 

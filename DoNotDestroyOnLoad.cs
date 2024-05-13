@@ -8,7 +8,7 @@ public class DoNotDestroyOnLoad : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        if (GameObject.FindGameObjectsWithTag("Persistant").Length + GameObject.FindGameObjectsWithTag("Player").Length <= 3)
+        if (GameObject.FindGameObjectsWithTag("Persistant").Length + GameObject.FindGameObjectsWithTag("Player").Length + GameObject.FindGameObjectsWithTag("MainUI").Length <= 3)
         {
             DontDestroyOnLoad(transform.gameObject);
         }

@@ -151,9 +151,10 @@ public class JSONSave : MonoBehaviour
     {
         if (type == 0)
         {
-            persistantScript.globalTimeElapsed = Save.timeElapsed;
+            
             SceneManager.LoadSceneAsync(Save.playerCurrentScene);
             StartCoroutine(SceneValueGrabber());
+            persistantScript.globalTimeElapsed = Save.timeElapsed;
         }
         if (type == 1)
         {

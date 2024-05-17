@@ -9,6 +9,7 @@ public class PlayerOverworldManager : MonoBehaviour
     public Rigidbody2D playerRigidbody;
     public Animator animator;
     public JSONSave JSONSave;
+    public TextStartEnd textSE;
 
     public string currentAnimation;
 
@@ -60,16 +61,16 @@ public class PlayerOverworldManager : MonoBehaviour
     {
         Vector2 movement = new Vector2(xVector, yVector);
         movement *= Time.deltaTime * moveSpd;
-        disSinceLastEncounter += Vector2.Distance(Vector2.zero, movement)/15;
+        disSinceLastEncounter += Vector2.Distance(Vector2.zero, movement) / 15;
 
         //playerRigidbody.AddForce(movement);
         playerRigidbody.velocity = movement;
     }
     void SetAnimation()
     {
-        if (animator !=  null)
+        if (animator != null)
         {
-            if (yVector==0)
+            if (yVector == 0)
             {
                 if (xVector < 0)
                 {
@@ -83,7 +84,7 @@ public class PlayerOverworldManager : MonoBehaviour
                 }
             }
 
-         
+
             if (yVector < 0)
             {
                 animator.SetTrigger("Down");
@@ -100,7 +101,7 @@ public class PlayerOverworldManager : MonoBehaviour
 
             if (xVector == 0 && yVector == 0)
             {
-                
+
                 animator.Play(currentAnimation, -1, 0.60f);
                 animator.speed = 0f;
 
@@ -118,6 +119,13 @@ public class PlayerOverworldManager : MonoBehaviour
         {
             JSONSave.SaveToJSON(1);
             SceneManager.LoadScene(1);
-        }    
+        }
+
     }
+
 }
+
+
+
+
+

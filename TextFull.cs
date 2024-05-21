@@ -25,7 +25,9 @@ public class TextFull : MonoBehaviour
         strings[3] = "A Mythical skill, Known to all as 'The Dev forgot to put a description on it'. Wield with Care.";
         strings[4] = "0";
         strings[19] = "0";
-        strings[20] = "";
+        strings[20] = "Use the Arrow Keys to Move. Use the Left Mouse Button or Z to close this text box. Press Esc to open the Menu";
+        strings[21] = "To quit the application, Press the Quit Button. To Save Press New Save on the Save Menu";
+        strings[22] = "0";
         strings[499] = "0";
         strings[500] = "May 20th, 2069";
         strings[501] = "Wait, thats it?";

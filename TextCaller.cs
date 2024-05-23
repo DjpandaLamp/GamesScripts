@@ -7,25 +7,12 @@ public class TextCaller : MonoBehaviour
 {
     public int index;
     public TextStartEnd textSE;
-
+    public int type;
+    public int id;
 
     private void Awake()
     {
-        StartCoroutine(SetRef());
-       
-    }
-
-
-    IEnumerator SetRef()
-    {
-        while (textSE == null)
-        {
-            yield return new WaitForSeconds(0.5f);
-            textSE = GameObject.Find("TextObject").GetComponent<TextStartEnd>();
-             
-        }
-
-        
+        textSE = GameObject.FindObjectOfType<TextStartEnd>(true);
     }
 
     private void OnTriggerEnter2D(Collider2D collision)

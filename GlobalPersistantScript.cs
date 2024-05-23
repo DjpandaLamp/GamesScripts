@@ -38,6 +38,21 @@ public class GlobalPersistantScript : MonoBehaviour
     public float globalTimeElapsed;
     public float worldtime;
 
+
+    [HideInInspector] public bool textFlag0;
+    [HideInInspector] public bool textFlag1;
+    [HideInInspector] public bool textFlag2;
+    [HideInInspector] public bool textFlag3;
+    [HideInInspector] public bool textFlag4;
+    [HideInInspector] public bool textFlag5;
+    [HideInInspector] public bool textFlag6;
+    [HideInInspector] public bool textFlag7;
+    [HideInInspector] public bool textFlag8;
+    [HideInInspector] public bool textFlag9;
+    [HideInInspector] public bool textFlag10;
+    [HideInInspector] public bool textFlag11;
+    [HideInInspector] public bool textFlag12;
+
     // Start is called before the first frame update
     void Start()
     {

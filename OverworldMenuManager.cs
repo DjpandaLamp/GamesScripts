@@ -23,12 +23,14 @@ public class OverworldMenuManager : MonoBehaviour
     public bool isUp;
     public Transform selfTransform;
     public GameObject[] menuObjects;
+    public TextStartEnd textSE;
 
     public StateMachine State;
     
     // Start is called before the first frame update
     void Start()
     {
+        textSE = GameObject.FindObjectOfType<TextStartEnd>(true);
         selfTransform = GetComponent<RectTransform>();
         StateSetter(0);
     }
@@ -57,7 +59,7 @@ public class OverworldMenuManager : MonoBehaviour
                     StateSetter(0);
                 }
             }
-            if (SceneManager.GetActiveScene().buildIndex == 1)
+            if (SceneManager.GetActiveScene().buildIndex == 1 || textSE.isActiveAndEnabled == true)
             {
                 isUp = false;
             }

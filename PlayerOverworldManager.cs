@@ -10,8 +10,11 @@ public class PlayerOverworldManager : MonoBehaviour
     public Animator animator;
     public JSONSave JSONSave;
     public TextStartEnd textSE;
+    public OverworldMenuManager overworldMenuManager;
 
     public string currentAnimation;
+
+    public bool canMove;
 
     public float xVector;
     public float yVector;
@@ -22,6 +25,8 @@ public class PlayerOverworldManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        textSE = GameObject.FindObjectOfType<TextStartEnd>(true);
+        overworldMenuManager = GameObject.FindObjectOfType<OverworldMenuManager>(true);
         animator = GetComponent<Animator>();
         JSONSave = GameObject.Find("PersistantObject").GetComponent<JSONSave>();
     }
@@ -29,31 +34,47 @@ public class PlayerOverworldManager : MonoBehaviour
     // Update is called once per frame
     void FixedUpdate()
     {
+        if (textSE.isActiveAndEnabled == false && overworldMenuManager.isUp == false && overworldMenuManager.yPos < -440)
 
-
-        GetInput();
-        MovePlayer();
+        {
+            GetInput(false,0,0);
+            MovePlayer();
+        }
+        else
+        {
+            GetInput(true, 0, 0);
+            MovePlayer();
+        }
+        
         SetAnimation();
 
     }
 
-    void GetInput()
+    void GetInput(bool overrule, float oXVector, float oYVector)
     {
-        if (Input.GetAxisRaw("Horizontal") != 0)
+        if (overrule)
         {
-            xVector = Mathf.Sign(Input.GetAxis("Horizontal"));
+            xVector = oXVector;
+            yVector = oYVector;
         }
         else
         {
-            xVector = 0;
-        }
-        if (Input.GetAxisRaw("Vertical") != 0)
-        {
-            yVector = Mathf.Sign(Input.GetAxis("Vertical"));
-        }
-        else
-        {
-            yVector = 0;
+            if (Input.GetAxisRaw("Horizontal") != 0)
+            {
+                xVector = Mathf.Sign(Input.GetAxis("Horizontal"));
+            }
+            else
+            {
+                xVector = 0;
+            }
+            if (Input.GetAxisRaw("Vertical") != 0)
+            {
+                yVector = Mathf.Sign(Input.GetAxis("Vertical"));
+            }
+            else
+            {
+                yVector = 0;
+            }
         }
     }
 
@@ -117,8 +138,12 @@ public class PlayerOverworldManager : MonoBehaviour
     {
         if (collision.gameObject.GetComponent<EnemyOverworldManager>() != null)
         {
-            JSONSave.SaveToJSON(1);
-            SceneManager.LoadScene(1);
+            if (textSE.isActiveAndEnabled == false && overworldMenuManager.isUp == false && overworldMenuManager.yPos < -440)
+            {
+                JSONSave.SaveToJSON(1);
+                SceneManager.LoadScene(1);
+            }
+
         }
 
     }

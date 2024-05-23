@@ -16,6 +16,7 @@ public class JSONSave : MonoBehaviour
 
     public GameObject loadObjectPrefab;
     public GameObject[] loadObjects;
+    
 
     public Config config;
     public Save Save;
@@ -170,6 +171,7 @@ public class JSONSave : MonoBehaviour
         yield return new WaitForSeconds(0.05f);
         PlayerOverworldManager = GameObject.FindWithTag("Player").GetComponent<PlayerOverworldManager>();
         PlayerOverworldManager.transform.position = new Vector3(AutoSave.playerTransform.x, AutoSave.playerTransform.y);
+        
         yield break; 
     }
 
@@ -253,6 +255,20 @@ public class Save
     public int player1En;
     public int player2En;
 
+    //Text Flags
+    public bool textFlag0;
+    public bool textFlag1;
+    public bool textFlag2;
+    public bool textFlag3;
+    public bool textFlag4;
+    public bool textFlag5;
+    public bool textFlag6;
+    public bool textFlag7;
+    public bool textFlag8;
+    public bool textFlag9;
+    public bool textFlag10;
+    public bool textFlag11;
+    public bool textFlag12;
 
     //PlayerPosition
     public Vector2 playerTransform;
@@ -278,6 +294,7 @@ public class AutoSave
 {
     public Vector2 playerTransform;
     public int playerCurrentScene;
+
 }
 
 

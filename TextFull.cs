@@ -29,12 +29,8 @@ public class TextFull : MonoBehaviour
         strings[21] = "To quit the application, Press the Quit Button. To Save Press New Save on the Save Menu";
         strings[22] = "0";
         strings[499] = "0";
-        strings[500] = "May 20th, 2069";
-        strings[501] = "Wait, thats it?";
-        strings[502] = "Yeah, could have gotten more done.";
-        strings[503] = "Just how the cookie crumbles i'm afraid.";
-        strings[504] = "Bye then";
-        strings[505] = "0";
+        strings[500] = "Wow, Those walls sure do look walkable!";
+        strings[501] = "0";
 
     }
 

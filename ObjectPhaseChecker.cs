@@ -14,7 +14,7 @@ public class ObjectPhaseChecker : MonoBehaviour
 
     private void Update()
     {
-        if (player.transform.position.y-0.5f > gameObject.transform.position.y-3)
+        if (player.transform.position.y-0.69f > gameObject.transform.position.y-3)
         {
             sprite.sortingOrder = 2;   
         }

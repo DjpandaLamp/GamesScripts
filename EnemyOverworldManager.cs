@@ -23,7 +23,8 @@ public class EnemyOverworldManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-
+        player = GameObject.FindWithTag("Player").GetComponent<PlayerOverworldManager>();
+        moveSpd = moveSpd * Random.Range(0.8f, 1.2f);
     }
 
     // Update is called once per frame
@@ -87,27 +88,41 @@ public class EnemyOverworldManager : MonoBehaviour
 
 
             }
-            movetimer -= 1f * Time.deltaTime;
+            
         }
         else
         {
-            UnityEngine.Vector2 direction = UnityEngine.Vector3.Normalize((transform.position - player.transform.position));
+            if (movetimer <= 0)
+            {
+                UnityEngine.Vector2 direction = UnityEngine.Vector3.Normalize((transform.position - player.transform.position));
 
 
-            xVector = -direction.x;
-            yVector = -direction.y;
+                xVector = -direction.x;
+                yVector = -direction.y;
+                movetimer = (0.5f + (0.1f * (Random.Range(-2, 4))));
+            }
+
             MovePlayer();
             SetAnimation();
         }
+        movetimer -= 1f * Time.deltaTime;
     }
 
     void MovePlayer()
     {
         UnityEngine.Vector2 movement = new UnityEngine.Vector2(xVector, yVector).normalized;
 
-        Debug.Log(movement.ToString());
+
+        
         movement *= Time.deltaTime * moveSpd;
 
+        xVector = movement.x;
+        yVector = movement.y;
+
+        if (isChasing)
+        {
+            movement *= 1.5f;
+        }
 
         //playerRigidbody.AddForce(movement);
         enemyRigidbody.velocity = movement;
@@ -128,19 +143,28 @@ public class EnemyOverworldManager : MonoBehaviour
                 if (xVector > 0)
                 {
                     animator.SetInteger("dir", 0);
-                    animator.Play(currentAnimation, -1, 0.60f);
-                    currentAnimation = "zomb_1_left";
+                    //animator.Play(currentAnimation, -1, 0.60f);
+                    //currentAnimation = "zomb_1_left";
                     Debug.Log("left");
-                    polygonCollider2D.transform.eulerAngles = new UnityEngine.Vector3(0, 0, 0);
+                    if (polygonCollider2D.transform.eulerAngles != new UnityEngine.Vector3(0,0,0))
+                    {
+                        polygonCollider2D.transform.eulerAngles = new UnityEngine.Vector3(0, 0, 0);
+                        polygonCollider2D.transform.localPosition = new UnityEngine.Vector3(0, 0, 0);
+                    }
+                    
                 }
                 if (xVector < 0)
                 {
                     animator.SetInteger("dir", 1);
-                    animator.Play(currentAnimation, -1, 0.60f);
-                    currentAnimation = "zomb_1_right";
+                    //animator.Play(currentAnimation, -1, 0.60f);
+                    //currentAnimation = "zomb_1_right";
                     Debug.Log("right");
-                    polygonCollider2D.transform.eulerAngles = new UnityEngine.Vector3(0, 0, 180);
-                    polygonCollider2D.transform.localPosition = new UnityEngine.Vector3(0, 0.5f, 0);
+                    if (polygonCollider2D.transform.eulerAngles != new UnityEngine.Vector3(0, 0, 180))
+                    {
+                        polygonCollider2D.transform.eulerAngles = new UnityEngine.Vector3(0, 0, 180);
+                        polygonCollider2D.transform.localPosition = new UnityEngine.Vector3(0, 0.5f, 0);
+                    }
+
                 }
             }
 
@@ -151,16 +175,24 @@ public class EnemyOverworldManager : MonoBehaviour
 
                 currentAnimation = "zomb_1_down";
                 Debug.Log("down");
-                polygonCollider2D.transform.eulerAngles = new UnityEngine.Vector3(0, 0, 270);
-                polygonCollider2D.transform.localPosition = new UnityEngine.Vector3(-0.3f, 0.3f, 0);
+                if (polygonCollider2D.transform.eulerAngles != new UnityEngine.Vector3(0, 0, 270))
+                {
+                    polygonCollider2D.transform.eulerAngles = new UnityEngine.Vector3(0, 0, 270);
+                    polygonCollider2D.transform.localPosition = new UnityEngine.Vector3(-0.3f, 0.3f, 0);
+                }
+
             }
             if (yVector > 0)
             {
                 animator.SetInteger("dir", 3);
                 currentAnimation = "zomb_1_up";
                 Debug.Log("up");
-                polygonCollider2D.transform.eulerAngles = new UnityEngine.Vector3(0, 0, 90);
-                polygonCollider2D.transform.localPosition = new UnityEngine.Vector3(0.2f, 0.2f, 0);
+                if (polygonCollider2D.transform.eulerAngles != new UnityEngine.Vector3(0, 0, 90))
+                {
+                    polygonCollider2D.transform.eulerAngles = new UnityEngine.Vector3(0, 0, 90);
+                    polygonCollider2D.transform.localPosition = new UnityEngine.Vector3(0.2f, 0.2f, 0);
+                }
+
             }
 
             if (xVector == 0 && yVector == 0)
@@ -175,6 +207,8 @@ public class EnemyOverworldManager : MonoBehaviour
                 animator.speed = 1f;
             }
         }
-
     }
+
+
+    
 }

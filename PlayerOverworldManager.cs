@@ -16,8 +16,10 @@ public class PlayerOverworldManager : MonoBehaviour
 
     public bool canMove;
 
+    public int dir = 0;
     public float xVector;
     public float yVector;
+    public Vector2 pastPos;
     public float moveSpd;
 
     public float disSinceLastEncounter;
@@ -37,7 +39,32 @@ public class PlayerOverworldManager : MonoBehaviour
         if (textSE.isActiveAndEnabled == false && overworldMenuManager.isUp == false && overworldMenuManager.yPos < -440)
 
         {
-            GetInput(false,0,0);
+            GetInput(false, 0, 0);
+            if (xVector != 0 || yVector != 0)
+            {
+
+                if (yVector == 0)
+                {
+                    if (xVector < 0)
+                    {
+                        dir = 0; //left
+                    }
+                    if (xVector > 0)
+                    {
+                        dir = 1; //right
+                    }
+                }
+
+
+                if (yVector < 0)
+                {
+                    dir = 2; //up
+                }
+                if (yVector > 0)
+                {
+                    dir = 3; //down
+                }
+            }
             MovePlayer();
         }
         else
@@ -45,7 +72,7 @@ public class PlayerOverworldManager : MonoBehaviour
             GetInput(true, 0, 0);
             MovePlayer();
         }
-        
+
         SetAnimation();
 
     }
@@ -76,6 +103,11 @@ public class PlayerOverworldManager : MonoBehaviour
                 yVector = 0;
             }
         }
+    }
+
+    public void setPastPos()
+    {
+        pastPos = transform.position;
     }
 
     void MovePlayer()

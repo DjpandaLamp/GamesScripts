@@ -12,7 +12,6 @@ public class TypeWriter : MonoBehaviour
     public AudioSource audio;
     public Image image;
     public float delay;
-    public Image[,] faces;
 
 
     public string fullText;

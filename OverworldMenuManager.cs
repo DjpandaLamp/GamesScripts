@@ -23,7 +23,13 @@ public class OverworldMenuManager : MonoBehaviour
     public bool isUp;
     public Transform selfTransform;
     public GameObject[] menuObjects;
+    public GameObject[] settingsObjects;
     public TextStartEnd textSE;
+    public GameObject perst;
+    public ConfigScript config;
+
+    public JSONSave JSONSave;
+
 
     public StateMachine State;
     
@@ -32,6 +38,9 @@ public class OverworldMenuManager : MonoBehaviour
     {
         textSE = GameObject.FindObjectOfType<TextStartEnd>(true);
         selfTransform = GetComponent<RectTransform>();
+        perst = GameObject.FindWithTag("Persistant");
+        config = perst.GetComponent<ConfigScript>();
+        JSONSave = perst.GetComponent<JSONSave>();
         StateSetter(0);
     }
 
@@ -188,5 +197,10 @@ public class OverworldMenuManager : MonoBehaviour
         {
             menuObjects[i].SetActive(false);
         }
+    }
+    public void ApplySetting(int fps, Vector2 res, bool fullscreen, bool vsync, float a1, float a2, float a3)
+    {
+        config.setSettings(fps,res,fullscreen,vsync,a1,a2,a3);
+        JSONSave.SaveToJSON(2);
     }
 }

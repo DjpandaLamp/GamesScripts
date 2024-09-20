@@ -9,6 +9,7 @@ public class JSONSave : MonoBehaviour
     private PlayerOverworldManager PlayerOverworldManager;
     private GlobalPersistantScript persistantScript;
     private OverworldMenuManager menuManager;
+    private ConfigScript configScript;
     private GameObject saveContainer;
     private string persistantPath;
 
@@ -28,6 +29,7 @@ public class JSONSave : MonoBehaviour
         persistantPath = Application.persistentDataPath;
         PlayerOverworldManager = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerOverworldManager>();
         persistantScript = GetComponent<GlobalPersistantScript>();
+        configScript = GetComponent<ConfigScript>();
         loadObjects = new GameObject[new DirectoryInfo(persistantPath).GetFiles().Length - 1];
     }
     private void Update()
@@ -103,6 +105,17 @@ public class JSONSave : MonoBehaviour
         }
         if (type == 2) //Settings Autosave
         {
+            config.masterVolume = configScript.audioMaster;
+            config.musicVolume = configScript.audioMusic;
+            config.sfxVolume = configScript.audioSFX;
+
+            config.screenResolution = configScript.resolutionSetting;
+            config.isFullscreen = configScript.fullScreenToggle;
+            config.targetFrameRate = configScript.fpsSetting;
+            config.isVsync = configScript.vSync;
+
+
+
             string configData = JsonUtility.ToJson(config);
             string filePath = persistantPath + "/ConfigData.json";
             Debug.Log(filePath);
@@ -142,7 +155,7 @@ public class JSONSave : MonoBehaviour
 
             string configData = System.IO.File.ReadAllText(filePath);
             config = JsonUtility.FromJson<Config>(configData);
-
+            configScript.setSettings(config.targetFrameRate,config.screenResolution,config.isFullscreen,config.isVsync,config.masterVolume,config.musicVolume,config.sfxVolume);
             Debug.Log("Successfully Loaded");
         }
 
@@ -303,17 +316,14 @@ public class Config
 {
     public int gameLanguage;
 
-    public int masterVolume;
-    public int musicVolume;
-    public int sfxVolume;
+    public float masterVolume;
+    public float musicVolume;
+    public float sfxVolume;
 
-    public int screenResolution;
+    public Vector2 screenResolution;
     public bool isFullscreen;
     public int targetFrameRate;
-
-    public int textSpeed;
-    public bool isRainDisabled;
-    public int colorblindSetting;
+    public bool isVsync;
 
 
 

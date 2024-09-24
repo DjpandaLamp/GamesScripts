@@ -22,23 +22,60 @@ public class JSONSave : MonoBehaviour
     public Config config;
     public Save Save;
     public AutoSave AutoSave;
+
+    private void Awake()
+    {
+        //LoadFromJSON(2,0);
+        persistantPath = Application.persistentDataPath;
+        Debug.Log(Application.persistentDataPath);
+    }
+
     private void Start()
     {
-        menuManager = GameObject.Find("BaseMenuBlock").GetComponent<OverworldMenuManager>();
-        saveContainer = GameObject.Find("SaveContainer");
-        persistantPath = Application.persistentDataPath;
-        PlayerOverworldManager = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerOverworldManager>();
-        persistantScript = GetComponent<GlobalPersistantScript>();
-        configScript = GetComponent<ConfigScript>();
-        loadObjects = new GameObject[new DirectoryInfo(persistantPath).GetFiles().Length - 1];
+
+
+        
     }
+
+
+    void OnEnable()
+    {
+        //Tell our 'OnLevelFinishedLoading' function to start listening for a scene change as soon as this script is enabled.
+        SceneManager.sceneLoaded += OnLevelFinishedLoading;
+    }
+
+    void OnDisable()
+    {
+        //Tell our 'OnLevelFinishedLoading' function to stop listening for a scene change as soon as this script is disabled. Remember to always have an unsubscription for every delegate you subscribe to!
+        SceneManager.sceneLoaded -= OnLevelFinishedLoading;
+    }
+
+    void OnLevelFinishedLoading(Scene scene, LoadSceneMode mode)
+    {
+        if (scene.buildIndex != 0 && scene.buildIndex != 1)
+        {
+            menuManager = GameObject.Find("BaseMenuBlock").GetComponent<OverworldMenuManager>();
+            saveContainer = GameObject.Find("SaveContainer");
+            PlayerOverworldManager = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerOverworldManager>();
+            persistantScript = GetComponent<GlobalPersistantScript>();
+            configScript = GetComponent<ConfigScript>();
+            loadObjects = new GameObject[new DirectoryInfo(persistantPath).GetFiles().Length - 1];
+        }
+    }
+
+
+
     private void Update()
     {
         GetInput();
-        if (!menuManager.isUp)
+        if (menuManager != null)
         {
-            CleanSavedGames();
+            if (!menuManager.isUp)
+            {
+                CleanSavedGames();
+            }
         }
+
     }
 
     void GetInput()
@@ -49,7 +86,7 @@ public class JSONSave : MonoBehaviour
         }
         if (Input.GetKeyDown(KeyCode.P))
         {
-            LoadFromJSON(2,0);
+            
         }
         if (Input.GetKeyDown(KeyCode.C))
         {
@@ -152,11 +189,17 @@ public class JSONSave : MonoBehaviour
         if (type == 2)
         {
             string filePath = persistantPath + "/ConfigData.json";
-
-            string configData = System.IO.File.ReadAllText(filePath);
-            config = JsonUtility.FromJson<Config>(configData);
-            configScript.setSettings(config.targetFrameRate,config.screenResolution,config.isFullscreen,config.isVsync,config.masterVolume,config.musicVolume,config.sfxVolume);
-            Debug.Log("Successfully Loaded");
+            //if (System.IO.File.Exists(filePath))
+            //{
+                string configData = System.IO.File.ReadAllText(filePath);
+                config = JsonUtility.FromJson<Config>(configData);
+                LoadSave(2);
+                Debug.Log("Successfully Loaded");
+           // }
+           // else
+            //{
+            //    Debug.Log("Setting Config File Does not Exist");
+           // }
         }
 
     }
@@ -175,7 +218,10 @@ public class JSONSave : MonoBehaviour
             SceneManager.LoadSceneAsync(AutoSave.playerCurrentScene);
             StartCoroutine(SceneValueGrabber());
             
-            
+        }
+        if (type == 2)
+        {
+            configScript.setSettings(config.targetFrameRate, config.screenResolution, config.isFullscreen, config.isVsync, config.masterVolume, config.musicVolume, config.sfxVolume);
         }
     }
 

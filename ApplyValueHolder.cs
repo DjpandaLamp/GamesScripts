@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class ApplyValueHolder : MonoBehaviour
 {
@@ -23,6 +24,7 @@ public class ApplyValueHolder : MonoBehaviour
 
     private void Start()
     {
+        OverworldMenuManager = GameObject.FindWithTag("OverMenu").GetComponent<OverworldMenuManager>();
         fpsLookup = new int[14];
         fpsLookup[0] = 10;
         fpsLookup[1] = 15;
@@ -49,20 +51,16 @@ public class ApplyValueHolder : MonoBehaviour
 
 
     }
-
-    private void Update()
+    public void Apply()
     {
-        fps = fpsLookup[gameObjects[0].GetComponent<Dropdown>().value];
-        res = resLookup[gameObjects[1].GetComponent<Dropdown>().value];
+        fps = fpsLookup[gameObjects[0].GetComponent<TMP_Dropdown>().value];
+        res = resLookup[gameObjects[1].GetComponent<TMP_Dropdown>().value];
         full = gameObjects[2].GetComponent<Toggle>().isOn;
         vsync = gameObjects[3].GetComponent<Toggle>().isOn;
 
         a1 = gameObjects[4].GetComponent<Slider>().value;
         a2 = gameObjects[5].GetComponent<Slider>().value;
         a3 = gameObjects[6].GetComponent<Slider>().value;
-    }
-    void Apply()
-    {
         OverworldMenuManager.ApplySetting(fps, res, full, vsync, a1, a2, a3);
     }
 

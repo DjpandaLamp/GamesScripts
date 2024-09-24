@@ -20,9 +20,9 @@ public class TextFull : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        strings = new string[4000];
-        faces = new Vector2[4000];
-        sprite = new Sprite[4000];
+        strings = new string[600];
+        faces = new Vector2[600];
+        sprite = new Sprite[600];
 
 
         for (int i = 0; i < strings.Length; i++)

@@ -10,9 +10,8 @@ public class TypeWriter : MonoBehaviour
 {
     public TextMeshProUGUI textComp;
     public AudioSource audio;
-    public Image image;
     public float delay;
-
+    public Image image;
 
     public string fullText;
     public string lastFrameFullText;

@@ -7,27 +7,23 @@ public class TextStartEnd : MonoBehaviour
 {
     public TypeWriter TypeWriter;
     public TextFull TextFull;
-    private Image face;
+    public Image face;
     public int width;
-
     public int index;
-    // Start is called before the first frame update
-    void Start()
-    {
-        face = GetComponentInChildren<Image>();
-    }
 
+    public Sprite face00;
+    public Sprite face01;
+    public Sprite face02;
+    
     public void CallTextWriter(int calledIndex)
     {
         index = calledIndex;
-        if (TextFull.faces[calledIndex] != Vector2.zero)
-        {
-            Debug.Log("face" + (((int)TextFull.faces[calledIndex].x * width) + (int)TextFull.faces[calledIndex].y).ToString());
-            face.sprite = TextFull.sprite[((int)TextFull.faces[calledIndex].x * width) + (int)TextFull.faces[calledIndex].y];
-            TypeWriter.image.sprite = face.sprite;
-           
-        }
         TypeWriter.fullText = TextFull.strings[index];
+
+            Debug.Log("face" + (TextFull.faces[index]).ToString()) ;
+            face.sprite = GetFace(TextFull.faces[index]);
+            TypeWriter.image.sprite = face.sprite;
+        //= TextFull.GetFace(TextFull.faces[index]);
     }
 
     // Update is called once per frame
@@ -38,6 +34,7 @@ public class TextStartEnd : MonoBehaviour
             if (TextFull.strings[index + 1] != "0")
             {
                 index += 1;
+                face.sprite = GetFace(TextFull.faces[index]);
                 TypeWriter.fullText = TextFull.strings[index];
             }
             else
@@ -48,4 +45,17 @@ public class TextStartEnd : MonoBehaviour
             }
         }
     }
+    Sprite GetFace(float value)
+    {
+        switch (value)
+        {
+            case 0.1f:
+                return face01;
+            case 0.2f:
+                return face02;
+            default:
+                return face00;
+        }
+    }
 }
+

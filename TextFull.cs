@@ -4,11 +4,12 @@ using UnityEngine;
 
 public class TextFull : MonoBehaviour
 {
-   
-    public string[] strings;
-    public Vector2[] faces;
 
-    public Sprite[] sprite; //Character face, emotion
+    public string[] strings;
+    public float[] faces;
+
+
+
 
     /*
      * This is the Error Index, Please refer to this if you come across any errors.
@@ -21,15 +22,15 @@ public class TextFull : MonoBehaviour
     void Start()
     {
         strings = new string[600];
-        faces = new Vector2[600];
-        sprite = new Sprite[600];
+        faces = new float[600];
+
 
 
         for (int i = 0; i < strings.Length; i++)
         {
             strings[i] = "This is an Error String Index #" + i.ToString() + ". Please report this to the game dev for Error Code TX1.";
-            faces[i] = Vector2.zero;
-            
+            faces[i] = 0;
+
         }
 
         strings[0] = "Yo, This is an Error Message. If you are seeing this, please inform the developer for Error Code TX0. Thank you.";
@@ -39,19 +40,15 @@ public class TextFull : MonoBehaviour
         strings[4] = "0";
         strings[19] = "0";
         strings[20] = "Use the Arrow Keys to Move. Use the Left Mouse Button or Z to close this text box. Press Esc to open the Menu";
-        faces[20] = new Vector2(0, 1);
+        faces[20] = 0.1f;
         strings[21] = "To quit the application, Press the Quit Button. To Save Press New Save on the Save Menu";
-        faces[21] = new Vector2(0, 2);
+        faces[21] = 0.2f;
         strings[22] = "0";
         strings[499] = "0";
         strings[500] = "Wow, Those walls sure do look walkable!";
         strings[501] = "0";
 
     }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
 }
+    
+

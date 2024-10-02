@@ -5,10 +5,12 @@ using UnityEngine;
 public class EnemyColliderDetectorScript : MonoBehaviour
 {
     public EnemyOverworldManager enemy;
+    public AudioSource audioSource;
 
     private void Start()
     {
         enemy = GetComponentInParent<EnemyOverworldManager>();
+        audioSource = GetComponentInParent<AudioSource>();
     }
 
     private void OnTriggerExit2D(Collider2D collision)
@@ -24,7 +26,13 @@ public class EnemyColliderDetectorScript : MonoBehaviour
         Debug.Log("enter");
         if (collision.gameObject.tag == "Player" && gameObject.name == "PlayerDetectorInner")
         {
+            if (!enemy.isChasing)
+            {
+                audioSource.Play();
+            }
+                
             enemy.isChasing = true;
+
         }
     }
     

@@ -10,7 +10,7 @@ public class ButtonScript : MonoBehaviour
 
     public void MainMenuStartGame()
     {
-        SceneManager.LoadSceneAsync(2);
+        SceneManager.LoadSceneAsync(3);
     }
     public void MainMenuLoadGame()
     {

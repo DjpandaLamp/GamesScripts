@@ -18,11 +18,11 @@ public class UISpawner : MonoBehaviour
 
     void OnLevelFinishedLoading(Scene scene, LoadSceneMode mode)
     {
-        if (scene.buildIndex != 0 || scene.buildIndex != 1)
+        if (scene.buildIndex != 0 || scene.buildIndex != 1 || scene.buildIndex != 2)
         {
             if (!GameObject.FindWithTag("MainUI"))
             {
-                if (SceneManager.GetActiveScene().buildIndex == 1 || SceneManager.GetActiveScene().buildIndex == 0)
+                if (scene.buildIndex == 1 || scene.buildIndex == 0 || scene.buildIndex == 2)
                 {
                     Debug.Log("Scene Index Not Ready For Game Menu Instantiation");
                 }

@@ -7,10 +7,17 @@ using UnityEngine.SceneManagement;
 
 public class ButtonScript : MonoBehaviour
 {
+    private SceneLoader sceneLoader;
+
+    private void Start()
+    {
+        sceneLoader = GameObject.FindWithTag("Persistant").GetComponent<SceneLoader>();
+    }
 
     public void MainMenuStartGame()
     {
-        SceneManager.LoadSceneAsync(3);
+        sceneLoader.SceneLoaded(3);
+        
     }
     public void MainMenuLoadGame()
     {

@@ -34,7 +34,7 @@ public class PartyBlockUpdater : MonoBehaviour
     public bool isBig = false;
     public bool isMenu = false;
 
-    private void Awake()
+    private void Start()
     {
         data = GameObject.FindWithTag("Persistant").GetComponent<GlobalPersistantScript>();
         player = GameObject.FindWithTag("Player").GetComponent<PlayerOverworldManager>();

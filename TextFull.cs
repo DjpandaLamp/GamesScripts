@@ -19,7 +19,7 @@ public class TextFull : MonoBehaviour
     */
 
     // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
         strings = new string[600];
         faces = new float[600];

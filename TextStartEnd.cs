@@ -10,6 +10,7 @@ public class TextStartEnd : MonoBehaviour
     public Image face;
     public int width;
     public int index;
+  
 
     public Sprite face00;
     public Sprite face01;
@@ -17,6 +18,8 @@ public class TextStartEnd : MonoBehaviour
     
     public void CallTextWriter(int calledIndex)
     {
+        
+
         index = calledIndex;
         TypeWriter.fullText = TextFull.strings[index];
 

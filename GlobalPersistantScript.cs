@@ -56,13 +56,22 @@ public class GlobalPersistantScript : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
-        agentLevelPoint = new int[252];
-
-        for (int i = 0; i < 251; i++)
+        if (overworldMenu == null & GameObject.FindWithTag("MainUI") != null)
         {
-            agentLevelPoint[i] = (5 * i) + Mathf.RoundToInt(Mathf.Pow(i, 3.2f));
+            overworldMenu = GameObject.FindWithTag("MainUI");
         }
+        if (overworldMenu != null)
+        {
+            if (SceneManager.GetActiveScene().buildIndex == 1 || SceneManager.GetActiveScene().buildIndex == 0)
+            {
+                overworldMenu.SetActive(false);
+            }
+            else
+            {
+                overworldMenu.SetActive(true);
+            }
+        }
+        
         if (data != null)
         {
             p1NM = data.agentName[1];
@@ -86,7 +95,6 @@ public class GlobalPersistantScript : MonoBehaviour
             p2MHP = data.agentHPMax[2];
             p2MEN = data.agentENMax[2];
             p2LV = data.agentLV[2];
-
         }
 
 
@@ -108,19 +116,53 @@ public class GlobalPersistantScript : MonoBehaviour
                 overworldMenu.SetActive(true);
             }
         }
+        else
+        {
+            if (GameObject.FindWithTag("OverMenu") != null)
+            {
+                overworldMenu = GameObject.FindWithTag("OverMenu");
+            }
 
+            if (data == null)
+            {
+                if (SceneManager.GetActiveScene().buildIndex != 1 && SceneManager.GetActiveScene().buildIndex != 0)
+                {
+                    data = GameObject.Find("LevelData").GetComponent<EnemyData>();
+                    p1NM = data.agentName[1];
+                    p1HP = data.agentHPCurrent[1];
+                    p1EN = data.agentENCurrent[1];
+                    p1AT = data.agentATK[1];
+                    p1DF = data.agentDEF[1];
+                    p1EAT = data.agentEATK[1];
+                    p1EDF = data.agentEDEF[1];
+                    p1MHP = data.agentHPMax[1];
+                    p1MEN = data.agentENMax[1];
+                    p1LV = data.agentLV[1];
+
+                    p2NM = data.agentName[2];
+                    p2HP = data.agentHPCurrent[2];
+                    p2EN = data.agentENCurrent[2];
+                    p2AT = data.agentATK[2];
+                    p2DF = data.agentDEF[2];
+                    p2EAT = data.agentEATK[2];
+                    p2EDF = data.agentEDEF[2];
+                    p2MHP = data.agentHPMax[2];
+                    p2MEN = data.agentENMax[2];
+                    p2LV = data.agentLV[2];
+                }
+
+            }
+        }
 
     }
 
     // Update is called once per frame
-    void EXPGrowth()
+    public void OverworldUIChecker()
     {
-
+        if (overworldMenu == null & GameObject.FindWithTag("MainUI") != null)
+        {
+            overworldMenu = GameObject.FindWithTag("MainUI");
+        }
     }
-
-
-
-
-
 }
 

@@ -16,7 +16,7 @@ public class DoNotDestroyOnLoad : MonoBehaviour
         {
             GameObject.Destroy(transform.gameObject);
         }
-        if (GameObject.FindGameObjectsWithTag("MainUI").Length == 1 && transform.tag == "MainUI")
+        if (GameObject.FindGameObjectsWithTag("MainUI").Length >= 1 && transform.tag == "MainUI")
         {
             DontDestroyOnLoad(transform.gameObject);
         }

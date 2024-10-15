@@ -54,8 +54,15 @@ public class PartyBlockUpdater : MonoBehaviour
     {
         if (ID == 1)
         {
-            objName.text = data.p1NM;
-            objLevel.text = "LV " + data.p1LV.ToString();
+            if (isBig)
+            {
+                objName.text = data.p1NM + " - LV " + data.p1LV.ToString();
+            }
+            else
+            {
+                objName.text = data.p1NM;
+                objLevel.text = "LV " + data.p1LV.ToString();
+            }
             currentHP = data.p1HP;
             maxHP = data.p1MHP;
 
@@ -67,8 +74,15 @@ public class PartyBlockUpdater : MonoBehaviour
         }
         if (ID == 2)
         {
-            objName.text = data.p2NM;
-            objLevel.text = "LV " + data.p2LV.ToString();
+            if (isBig)
+            {
+                objName.text = data.p2NM + " - LV " + data.p2LV.ToString();
+            }
+            else
+            {
+                objName.text = data.p2NM;
+                objLevel.text = "LV " + data.p2LV.ToString();
+            }
             currentHP = data.p2HP;
             maxHP = data.p2MHP;
 
@@ -123,8 +137,8 @@ public class PartyBlockUpdater : MonoBehaviour
                 maxEN = data.p1MEN;
                 enSlider.maxValue = maxEN;
                 enSlider.value = currentEN;
-                objHPText.text = "HP                    " + currentHP.ToString() + "/" + maxHP.ToString();
-                objENText.text = "EN                    " + currentEN.ToString() + "/" + maxEN.ToString();
+                objHPText.text = "HP " + currentHP.ToString() + "/" + maxHP.ToString();
+                objENText.text = "EN " + currentEN.ToString() + "/" + maxEN.ToString();
             }
             if (ID == 2)
             {
@@ -132,8 +146,8 @@ public class PartyBlockUpdater : MonoBehaviour
                 maxEN = data.p2MEN;
                 enSlider.maxValue = maxEN;
                 enSlider.value = currentEN;
-                objHPText.text = "HP                    " + currentHP.ToString() + "/" + maxHP.ToString();
-                objENText.text = "EN                   " + currentEN.ToString() + "/" + maxEN.ToString();
+                objHPText.text = "HP " + currentHP.ToString() + "/" + maxHP.ToString();
+                objENText.text = "EN " + currentEN.ToString() + "/" + maxEN.ToString();
             }
         }
        

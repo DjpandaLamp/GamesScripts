@@ -55,6 +55,8 @@ public class BattleSystem : MonoBehaviour
     public int PlayerCount;
     public int EnemyCount; //Number of Enemies to be Generated
 
+    public SceneLoader sceneLoader;
+
     public string[] SkillsDescs;
 
 
@@ -70,6 +72,7 @@ public class BattleSystem : MonoBehaviour
         BaseEnemyCount = EnemyCount;
 
         JSONSave = GameObject.Find("PersistantObject").GetComponent<JSONSave>();
+        sceneLoader = GameObject.Find("PersistantObject").GetComponent<SceneLoader>();
 
         TextArrow.gameObject.SetActive(false);
 
@@ -647,7 +650,7 @@ public class BattleSystem : MonoBehaviour
             yield return StartCoroutine(TextPrinterWait(0));
             //give gameover screen
             yield return new WaitForSeconds(3);
-            SceneManager.LoadSceneAsync(0);
+            sceneLoader.SceneLoaded(0);
         }
         if (state == battleStateMachine.Flee)
         {

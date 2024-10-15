@@ -22,6 +22,7 @@ public class JSONSave : MonoBehaviour
     public Config config;
     public Save Save;
     public AutoSave AutoSave;
+    public Canvas canvas;
 
     private void Awake()
     {
@@ -54,6 +55,7 @@ public class JSONSave : MonoBehaviour
     {
         if (scene.buildIndex != 0 && scene.buildIndex != 1)
         {
+            canvas = GameObject.FindWithTag("MainUI").GetComponent<Canvas>();
             menuManager = GameObject.Find("BaseMenuBlock").GetComponent<OverworldMenuManager>();
             saveContainer = GameObject.Find("SaveContainer");
             PlayerOverworldManager = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerOverworldManager>();
@@ -230,7 +232,8 @@ public class JSONSave : MonoBehaviour
         yield return new WaitForSeconds(0.05f);
         PlayerOverworldManager = GameObject.FindWithTag("Player").GetComponent<PlayerOverworldManager>();
         PlayerOverworldManager.transform.position = new Vector3(AutoSave.playerTransform.x, AutoSave.playerTransform.y);
-        
+        canvas.worldCamera = GameObject.FindWithTag("MainCamera").GetComponent<Camera>();
+        menuManager.mainCamera = canvas.worldCamera;
         yield break; 
     }
 

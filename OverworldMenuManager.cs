@@ -20,7 +20,13 @@ public class OverworldMenuManager : MonoBehaviour
     }
 
     public float yPos = 0;
+    public float yPosSet = -500;
+    public float cameraXOffset = 0;
+    public float cameraXOffsetSet = -5;
+
+
     public bool isUp;
+    
     public Transform selfTransform;
     public GameObject[] menuObjects;
     public GameObject[] settingsObjects;
@@ -30,6 +36,7 @@ public class OverworldMenuManager : MonoBehaviour
 
     public JSONSave JSONSave;
 
+    public Camera mainCamera;
 
     public StateMachine State;
     
@@ -41,6 +48,7 @@ public class OverworldMenuManager : MonoBehaviour
         perst = GameObject.FindWithTag("Persistant");
         config = perst.GetComponent<ConfigScript>();
         JSONSave = perst.GetComponent<JSONSave>();
+        mainCamera = GameObject.FindWithTag("MainCamera").GetComponent<Camera>();
         StateSetter(0);
     }
 
@@ -63,7 +71,7 @@ public class OverworldMenuManager : MonoBehaviour
             else
             {
                 isUp = !isUp;
-                if (yPos < -440)
+                if (yPos < yPosSet+60)
                 {
                     StateSetter(0);
                 }
@@ -78,28 +86,44 @@ public class OverworldMenuManager : MonoBehaviour
         {
             if (yPos < 0)
             {
-                yPos += 2500 * Time.deltaTime;
+                yPos += 2000 * Time.deltaTime;
                 if (yPos > 0)
                 {
                     yPos = 0;
                 }
             }
 
-
-            transform.localPosition = new Vector3(0, yPos, 0);
+            if (cameraXOffset > cameraXOffsetSet)
+            {
+                cameraXOffset -= 20 * Time.deltaTime;
+                if (cameraXOffset < cameraXOffsetSet)
+                {
+                    cameraXOffset = cameraXOffsetSet;
+                }
+            }
+            mainCamera.transform.localPosition = new Vector3(cameraXOffset, 0, -45);
+            transform.localPosition = new Vector3(-180, yPos, 0);
         }
         else
         {
-            if (yPos > -500)
+            if (yPos > yPosSet)
             {
-                yPos -= 2500 * Time.deltaTime;
-                if (yPos < -500)
+                yPos -= 2000 * Time.deltaTime;
+                if (yPos < yPosSet)
                 {
-                    yPos = -500;
+                    yPos = yPosSet;
                 }
             }
-
-            transform.localPosition = new Vector3(0, yPos, 0);
+            if (cameraXOffset < 0)
+            {
+                cameraXOffset += 20 * Time.deltaTime;
+                if (cameraXOffset > 0)
+                {
+                    cameraXOffset = 0;
+                }
+            }
+            mainCamera.transform.localPosition = new Vector3(cameraXOffset, 0, -45);
+            transform.localPosition = new Vector3(-180, yPos, 0);
         }
     }
 

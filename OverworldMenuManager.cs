@@ -55,7 +55,16 @@ public class OverworldMenuManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        UIUpChecker();
+        if (mainCamera == null)
+        {
+            mainCamera = GameObject.FindWithTag("MainCamera").GetComponent<Camera>();
+        }
+        if (SceneManager.GetActiveScene().buildIndex != 0 && SceneManager.GetActiveScene().buildIndex != 1 && SceneManager.GetActiveScene().buildIndex != 2)
+        {
+            UIUpChecker();
+        }
+
+        
     }
 
     void UIUpChecker()
@@ -76,7 +85,7 @@ public class OverworldMenuManager : MonoBehaviour
                     StateSetter(0);
                 }
             }
-            if (SceneManager.GetActiveScene().buildIndex == 1 || textSE.isActiveAndEnabled == true)
+            if (textSE.isActiveAndEnabled == true)
             {
                 isUp = false;
             }
@@ -192,6 +201,7 @@ public class OverworldMenuManager : MonoBehaviour
         {
             MenuReseter();
             menuObjects[5].SetActive(true);
+            JSONSave.LoadSavedGames();
         }
         if (State == StateMachine.Load)
         {

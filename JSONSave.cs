@@ -4,13 +4,14 @@ using System.IO;
 using UnityEngine.SceneManagement;
 using UnityEngine;
 
+
 public class JSONSave : MonoBehaviour
 {
     private PlayerOverworldManager PlayerOverworldManager;
     private GlobalPersistantScript persistantScript;
     private OverworldMenuManager menuManager;
     private ConfigScript configScript;
-    private GameObject saveContainer;
+    public GameObject saveContainer;
     private string persistantPath;
 
     public int timeSincePreviousSave;
@@ -51,14 +52,16 @@ public class JSONSave : MonoBehaviour
         SceneManager.sceneLoaded -= OnLevelFinishedLoading;
     }
 
-    void OnLevelFinishedLoading(Scene scene, LoadSceneMode mode)
+    void OnLevelFinishedLoading(UnityEngine.SceneManagement.Scene scene, LoadSceneMode mode)
     {
-        if (scene.buildIndex != 0 && scene.buildIndex != 1)
-        {
-            canvas = GameObject.FindWithTag("MainUI").GetComponent<Canvas>();
+         if (scene.buildIndex != 0 && scene.buildIndex != 1 && scene.buildIndex != 2)
+         {
+            /*  canvas = GameObject.FindWithTag("MainUI").GetComponent<Canvas>();
+              
+
+              PlayerOverworldManager = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerOverworldManager>();
+             */
             menuManager = GameObject.Find("BaseMenuBlock").GetComponent<OverworldMenuManager>();
-            saveContainer = GameObject.Find("SaveContainer");
-            PlayerOverworldManager = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerOverworldManager>();
             persistantScript = GetComponent<GlobalPersistantScript>();
             configScript = GetComponent<ConfigScript>();
             loadObjects = new GameObject[new DirectoryInfo(persistantPath).GetFiles().Length - 1];
@@ -229,11 +232,24 @@ public class JSONSave : MonoBehaviour
 
     IEnumerator SceneValueGrabber()
     {
+        
         yield return new WaitForSeconds(0.05f);
-        PlayerOverworldManager = GameObject.FindWithTag("Player").GetComponent<PlayerOverworldManager>();
-        PlayerOverworldManager.transform.position = new Vector3(AutoSave.playerTransform.x, AutoSave.playerTransform.y);
-        canvas.worldCamera = GameObject.FindWithTag("MainCamera").GetComponent<Camera>();
-        menuManager.mainCamera = canvas.worldCamera;
+        UnityEngine.SceneManagement.Scene scene = SceneManager.GetActiveScene();
+        if (scene.buildIndex != 0 && scene.buildIndex != 1 && scene.buildIndex != 2)
+        {
+           
+          
+            menuManager = GameObject.Find("BaseMenuBlock").GetComponent<OverworldMenuManager>();
+          
+            
+            PlayerOverworldManager = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerOverworldManager>();
+            persistantScript = GetComponent<GlobalPersistantScript>();
+            configScript = GetComponent<ConfigScript>();
+            loadObjects = new GameObject[new DirectoryInfo(persistantPath).GetFiles().Length - 1];
+            PlayerOverworldManager.transform.position = new Vector3(AutoSave.playerTransform.x, AutoSave.playerTransform.y);
+            //menuManager.mainCamera = GameObject.FindWithTag("MainCamera").GetComponent<Camera>();
+            //canvas.worldCamera = menuManager.mainCamera;
+        }
         yield break; 
     }
 
@@ -241,9 +257,8 @@ public class JSONSave : MonoBehaviour
     {
         if (Directory.Exists(Application.persistentDataPath))
         {
-            
-
             DirectoryInfo d = new DirectoryInfo(persistantPath);
+            
             for (int i = d.GetFiles().Length; i > 0; i--)
             {
                 GameObject newsavebox = Instantiate(loadObjectPrefab, saveContainer.transform);

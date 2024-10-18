@@ -8,6 +8,7 @@ public class GlobalPersistantScript : MonoBehaviour
     public Transform playerSavedTransform;
     public EnemyData data;
     public GameObject overworldMenu;
+    public GameObject cameraPrefab;
 
     public string p1NM;
     public int p1HP;
@@ -71,6 +72,7 @@ public class GlobalPersistantScript : MonoBehaviour
                 overworldMenu.SetActive(true);
             }
         }
+
         
         if (data != null)
         {
@@ -107,7 +109,7 @@ public class GlobalPersistantScript : MonoBehaviour
         worldtime += Time.deltaTime;
         if (overworldMenu != null)
         {
-            if (SceneManager.GetActiveScene().buildIndex == 1 || SceneManager.GetActiveScene().buildIndex == 0)
+            if (SceneManager.GetActiveScene().buildIndex == 1 || SceneManager.GetActiveScene().buildIndex == 0 || SceneManager.GetActiveScene().buildIndex == 2)
             {
                 overworldMenu.SetActive(false);
             }

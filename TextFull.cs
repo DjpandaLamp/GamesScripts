@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -6,6 +6,7 @@ public class TextFull : MonoBehaviour
 {
 
     public string[] strings;
+    public string[] stringsJP;
     public float[] faces;
 
 
@@ -22,6 +23,7 @@ public class TextFull : MonoBehaviour
     void Awake()
     {
         strings = new string[600];
+        stringsJP = new string[600];
         faces = new float[600];
 
 
@@ -29,6 +31,8 @@ public class TextFull : MonoBehaviour
         for (int i = 0; i < strings.Length; i++)
         {
             strings[i] = "This is an Error String Index #" + i.ToString() + ". Please report this to the game dev for Error Code TX1.";
+            stringsJP[i] = "これはテキストエラーインデックス#" + i.ToString() + "。エラー「TX0」として開発者に報告します。";
+
             faces[i] = 0;
 
         }

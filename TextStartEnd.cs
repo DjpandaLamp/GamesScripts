@@ -10,7 +10,9 @@ public class TextStartEnd : MonoBehaviour
     public Image face;
     public int width;
     public int index;
-  
+    public int lang;
+    //0 is english
+    //1 is japanese
 
     public Sprite face00;
     public Sprite face01;
@@ -21,8 +23,14 @@ public class TextStartEnd : MonoBehaviour
         
 
         index = calledIndex;
-        TypeWriter.fullText = TextFull.strings[index];
-
+        if (lang == 0)
+        {
+            TypeWriter.fullText = TextFull.strings[index];
+        }
+        if (lang == 1)
+        {
+            TypeWriter.fullText = TextFull.stringsJP[index];
+        }
             Debug.Log("face" + (TextFull.faces[index]).ToString()) ;
             face.sprite = GetFace(TextFull.faces[index]);
             TypeWriter.image.sprite = face.sprite;
@@ -34,17 +42,32 @@ public class TextStartEnd : MonoBehaviour
     {
         if (TypeWriter.isFinished && Input.GetMouseButton(0) == true || TypeWriter.isFinished && Input.GetKey("z") == true)
         {
-            if (TextFull.strings[index + 1] != "0")
+            if (lang == 0)
             {
-                index += 1;
-                face.sprite = GetFace(TextFull.faces[index]);
-                TypeWriter.fullText = TextFull.strings[index];
+                
+                if (TextFull.strings[index + 1] != "0")
+                {
+                    index += 1;
+                    face.sprite = GetFace(TextFull.faces[index]);
+                    TypeWriter.fullText = TextFull.strings[index];
+                }
+                else
+                {
+                    gameObject.SetActive(false);
+                }
             }
-            else
+            if (lang == 1)
             {
-
-                gameObject.SetActive(false);
-
+                if (TextFull.stringsJP[index + 1] != "0")
+                {
+                    index += 1;
+                    face.sprite = GetFace(TextFull.faces[index]);
+                    TypeWriter.fullText = TextFull.stringsJP[index];
+                }
+                else
+                {
+                    gameObject.SetActive(false);
+                }
             }
         }
     }

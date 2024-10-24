@@ -1,6 +1,5 @@
  using System.Collections;
 using System.Collections.Generic;
-using System.Numerics;
 using UnityEngine;
 
 public class EnemyOverworldManager : MonoBehaviour
@@ -10,12 +9,17 @@ public class EnemyOverworldManager : MonoBehaviour
     public PolygonCollider2D polygonCollider2D;
     public CircleCollider2D circleCollider2D;
 
+    public GameObject perst;
+    public GlobalPersistantScript GlobalPersistant;
+
     public float xVector;
     public float yVector;
     public float movetimer;
     public float moveSpd = 10;
     public bool isChasing;
     public PlayerOverworldManager player;
+
+
 
     public int id;
 
@@ -24,6 +28,8 @@ public class EnemyOverworldManager : MonoBehaviour
     void Start()
     {
         player = GameObject.FindWithTag("Player").GetComponent<PlayerOverworldManager>();
+        perst = GameObject.FindWithTag("Persistant");
+        GlobalPersistant = perst.GetComponent<GlobalPersistantScript>();
         moveSpd = moveSpd * Random.Range(0.8f, 1.2f);
     }
 
@@ -36,76 +42,83 @@ public class EnemyOverworldManager : MonoBehaviour
 
     void GetInput()
     {
-        if (!isChasing)
+        if (!GlobalPersistant.isPaused)
         {
-            if (movetimer <= 0)
+            if (!isChasing)
             {
-                int dir = Random.Range(0, 9);
-
-                switch (dir)
+                if (movetimer <= 0)
                 {
-                    case 0: //no movement
-                        xVector = 0;
-                        yVector = 0;
-                        break;
-                    case 1: //right
-                        xVector = 1;
-                        yVector = 0;
-                        break;
-                    case 2: //left
-                        xVector = -1;
-                        yVector = 0;
-                        break;
-                    case 3: //up
-                        xVector = 0;
-                        yVector = 1;
-                        break;
-                    case 4: //down
-                        xVector = 0;
-                        yVector = -1;
-                        break;
-                    case 5: //upright
-                        xVector = 1;
-                        yVector = 1;
-                        break;
-                    case 6: //upleft
-                        xVector = -1;
-                        yVector = 1;
-                        break;
-                    case 7: //downright
-                        xVector = 1;
-                        yVector = -1;
-                        break;
-                    case 8: //downleft
-                        xVector = -1;
-                        yVector = -1;
-                        break;
+                    int dir = Random.Range(0, 9);
+
+                    switch (dir)
+                    {
+                        case 0: //no movement
+                            xVector = 0;
+                            yVector = 0;
+                            break;
+                        case 1: //right
+                            xVector = 1;
+                            yVector = 0;
+                            break;
+                        case 2: //left
+                            xVector = -1;
+                            yVector = 0;
+                            break;
+                        case 3: //up
+                            xVector = 0;
+                            yVector = 1;
+                            break;
+                        case 4: //down
+                            xVector = 0;
+                            yVector = -1;
+                            break;
+                        case 5: //upright
+                            xVector = 1;
+                            yVector = 1;
+                            break;
+                        case 6: //upleft
+                            xVector = -1;
+                            yVector = 1;
+                            break;
+                        case 7: //downright
+                            xVector = 1;
+                            yVector = -1;
+                            break;
+                        case 8: //downleft
+                            xVector = -1;
+                            yVector = -1;
+                            break;
+
+                    }
+                    MovePlayer();
+                    SetAnimation();
+                    movetimer = (2 + (0.1f * (Random.Range(-2, 4))));
+
 
                 }
-                MovePlayer();
-                SetAnimation();
-                movetimer = (2 + (0.1f * (Random.Range(-2, 4))));
-
 
             }
-            
+            else
+            {
+                if (movetimer <= 0)
+                {
+                    UnityEngine.Vector2 direction = UnityEngine.Vector3.Normalize((transform.position - player.transform.position));
+
+
+                    xVector = -direction.x;
+                    yVector = -direction.y;
+                    movetimer = (0.5f + (0.1f * (Random.Range(-2, 4))));
+                }
+
+                MovePlayer();
+                SetAnimation();
+            }
+            movetimer -= 1f * Time.deltaTime;
         }
         else
         {
-            if (movetimer <= 0)
-            {
-                UnityEngine.Vector2 direction = UnityEngine.Vector3.Normalize((transform.position - player.transform.position));
-
-
-                xVector = -direction.x;
-                yVector = -direction.y;
-                movetimer = (0.5f + (0.1f * (Random.Range(-2, 4))));
-            }
-
-            MovePlayer();
-            SetAnimation();
+            enemyRigidbody.velocity = Vector2.zero;
         }
-        movetimer -= 1f * Time.deltaTime;
     }
 
     void MovePlayer()

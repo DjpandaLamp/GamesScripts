@@ -32,6 +32,7 @@ public class OverworldMenuManager : MonoBehaviour
     public GameObject[] settingsObjects;
     public TextStartEnd textSE;
     public GameObject perst;
+    public GlobalPersistantScript GlobalPersistant;
     public ConfigScript config;
 
     public JSONSave JSONSave;
@@ -46,6 +47,7 @@ public class OverworldMenuManager : MonoBehaviour
         textSE = GameObject.FindObjectOfType<TextStartEnd>(true);
         selfTransform = GetComponent<RectTransform>();
         perst = GameObject.FindWithTag("Persistant");
+        GlobalPersistant = perst.GetComponent<GlobalPersistantScript>();
         config = perst.GetComponent<ConfigScript>();
         JSONSave = perst.GetComponent<JSONSave>();
         mainCamera = GameObject.FindWithTag("MainCamera").GetComponent<Camera>();
@@ -63,13 +65,19 @@ public class OverworldMenuManager : MonoBehaviour
         {
             UIUpChecker();
         }
-
+        if (textSE.isActiveAndEnabled == true || isUp)
+        {
+            GlobalPersistant.isPaused = true;
+        }
+        else
+        {
+            GlobalPersistant.isPaused = false;
+        }
         
     }
 
     void UIUpChecker()
     {
-      
         if (Input.GetKeyDown(KeyCode.Escape)||Input.GetKeyDown(KeyCode.I))
         {
 

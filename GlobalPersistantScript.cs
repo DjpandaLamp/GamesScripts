@@ -38,6 +38,7 @@ public class GlobalPersistantScript : MonoBehaviour
 
     public float globalTimeElapsed;
     public float worldtime;
+    public bool isPaused;
 
 
     [HideInInspector] public bool textFlag0;

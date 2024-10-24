@@ -27,6 +27,7 @@ public class PlayerOverworldManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        
         textSE = GameObject.FindObjectOfType<TextStartEnd>(true);
         overworldMenuManager = GameObject.FindObjectOfType<OverworldMenuManager>(true);
         animator = GetComponent<Animator>();

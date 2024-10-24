@@ -34,9 +34,9 @@ public class JSONSave : MonoBehaviour
 
     private void Start()
     {
+        PlayerOverworldManager = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerOverworldManager>();
 
 
-        
     }
 
 

@@ -7,6 +7,9 @@ public class PartyMemberFollow : MonoBehaviour
     private PlayerOverworldManager player;
     public Animator animator;
     public Rigidbody2D rigidbody2d;
+    public GameObject perst;
+    public GlobalPersistantScript GlobalPersistant;
+
     public float yVector;
     public float xVector;
     public string currentAnimation;
@@ -23,7 +26,8 @@ public class PartyMemberFollow : MonoBehaviour
     void Start()
     {
         player = GetComponentInParent<PlayerOverworldManager>();
-        
+        perst = GameObject.FindWithTag("Persistant");
+        GlobalPersistant = perst.GetComponent<GlobalPersistantScript>();
     }
 
     // Update is called once per frame

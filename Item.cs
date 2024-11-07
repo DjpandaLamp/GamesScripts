@@ -26,4 +26,5 @@ public class Item : ScriptableObject
 
     public int healthValue;
     public int status;
+    public string desc;
 }

@@ -13,8 +13,10 @@ public class PartyBlockUpdater : MonoBehaviour
 
     public Image image;
     public Image photo;
-    public Image sliderColor;
-    public Image sliderBackColor;
+    public Image sliderColorHP;
+    public Image sliderBackColorHP;
+    public Image sliderColorEN;
+    public Image sliderBackColorEN;
 
     public TextMeshProUGUI objName;
     public TextMeshProUGUI objLevel;
@@ -54,42 +56,50 @@ public class PartyBlockUpdater : MonoBehaviour
     {
         if (ID == 1)
         {
+
+            currentHP = data.p1HP;
+            maxHP = data.p1MHP;
+            hpSlider.maxValue = maxHP;
+            hpSlider.value = currentHP;
+            currentEN = data.p1EN;
+            maxEN = data.p1MEN;
+            enSlider.maxValue = maxEN;
+            enSlider.value = currentEN;
             if (isBig)
             {
                 objName.text = data.p1NM + " - LV " + data.p1LV.ToString();
+                objHPText.text = "HP " + currentHP.ToString() + "/" + maxHP.ToString();
+                objENText.text = "EN " + currentEN.ToString() + "/" + maxEN.ToString();
             }
             else
             {
                 objName.text = data.p1NM;
                 objLevel.text = "LV " + data.p1LV.ToString();
             }
-            currentHP = data.p1HP;
-            maxHP = data.p1MHP;
-
-           
-
-            hpSlider.maxValue = maxHP;
-            hpSlider.value = currentHP;
 
         }
         if (ID == 2)
         {
+
+            currentHP = data.p2HP;
+            maxHP = data.p2MHP;
+            hpSlider.maxValue = maxHP;
+            hpSlider.value = currentHP;
+            currentEN = data.p2EN;
+            maxEN = data.p2MEN;
+            enSlider.maxValue = maxEN;
+            enSlider.value = currentEN;
             if (isBig)
             {
                 objName.text = data.p2NM + " - LV " + data.p2LV.ToString();
+                objHPText.text = "HP " + currentHP.ToString() + "/" + maxHP.ToString();
+                objENText.text = "EN " + currentEN.ToString() + "/" + maxEN.ToString();
             }
             else
             {
                 objName.text = data.p2NM;
                 objLevel.text = "LV " + data.p2LV.ToString();
             }
-            currentHP = data.p2HP;
-            maxHP = data.p2MHP;
-
-            
-
-            hpSlider.maxValue = maxHP;
-            hpSlider.value = currentHP;
         }
 
         if (!isBig)
@@ -126,30 +136,10 @@ public class PartyBlockUpdater : MonoBehaviour
             objName.color = new Color(objName.color.r, objName.color.g, objName.color.b, transparency);
             objLevel.color = new Color(objLevel.color.r, objLevel.color.g, objLevel.color.b, transparency);
             photo.color = new Color(photo.color.r, photo.color.g, photo.color.b, transparency);
-            sliderBackColor.color = new Color(sliderBackColor.color.r, sliderBackColor.color.g, sliderBackColor.color.b, transparency);
-            sliderColor.color = new Color(sliderColor.color.r, sliderColor.color.g, sliderColor.color.b, transparency);
+            sliderBackColorHP.color = new Color(sliderBackColorHP.color.r, sliderBackColorHP.color.g, sliderBackColorHP.color.b, transparency);
+            sliderColorHP.color = new Color(sliderColorHP.color.r, sliderColorHP.color.g, sliderColorHP.color.b, transparency);
+            sliderBackColorEN.color = new Color(sliderBackColorEN.color.r, sliderBackColorEN.color.g, sliderBackColorEN.color.b, transparency);
+            sliderColorEN.color = new Color(sliderColorEN.color.r, sliderColorEN.color.g, sliderColorEN.color.b, transparency);
         }
-        else
-        {
-            if (ID == 1)
-            {
-                currentEN = data.p1EN;
-                maxEN = data.p1MEN;
-                enSlider.maxValue = maxEN;
-                enSlider.value = currentEN;
-                objHPText.text = "HP " + currentHP.ToString() + "/" + maxHP.ToString();
-                objENText.text = "EN " + currentEN.ToString() + "/" + maxEN.ToString();
-            }
-            if (ID == 2)
-            {
-                currentEN = data.p2EN;
-                maxEN = data.p2MEN;
-                enSlider.maxValue = maxEN;
-                enSlider.value = currentEN;
-                objHPText.text = "HP " + currentHP.ToString() + "/" + maxHP.ToString();
-                objENText.text = "EN " + currentEN.ToString() + "/" + maxEN.ToString();
-            }
-        }
-       
     }
 }

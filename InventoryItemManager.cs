@@ -4,15 +4,17 @@ using UnityEngine;
 
 public class InventoryItemManager : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
 
-    // Update is called once per frame
-    void Update()
+
+    public Item[] items;
+    public int[] itemCounts;
+
+    public void addItem(int ItemId)
     {
-        
+        itemCounts[ItemId] += 1;
+    }
+    public void ridItem(int ItemId)
+    {
+        itemCounts[ItemId] -= 1;
     }
 }

@@ -40,6 +40,12 @@ public class OverworldMenuManager : MonoBehaviour
     public Camera mainCamera;
 
     public StateMachine State;
+
+    public InventoryItemManager inventory;
+    public GameObject inventoryContainer;
+    public GameObject inventoryButtonPrefab;
+    public List<GameObject> inventoryObjects;
+
     
     // Start is called before the first frame update
     void Start()
@@ -51,6 +57,7 @@ public class OverworldMenuManager : MonoBehaviour
         config = perst.GetComponent<ConfigScript>();
         JSONSave = perst.GetComponent<JSONSave>();
         mainCamera = GameObject.FindWithTag("MainCamera").GetComponent<Camera>();
+        inventory = perst.GetComponent<InventoryItemManager>();
         StateSetter(0);
     }
 
@@ -189,6 +196,7 @@ public class OverworldMenuManager : MonoBehaviour
         {
             MenuReseter();
             menuObjects[1].SetActive(true);
+            resetInventory(ItemTag.ConsumableHeal);
         }
         if (State == StateMachine.Equiment)
         {
@@ -245,4 +253,32 @@ public class OverworldMenuManager : MonoBehaviour
         config.setSettings(fps,res,fullscreen,vsync,a1,a2,a3);
         JSONSave.SaveToJSON(2);
     }
+
+    #region
+
+    public void resetInventory(ItemTag filter)
+    {
+        for (int i = 0; i < inventoryObjects.ToArray().Length; i++)
+        {
+            Destroy(inventoryObjects[i]);
+        }
+        if (inventoryObjects.ToArray().Length > 0)
+        {
+            inventoryObjects.Clear();
+        }
+
+
+        for (int i = 0; i < inventory.itemCounts.Length; i++)
+        {
+            if (inventory.itemCounts[i] > 0 && inventory.items[i].ItemTag == filter)
+            {
+                GameObject newer = Instantiate(inventoryButtonPrefab, inventoryContainer.transform);
+                inventoryObjects.Add(newer);
+            }
+        }
+    }
+
+
+    #endregion
+
 }

@@ -16,15 +16,34 @@ public enum ItemTag
     ConsumableStatus,
     Weapon
 }
+
+public enum TagGroups
+{
+    Armor,
+    Consumable,
+    Weapon
+}
+
+public enum status
+{
+    None,
+    All,
+    Poison,
+    Winded,
+    Tired
+}
+
 [CreateAssetMenu(menuName = "Scriptable Objects/Item")]
 public class Item : ScriptableObject
 {
+    public string displayName;
     public int iD;
     public ItemTag ItemTag;
+    public TagGroups tagGroup;
     public int ArmorValue;
     public int ArmorRestist;
 
     public int healthValue;
-    public int status;
+    public status status;
     public string desc;
 }

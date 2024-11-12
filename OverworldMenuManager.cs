@@ -196,7 +196,7 @@ public class OverworldMenuManager : MonoBehaviour
         {
             MenuReseter();
             menuObjects[1].SetActive(true);
-            resetInventory(ItemTag.ConsumableHeal);
+            resetInventory(TagGroups.Consumable);
         }
         if (State == StateMachine.Equiment)
         {
@@ -254,9 +254,24 @@ public class OverworldMenuManager : MonoBehaviour
         JSONSave.SaveToJSON(2);
     }
 
-    #region
+    public void inventorySorterOnClick(int i)
+    {
+        if (i == 0)
+        {
+            resetInventory(TagGroups.Armor);
+        }
+        if (i == 1)
+        {
+            resetInventory(TagGroups.Consumable);
+        }
+        if (i == 2)
+        {
+            resetInventory(TagGroups.Weapon);
+        }
+    }
 
-    public void resetInventory(ItemTag filter)
+
+    public void resetInventory(TagGroups filter)
     {
         for (int i = 0; i < inventoryObjects.ToArray().Length; i++)
         {
@@ -270,15 +285,99 @@ public class OverworldMenuManager : MonoBehaviour
 
         for (int i = 0; i < inventory.itemCounts.Length; i++)
         {
-            if (inventory.itemCounts[i] > 0 && inventory.items[i].ItemTag == filter)
+            if (inventory.itemCounts[i] > 0 && inventory.items[i].tagGroup == filter)
             {
                 GameObject newer = Instantiate(inventoryButtonPrefab, inventoryContainer.transform);
+                InventoryButtonData data = newer.GetComponent<InventoryButtonData>();
+                data.textCount.text = inventory.itemCounts[i].ToString() + "/99";
+                data.textName.text = inventory.items[i].displayName;
+                switch(inventory.items[i].ItemTag)
+                {
+                    case ItemTag.ArmorHead:
+                        {
+                            data.textCategory.text = "Head";
+                            break;
+                        }
+                    case ItemTag.ArmorGloves:
+                        {
+                            data.textCategory.text = "Gloves";
+                            break;
+                        }
+                    case ItemTag.ArmorHelmet:
+                        {
+                            data.textCategory.text = "Helmet";
+                            break;
+                        }
+                    case ItemTag.ArmorPants:
+                        {
+                            data.textCategory.text = "Pants";
+                            break;
+                        }
+                    case ItemTag.ArmorRing:
+                        {
+                            data.textCategory.text = "Ring";
+                            break;
+                        }
+                    case ItemTag.ArmorShirt:
+                        {
+                            data.textCategory.text = "Shirt";
+                            break;
+                        }
+                    case ItemTag.ArmorShoes:
+                        {
+                            data.textCategory.text = "Shoe";
+                            break;
+                        }
+                    case ItemTag.ArmorSocks:
+                        {
+                            data.textCategory.text = "Socks";
+                            break;
+                        }
+                    case ItemTag.ConsumableHeal:
+                        {
+                            data.textCategory.text = "Heal";
+                            break;
+                        }
+                    case ItemTag.ConsumableStatus:
+                        {
+                            data.textCategory.text = "Cure";
+                            break;
+                        }
+                }
+                switch (inventory.items[i].ItemTag)
+                {
+                    case ItemTag.ConsumableHeal:
+                        {
+                            data.textValue.text = "Health+ " + inventory.items[i].healthValue.ToString();
+                            data.textValue.color = Color.green;
+                            break;
+                        }
+                    case ItemTag.ConsumableStatus:
+                        {
+                            data.textValue.text = "Cures: " + inventory.items[i].status.ToString();
+                            data.textValue.color = Color.magenta;
+                            break;
+                        }
+                    case ItemTag.Weapon:
+                        {
+                            data.textValue.text = "Damage: " + inventory.items[i].ArmorValue.ToString();
+                            data.textValue.color = Color.red;
+                            break;
+                        }
+                    default:
+                        {
+                            data.textValue.text = "Armor+ " + inventory.items[i].ArmorValue.ToString();
+                            data.textValue.color = Color.grey;
+                            break;
+                        }
+                }
+                data.textCount.text = inventory.itemCounts[i].ToString() + "/99";
                 inventoryObjects.Add(newer);
             }
         }
     }
 
 
-    #endregion
+    
 
 }

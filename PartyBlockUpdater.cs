@@ -57,48 +57,48 @@ public class PartyBlockUpdater : MonoBehaviour
         if (ID == 1)
         {
 
-            currentHP = data.p1HP;
-            maxHP = data.p1MHP;
+            currentHP = data.healthPoints[0];
+            maxHP = data.maxHealthPoints[0];
             hpSlider.maxValue = maxHP;
             hpSlider.value = currentHP;
-            currentEN = data.p1EN;
-            maxEN = data.p1MEN;
+            currentEN = data.energyPoints[0];
+            maxEN = data.maxEnergyPoints[0];
             enSlider.maxValue = maxEN;
             enSlider.value = currentEN;
             if (isBig)
             {
-                objName.text = data.p1NM + " - LV " + data.p1LV.ToString();
+                objName.text = data.partyname[0] + " - LV " + data.levels[0].ToString();
                 objHPText.text = "HP " + currentHP.ToString() + "/" + maxHP.ToString();
                 objENText.text = "EN " + currentEN.ToString() + "/" + maxEN.ToString();
             }
             else
             {
-                objName.text = data.p1NM;
-                objLevel.text = "LV " + data.p1LV.ToString();
+                objName.text = data.partyname[0];
+                objLevel.text = "LV " + data.levels[0].ToString();
             }
 
         }
         if (ID == 2)
         {
 
-            currentHP = data.p2HP;
-            maxHP = data.p2MHP;
+            currentHP = data.healthPoints[1];
+            maxHP = data.maxHealthPoints[1];
             hpSlider.maxValue = maxHP;
             hpSlider.value = currentHP;
-            currentEN = data.p2EN;
-            maxEN = data.p2MEN;
+            currentEN = data.energyPoints[1];
+            maxEN = data.maxEnergyPoints[1];
             enSlider.maxValue = maxEN;
             enSlider.value = currentEN;
             if (isBig)
             {
-                objName.text = data.p2NM + " - LV " + data.p2LV.ToString();
+                objName.text = data.partyname[1] + " - LV " + data.levels[1].ToString();
                 objHPText.text = "HP " + currentHP.ToString() + "/" + maxHP.ToString();
                 objENText.text = "EN " + currentEN.ToString() + "/" + maxEN.ToString();
             }
             else
             {
-                objName.text = data.p2NM;
-                objLevel.text = "LV " + data.p2LV.ToString();
+                objName.text = data.partyname[1];
+                objLevel.text = "LV " + data.levels[1].ToString();
             }
         }
 

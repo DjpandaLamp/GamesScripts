@@ -2,6 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using TMPro;
+using UnityEngine.UI;
 
 public class OverworldMenuManager : MonoBehaviour
 {
@@ -41,12 +43,17 @@ public class OverworldMenuManager : MonoBehaviour
 
     public StateMachine State;
 
+    [Header("Inventory")]
     public InventoryItemManager inventory;
     public GameObject inventoryContainer;
     public GameObject inventoryButtonPrefab;
     public List<GameObject> inventoryObjects;
+    public Image inventoryImage;
+    public Sprite[] inventoryImageArray;
+    public TMP_Text inventoryObjectText;
+    public TMP_Text inventoryEffectText;
+    public TMP_Text inventoryDescText;
 
-    
     // Start is called before the first frame update
     void Start()
     {
@@ -289,6 +296,7 @@ public class OverworldMenuManager : MonoBehaviour
             {
                 GameObject newer = Instantiate(inventoryButtonPrefab, inventoryContainer.transform);
                 InventoryButtonData data = newer.GetComponent<InventoryButtonData>();
+                data.ID = i;
                 data.textCount.text = inventory.itemCounts[i].ToString() + "/99";
                 data.textName.text = inventory.items[i].displayName;
                 switch(inventory.items[i].ItemTag)
@@ -376,8 +384,43 @@ public class OverworldMenuManager : MonoBehaviour
             }
         }
     }
-
+    public void SetDescription(int index)
+    {
+        inventoryObjectText.text = inventory.items[index].displayName;
+        inventoryDescText.text = inventory.items[index].desc;
+        //inventoryEffectText.text = ;
+        switch (inventory.items[index].ItemTag)
+        {
+            case ItemTag.ConsumableHeal:
+                {
+                    inventoryEffectText.text = "Heals: + " + inventory.items[index].healthValue.ToString();
+                    inventoryEffectText.color = Color.green;
+                    inventoryImage.sprite = inventoryImageArray[2];
+                    break;
+                }
+            case ItemTag.ConsumableStatus:
+                {
+                    inventoryEffectText.text = "Cures: " + inventory.items[index].status.ToString();
+                    inventoryEffectText.color = Color.magenta;
+                    inventoryImage.sprite = inventoryImageArray[1];
+                    break;
+                }
+            case ItemTag.Weapon:
+                {
+                    inventoryEffectText.text = "Damage: +" + inventory.items[index].ArmorValue.ToString();
+                    inventoryEffectText.color = Color.red;
+                    inventoryImage.sprite = inventoryImageArray[0];
+                    break;
+                }
+            default:
+                {
+                    inventoryEffectText.text = "Armor: +" + inventory.items[index].ArmorValue.ToString();
+                    inventoryEffectText.color = Color.grey;
+                    inventoryImage.sprite = inventoryImageArray[0];
+                    break;
+                }
+        }
 
     
-
+    }
 }

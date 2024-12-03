@@ -54,53 +54,28 @@ public class PartyBlockUpdater : MonoBehaviour
     }
     void uiUpdate()
     {
-        if (ID == 1)
+
+
+        currentHP = data.healthPoints[ID];
+        maxHP = data.maxHealthPoints[ID];
+        hpSlider.maxValue = maxHP;
+        hpSlider.value = currentHP;
+        currentEN = data.energyPoints[ID];
+        maxEN = data.maxEnergyPoints[ID];
+        enSlider.maxValue = maxEN;
+        enSlider.value = currentEN;
+        if (isBig)
         {
-
-            currentHP = data.healthPoints[0];
-            maxHP = data.maxHealthPoints[0];
-            hpSlider.maxValue = maxHP;
-            hpSlider.value = currentHP;
-            currentEN = data.energyPoints[0];
-            maxEN = data.maxEnergyPoints[0];
-            enSlider.maxValue = maxEN;
-            enSlider.value = currentEN;
-            if (isBig)
-            {
-                objName.text = data.partyname[0] + " - LV " + data.levels[0].ToString();
-                objHPText.text = "HP " + currentHP.ToString() + "/" + maxHP.ToString();
-                objENText.text = "EN " + currentEN.ToString() + "/" + maxEN.ToString();
-            }
-            else
-            {
-                objName.text = data.partyname[0];
-                objLevel.text = "LV " + data.levels[0].ToString();
-            }
-
+            objName.text = data.partyname[ID] + " - LV " + data.levels[0].ToString();
+            objHPText.text = "HP " + currentHP.ToString() + "/" + maxHP.ToString();
+            objENText.text = "EN " + currentEN.ToString() + "/" + maxEN.ToString();
         }
-        if (ID == 2)
+        else
         {
-
-            currentHP = data.healthPoints[1];
-            maxHP = data.maxHealthPoints[1];
-            hpSlider.maxValue = maxHP;
-            hpSlider.value = currentHP;
-            currentEN = data.energyPoints[1];
-            maxEN = data.maxEnergyPoints[1];
-            enSlider.maxValue = maxEN;
-            enSlider.value = currentEN;
-            if (isBig)
-            {
-                objName.text = data.partyname[1] + " - LV " + data.levels[1].ToString();
-                objHPText.text = "HP " + currentHP.ToString() + "/" + maxHP.ToString();
-                objENText.text = "EN " + currentEN.ToString() + "/" + maxEN.ToString();
-            }
-            else
-            {
-                objName.text = data.partyname[1];
-                objLevel.text = "LV " + data.levels[1].ToString();
-            }
+            objName.text = data.partyname[ID];
+            objLevel.text = "LV " + data.levels[0].ToString();
         }
+
 
         if (!isBig)
         {

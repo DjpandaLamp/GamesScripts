@@ -10,6 +10,7 @@ public class GlobalPersistantScript : MonoBehaviour
     public GameObject overworldMenu;
     public GameObject cameraPrefab;
 
+    public int[] partyIDs;
 
     public string[] partyname;
     public int[] healthPoints;
@@ -21,29 +22,7 @@ public class GlobalPersistantScript : MonoBehaviour
     public int[] maxHealthPoints;
     public int[] maxEnergyPoints;
     public int[] levels;
-    /*
-    public string p1NM;
-    public int p1HP;
-    public int p1EN;
-    public int p1AT;
-    public int p1DF;
-    public int p1EAT;
-    public int p1EDF;
-    public int p1MHP;
-    public int p1MEN;
-    public int p1LV;
-
-    public string p2NM;
-    public int p2HP;
-    public int p2EN;
-    public int p2AT;
-    public int p2DF;
-    public int p2EAT;
-    public int p2EDF;
-    public int p2MHP;
-    public int p2MEN;
-    public int p2LV;
-    */
+    
     public int[] agentLevelPoint;
 
     public bool firstTimeLoad; //if false, load save data
@@ -70,6 +49,7 @@ public class GlobalPersistantScript : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        
         partyname = new string[4];
         healthPoints = new int[4];
         energyPoints = new int[4];
@@ -121,8 +101,52 @@ public class GlobalPersistantScript : MonoBehaviour
             maxHealthPoints[1] = data.agentHPMax[2];
             maxEnergyPoints[1] = data.agentENMax[2];
             levels[1] = data.agentLV[2];
+
+            partyname[2] = data.agentName[3];
+            healthPoints[2] = data.agentHPCurrent[3];
+            energyPoints[2] = data.agentENCurrent[3];
+            attackPhysicalStat[2] = data.agentATK[3];
+            defencePhysicalStat[2] = data.agentDEF[3];
+            attackEnergyStat[2] = data.agentEATK[3];
+            defenceEnergyStat[2] = data.agentEDEF[3];
+            maxHealthPoints[2] = data.agentHPMax[3];
+            maxEnergyPoints[2] = data.agentENMax[3];
+            levels[2] = data.agentLV[3];
         }
 
+
+
+    }
+
+    public void UpdateParty(int party1, int party2, int party3, int party4)
+    {
+        for (int i = 0; i < partyIDs.Length; i++)
+        {
+            if (party1 != 0)
+            {
+                partyIDs[i] = party1;
+                party1 = 0;
+            }
+            else if (party2 != 0)
+            {
+                partyIDs[i] = party2;
+                party2 = 0;
+            }
+            else if (party3 != 0)
+            {
+                partyIDs[i] = party3;
+                party3 = 0;
+            }
+            else if (party4 != 0)
+            {
+                partyIDs[i] = party4;
+                party4 = 0;
+            }
+            else
+            {
+                return;
+            }
+        }
 
 
     }
@@ -175,6 +199,17 @@ public class GlobalPersistantScript : MonoBehaviour
                     maxHealthPoints[1] = data.agentHPMax[2];
                     maxEnergyPoints[1] = data.agentENMax[2];
                     levels[1] = data.agentLV[2];
+
+                    partyname[2] = data.agentName[3];
+                    healthPoints[2] = data.agentHPCurrent[3];
+                    energyPoints[2] = data.agentENCurrent[3];
+                    attackPhysicalStat[2] = data.agentATK[3];
+                    defencePhysicalStat[2] = data.agentDEF[3];
+                    attackEnergyStat[2] = data.agentEATK[3];
+                    defenceEnergyStat[2] = data.agentEDEF[3];
+                    maxHealthPoints[2] = data.agentHPMax[3];
+                    maxEnergyPoints[2] = data.agentENMax[3];
+                    levels[2] = data.agentLV[3];
                 }
 
             }

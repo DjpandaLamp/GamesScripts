@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class EnemyData : MonoBehaviour
 {
-    private int count = 3;
+    private int count = 20;
 
 
     public string[] agentName; //Name of Enemy
@@ -69,7 +69,7 @@ public class EnemyData : MonoBehaviour
 
         //Player - 1
         #region
-        agentName[1] = "Gale";
+        agentName[1] = "Whit";
         agentType[1] = 0;
 
         agentLV[1] = 1;
@@ -86,7 +86,7 @@ public class EnemyData : MonoBehaviour
 
         //Player - 2
         #region
-        agentName[2] = "Whit";
+        agentName[2] = "Gale";
         agentType[2] = 0;
 
         agentLV[2] = 1;
@@ -99,6 +99,23 @@ public class EnemyData : MonoBehaviour
         agentDEF[2] = 75;
         agentEDEF[2] = 75;
         agentSPD[2] = 20;
+        #endregion
+
+        //Player - 3
+        #region
+        agentName[3] = "Gen";
+        agentType[3] = 0;
+
+        agentLV[3] = 1;
+        agentHPMax[3] = 400;
+        agentHPCurrent[3] = 400;
+        agentENMax[3] = 30;
+        agentENCurrent[3] = 30;
+        agentATK[3] = 120;
+        agentEATK[3] = 180;
+        agentDEF[3] = 90;
+        agentEDEF[3] = 90;
+        agentSPD[3] = 20;
         #endregion
 
 

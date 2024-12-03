@@ -107,7 +107,7 @@ public class BattleSystem : MonoBehaviour
             GameObject NewPlayer = Instantiate(PlayerPrefab, PlayerTransformArray[i].position, Quaternion.identity, visualCanvasElement.transform);
             BattleAgent battleAgent = NewPlayer.GetComponent<BattleAgent>();
             battleAgent.agentCount = i;
-            battleAgent.agentId = 1;
+            battleAgent.agentId = i+1;
             PlayerArray[i] = NewPlayer;
         }
     }

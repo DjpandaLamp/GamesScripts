@@ -56,11 +56,11 @@ public class JSONSave : MonoBehaviour
     {
          if (scene.buildIndex != 0 && scene.buildIndex != 1 && scene.buildIndex != 2)
          {
-            /*  canvas = GameObject.FindWithTag("MainUI").GetComponent<Canvas>();
+              canvas = GameObject.FindWithTag("MainUI").GetComponent<Canvas>();
               
 
               PlayerOverworldManager = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerOverworldManager>();
-             */
+             
             menuManager = GameObject.Find("BaseMenuBlock").GetComponent<OverworldMenuManager>();
             persistantScript = GetComponent<GlobalPersistantScript>();
             configScript = GetComponent<ConfigScript>();

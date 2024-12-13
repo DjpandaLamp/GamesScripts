@@ -5,7 +5,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class BattleAgent : MonoBehaviour
+public class BattleAgent : MonoBehaviour, IComparable
 {
     public BattleSystem system;
     public EnemyData data;
@@ -46,6 +46,20 @@ public class BattleAgent : MonoBehaviour
     public bool HasText = true;
 
     public bool agentHasGone = false;
+
+    public int CompareTo(object obj)
+    {
+        var a = this;
+        var b = obj as BattleAgent;
+
+        if (a.agentSPD < b.agentSPD)
+            return -1;
+
+        if (a.agentSPD > b.agentSPD)
+            return 1;
+
+        return 0;
+    }
 
     void Start()
     {
@@ -101,7 +115,21 @@ public class BattleAgent : MonoBehaviour
         agentEnergySlider.maxValue = agentENMax;
         agentEnergySlider.value = agentENCurrent;
         agentEnergySlider.minValue = 0;
-        
+
+        if (!data.agentPlayerCheck[agentId])
+        {
+            agentHPMax = (int)MathF.Round(agentHPMax*UnityEngine.Random.Range(0.9f,1.1f));
+            agentENMax = (int)MathF.Round(agentENMax * UnityEngine.Random.Range(0.9f, 1.1f));
+            agentHPCurrent = agentHPMax;
+            agentENCurrent = agentENMax;
+            agentATKBase = (int)MathF.Round(agentATKBase * UnityEngine.Random.Range(0.9f, 1.1f));
+            agentEATKBase = (int)MathF.Round(agentEATKBase * UnityEngine.Random.Range(0.9f, 1.1f));
+            agentDEFBase = (int)MathF.Round(agentDEFBase * UnityEngine.Random.Range(0.9f, 1.1f));
+            agentEDEFBase = (int)MathF.Round(agentEDEFBase * UnityEngine.Random.Range(0.9f, 1.1f));
+            agentSPD = (int)MathF.Round(agentSPD * UnityEngine.Random.Range(0.9f, 1.1f));
+            
+        }
+
         agentHeaderText.text = agentName + "- LV" + agentLV.ToString();
         if (HasText)
         {

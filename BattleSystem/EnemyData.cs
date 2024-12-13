@@ -22,6 +22,7 @@ public class EnemyData : MonoBehaviour
     public int[] agentEDEF;
     public int[] agentSPD; //Enemy speed stat
 
+    public bool[] agentPlayerCheck;
     public int[] agentEXPReward;
     public int agentTotalEXP;
     public int[] agentLevelPoint;
@@ -34,7 +35,7 @@ public class EnemyData : MonoBehaviour
         agentType = new int[count]; //Basic or Boss Enemy
                                     //  agentSprite = new Sprite[count]; //Sprite of the Enemy
 
-
+        agentPlayerCheck = new bool[count];
         agentLV = new int[count];//EnemyLevel, used for scaling
         agentHPMax = new int[count]; //Enemy Max HP
         agentHPCurrent = new int[count]; //Enemy Current HP
@@ -64,7 +65,8 @@ public class EnemyData : MonoBehaviour
         agentEATK[0] = 100;
         agentDEF[0] = 75;
         agentEDEF[0] = 75;
-        agentSPD[0] = 20;
+        agentSPD[0] = 50;
+        agentPlayerCheck[0] = false;
         #endregion
 
         //Player - 1
@@ -81,7 +83,8 @@ public class EnemyData : MonoBehaviour
         agentEATK[1] = 150;
         agentDEF[1] = 85;
         agentEDEF[1] = 75;
-        agentSPD[1] = 20;
+        agentSPD[1] = 45;
+        agentPlayerCheck[1] = true;
         #endregion
 
         //Player - 2
@@ -98,7 +101,8 @@ public class EnemyData : MonoBehaviour
         agentEATK[2] = 150;
         agentDEF[2] = 75;
         agentEDEF[2] = 75;
-        agentSPD[2] = 20;
+        agentSPD[2] = 55;
+        agentPlayerCheck[2] = true;
         #endregion
 
         //Player - 3
@@ -115,7 +119,8 @@ public class EnemyData : MonoBehaviour
         agentEATK[3] = 180;
         agentDEF[3] = 90;
         agentEDEF[3] = 90;
-        agentSPD[3] = 20;
+        agentSPD[3] = 50;
+        agentPlayerCheck[3] = true;
         #endregion
 
 

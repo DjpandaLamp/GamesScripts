@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.TextCore.Text;
 using UnityEngine.UI;
 
 public enum battleStateMachine
@@ -63,7 +64,8 @@ public class BattleSystem : MonoBehaviour
     public GameObject[] PlayerCurrentArray;
     public GameObject[] EnemyCurrentArray;
 
-    public List<MoveInfo> moves;
+    public List<MoveInfo> moves; //contains the data for moves.
+    public List<BattleAgent> AgentOrder; //calculated at the start of each turn.
 
     public int playerCursorPos;
     public bool isBackPressed;
@@ -119,7 +121,8 @@ public class BattleSystem : MonoBehaviour
         LoadEnemyUnit();
 
         currentActiveAgent = PlayerArray[0];
-
+        yield return new WaitForSeconds(0.1f);
+        CalculateSpeed();
         yield return new WaitForSeconds(1);
 
         state = battleStateMachine.PlayerTurn;
@@ -137,6 +140,7 @@ public class BattleSystem : MonoBehaviour
             battleAgent.agentCount = i;
             battleAgent.agentId = i+1;
             PlayerArray.Add(NewPlayer);
+           AgentOrder.Add(NewPlayer.GetComponent<BattleAgent>());
         }
     }
     void LoadEnemyUnit()
@@ -149,10 +153,17 @@ public class BattleSystem : MonoBehaviour
             battleAgent.agentId = 0;
 
             EnemyArray[i] = NewEnemy;
-
+           AgentOrder.Add(NewEnemy.GetComponent<BattleAgent>());
         }
 
     }
+
+    void CalculateSpeed()
+    {
+        AgentOrder.Sort();
+        
+    }
+
     void PlayerTurn()
     {
         StatusUpdate();
@@ -644,7 +655,7 @@ public class BattleSystem : MonoBehaviour
         
     }
 
-    IEnumerator ExecuteTurn(GameObject agent, Vector3 desiredScale)
+    IEnumerator ExecuteTurn()
     {
 
 

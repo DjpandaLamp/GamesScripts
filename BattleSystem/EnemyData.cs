@@ -33,7 +33,7 @@ public class EnemyData : MonoBehaviour
 
         agentName = new string[count]; //Name of Enemy
         agentType = new int[count]; //Basic or Boss Enemy
-                                    //  agentSprite = new Sprite[count]; //Sprite of the Enemy
+                                 //  agentSprite = new Sprite[count]; //Sprite of the Enemy
 
         agentPlayerCheck = new bool[count];
         agentLV = new int[count];//EnemyLevel, used for scaling

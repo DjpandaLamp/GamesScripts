@@ -35,6 +35,7 @@ public class BattleAgent : MonoBehaviour, IComparable
     public int agentEDEFBase;
     public int agentSPD;
 
+    public int currentBattleSpeedIndex;
 
     public int agentATKFull;
     public int agentEATKFull;
@@ -92,7 +93,8 @@ public class BattleAgent : MonoBehaviour, IComparable
 
 
         agentImage = GetComponentInChildren<Image>();
-
+        agentImage.sprite = data.agentSprite[agentId];
+         
         //Grabs Unit Data according to its ID from database
         agentName = data.agentName[agentId];
         agentLV = data.agentLV[agentId];

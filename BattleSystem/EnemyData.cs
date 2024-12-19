@@ -83,7 +83,7 @@ public class EnemyData : MonoBehaviour
         agentEATK[1] = 150;
         agentDEF[1] = 85;
         agentEDEF[1] = 75;
-        agentSPD[1] = 45;
+        agentSPD[1] = 48;
         agentPlayerCheck[1] = true;
         #endregion
 
@@ -101,7 +101,7 @@ public class EnemyData : MonoBehaviour
         agentEATK[2] = 150;
         agentDEF[2] = 75;
         agentEDEF[2] = 75;
-        agentSPD[2] = 55;
+        agentSPD[2] = 52;
         agentPlayerCheck[2] = true;
         #endregion
 

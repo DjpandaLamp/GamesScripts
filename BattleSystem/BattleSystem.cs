@@ -23,7 +23,7 @@ public enum battleStateMachine
 public class MoveInfo : MonoBehaviour
 {
     public string move;
-    public BattleAgent attackingAgent;
+    public GameObject attackingAgent;
     public BattleAgent targetedAgent;
 }
 
@@ -52,6 +52,7 @@ public class BattleSystem : MonoBehaviour
     public GameObject movesContainer;
     public List<BattleAgent> AgentOrder; //calculated at the start of each turn.
     public Image[] battleImages; //Images sorted
+    public int removedAgentCount;
 
     public int playerCursorPos;
     public bool isBackPressed;
@@ -71,6 +72,7 @@ public class BattleSystem : MonoBehaviour
     public int EnemyCount; //Number of Enemies to be Generated
     public int currentActiveAgentInt;
     public int targetedAgentNumber;
+    
 
     public SceneLoader sceneLoader;
 
@@ -107,14 +109,14 @@ public class BattleSystem : MonoBehaviour
         LoadPlayerUnit();
         LoadEnemyUnit();
 
-        currentActiveAgent = PlayerArray[0];
-        yield return new WaitForSeconds(0.1f);
+        currentActiveAgent = EnemyArray[0];
+        yield return new WaitForEndOfFrame();
         CalculateSpeed();
-        yield return new WaitForSeconds(1);
+        yield return new WaitForEndOfFrame();
 
-        state = battleStateMachine.PlayerTurn;
+        state = battleStateMachine.EnemyTurn;
         Debug.Log("Battle Loaded");
-        PlayerTurn();
+        StartCoroutine(EnemyTurn(0));
 
 
     }
@@ -175,7 +177,7 @@ public class BattleSystem : MonoBehaviour
         EnemyArray[enemyIndex].GetComponent<BattleAgent>().agentHasGone = true;
         if (EnemyArray[enemyIndex].activeSelf == true)
         {
-
+            
             //Enemy Basic Attack
             #region
             StartCoroutine(AgentScale(currentActiveAgent, new Vector3(1f, 1f, 1f)));
@@ -193,10 +195,11 @@ public class BattleSystem : MonoBehaviour
             }
             MoveInfo move = movesContainer.AddComponent<MoveInfo>();
             move.move = "Attack";
-            move.attackingAgent = EnemyArray[enemyIndex].GetComponent<BattleAgent>();
+            move.attackingAgent = EnemyArray[enemyIndex];
             move.targetedAgent = targetedAgent;
-            moves[EnemyArray[enemyIndex].GetComponent<BattleAgent>().currentBattleSpeedIndex] = move; 
-            StartCoroutine(BasicAttack(EnemyArray[enemyIndex].GetComponent<BattleAgent>(), false));
+            moves[EnemyArray[enemyIndex].GetComponent<BattleAgent>().currentBattleSpeedIndex] = move;
+            ChangeCurrentAgent();
+            //StartCoroutine(BasicAttack(EnemyArray[enemyIndex].GetComponent<BattleAgent>(), false));
             #endregion
         }
         else
@@ -243,11 +246,11 @@ public class BattleSystem : MonoBehaviour
 
         MoveInfo move = movesContainer.AddComponent<MoveInfo>();
         move.move = "Attack";
-        move.attackingAgent = currentActiveAgent.GetComponent<BattleAgent>();
+        move.attackingAgent = currentActiveAgent;
         move.targetedAgent = targetedAgent;
         moves[currentActiveAgent.GetComponent<BattleAgent>().currentBattleSpeedIndex] = move;
-
-        StartCoroutine(BasicAttack(currentActiveAgent.GetComponent<BattleAgent>(), true));
+        ChangeCurrentAgent();
+        //StartCoroutine(BasicAttack(currentActiveAgent.GetComponent<BattleAgent>(), true));
     }
 
     public void OnFleeButton()
@@ -287,22 +290,23 @@ public class BattleSystem : MonoBehaviour
 
             MoveInfo move = movesContainer.AddComponent<MoveInfo>();
             move.move = "Heal" + grade.ToString();
-            move.attackingAgent = currentActiveAgent.GetComponent<BattleAgent>();
-            move.targetedAgent = targetedAgent;
+            move.attackingAgent = currentActiveAgent;
+            move.targetedAgent = activeAgent;
             moves[currentActiveAgent.GetComponent<BattleAgent>().currentBattleSpeedIndex] = move;
 
-
-            StartCoroutine(BasicHeal(activeAgent));
+            ChangeCurrentAgent();
+            //StartCoroutine(BasicHeal(activeAgent));
         }
     }
     public void OnDefenseButton()
     {
         MoveInfo move = movesContainer.AddComponent<MoveInfo>();
         move.move = "Defend";
-        move.attackingAgent = currentActiveAgent.GetComponent<BattleAgent>();
-        move.targetedAgent = move.attackingAgent;
+        move.attackingAgent = currentActiveAgent;
+        move.targetedAgent = move.attackingAgent.GetComponent<BattleAgent>();
         moves[currentActiveAgent.GetComponent<BattleAgent>().currentBattleSpeedIndex] = move;
-        StartCoroutine(OnDefenseEnumberable());
+        ChangeCurrentAgent();
+        //StartCoroutine(OnDefenseEnumberable());
     }
 
 
@@ -416,6 +420,8 @@ public class BattleSystem : MonoBehaviour
                 
                 EnemyCount = BaseEnemyCount;
                 EnemyCount -= 1;
+                AgentOrder.Remove(targetedAgent);
+                removedAgentCount += 1;
                 for (int i = 0; i < EnemyArray.Length; i++)
                 {
 
@@ -442,7 +448,7 @@ public class BattleSystem : MonoBehaviour
                             targetedAgent.gameObject.SetActive(false);
                             baseMenuFlavorText.fullText = targetedAgent.agentName.ToString() + " was Defeated.";
                             yield return StartCoroutine(TextPrinterWait(0));
-                            ChangeCurrentAgent();
+                            
                         }
                     }
                 }
@@ -452,7 +458,7 @@ public class BattleSystem : MonoBehaviour
 
                 baseMenuFlavorText.fullText = targetedAgent.agentName.ToString() + " took " + (agentPreDamageHealth - targetedAgent.agentHPCurrent).ToString() + " damage!";
                 yield return StartCoroutine(TextPrinterWait(0));
-                ChangeCurrentAgent();
+                
             }
         }
         //Enemy Attack
@@ -463,6 +469,8 @@ public class BattleSystem : MonoBehaviour
             if (isDefeated)
             {
                 PlayerArray.Remove(PlayerArray[targetedAgentNumber]);
+                AgentOrder.Remove(PlayerArray[targetedAgentNumber].GetComponent<BattleAgent>());
+                removedAgentCount += 1;
                 PlayerCount = PlayerArray.ToArray().Length;
                     if (PlayerArray.ToArray().Length == 0)
                         {
@@ -482,7 +490,7 @@ public class BattleSystem : MonoBehaviour
                             targetedAgent.gameObject.SetActive(false);
                             baseMenuFlavorText.fullText = targetedAgent.agentName.ToString() + " was Defeated.";
                             yield return StartCoroutine(TextPrinterWait(0));
-                            ChangeCurrentAgent();
+                            
                         }   
             }
             else
@@ -491,7 +499,7 @@ public class BattleSystem : MonoBehaviour
                 baseMenuFlavorText.fullText = targetedAgent.agentName.ToString() + " took " + (agentPreDamageHealth - targetedAgent.agentHPCurrent).ToString() + " damage!";
                 yield return StartCoroutine(TextPrinterWait(0));
 
-                ChangeCurrentAgent();
+                
             }
         }
 
@@ -515,7 +523,7 @@ public class BattleSystem : MonoBehaviour
         }
         
         yield return StartCoroutine(TextPrinterWait(0));
-        ChangeCurrentAgent();
+        
     }
 
 
@@ -574,20 +582,25 @@ public class BattleSystem : MonoBehaviour
     {
         StartCoroutine(AgentScale(currentActiveAgent,new Vector3(0.9f,0.9f,.9f)));
         state = battleStateMachine.Text;
+
+        if (currentActiveAgentInt >= AgentOrder.ToArray().Length - 1)
+        {
+            StartCoroutine(ExecuteTurn());
+            return;
+        }
+
         for (int i = 0; i < PlayerCount; i++)
         {
             if (currentActiveAgent == PlayerArray[i])
             {
-
                 if (PlayerCount > i + 1)
                 {
                     currentActiveAgent = PlayerArray[i + 1];
-                    currentActiveAgentInt = i + 1;
+                    currentActiveAgentInt = i + 5; 
                     state = battleStateMachine.PlayerTurn;
                     PlayerTurn();
                     Debug.Log("PlayerTurnToPlayerTurn");
                     return;
-
                 }
                 else
                 {
@@ -613,7 +626,7 @@ public class BattleSystem : MonoBehaviour
                     EnemyArray[j].GetComponent<BattleAgent>().agentHasGone = false;
                 }
                 currentActiveAgent = PlayerArray[0];
-                currentActiveAgentInt = 0;
+                currentActiveAgentInt = 4;
                 state = battleStateMachine.PlayerTurn;
                 PlayerTurn();
                 Debug.Log("EnemyTurnToPlayerTurn");
@@ -622,13 +635,13 @@ public class BattleSystem : MonoBehaviour
             if (EnemyArray[i].GetComponent<BattleAgent>().agentHasGone == true || EnemyArray[i].activeSelf == false)
             {
                 currentActiveAgent = EnemyArray[i];
-                currentActiveAgentInt = 2 + i;
+                currentActiveAgentInt = i;
                 continue;
             }
             else
             {
                 currentActiveAgent = EnemyArray[i];
-                currentActiveAgentInt = 2 + i;
+                currentActiveAgentInt = i;
                 state = battleStateMachine.EnemyTurn;
                 StartCoroutine(EnemyTurn(i));
                 Debug.Log("EnemyTurnToEnemyTurn");
@@ -675,9 +688,43 @@ public class BattleSystem : MonoBehaviour
 
     IEnumerator ExecuteTurn()
     {
+        for (int i = 0; i < moves.Length; i++)
+        {
+            if (moves[i] == null)
+            {
+                Debug.Log("Null Move");
+                continue; 
+            }
+            if (moves[i].move == "Attack")
+            {
+                Debug.Log("Attack Move");
+                currentActiveAgent = moves[i].attackingAgent;
+                targetedAgent = moves[i].targetedAgent;
+                yield return StartCoroutine(BasicAttack(currentActiveAgent.GetComponent<BattleAgent>(), true));
+                continue;
+            }
+            if (moves[i].move == "Defend")
+            {
+                Debug.Log("Defend Move");
+                continue;
+            }
+            if (moves[i].move == "Heal")
+            {
 
-
-        return null;
+                currentActiveAgent = moves[i].attackingAgent;
+                targetedAgent = moves[i].targetedAgent;
+                yield return StartCoroutine(BasicHeal(moves[i].targetedAgent));
+                continue;
+            }
+        }
+        for (int i = 0; i < moves.Length; i++)
+        {
+            moves[i] = null;
+            currentActiveAgentInt = 0;
+        }
+        CalculateSpeed();
+        ChangeCurrentAgent(); 
+        yield return null;
     }
 
 

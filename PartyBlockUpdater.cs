@@ -82,9 +82,9 @@ public class PartyBlockUpdater : MonoBehaviour
             if (player.xVector == 0 && player.yVector == 0)
             {
 
-                if (transparency >= 0.9f)
+                if (transparency >= 0.99f)
                 {
-                    transparency = 0.9f;
+                    transparency = 1f;
                 }
                 else
                 {

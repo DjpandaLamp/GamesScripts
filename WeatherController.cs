@@ -10,6 +10,7 @@ public class WeatherController : MonoBehaviour
     public ParticleSystem ParticleSystemSplash;
     public ParticleSystem ParticleSystemSnow;
     public int weather;
+    public float weatherTimer;
 
     private void Start()
     {
@@ -85,5 +86,15 @@ public class WeatherController : MonoBehaviour
 
         }
         sprite.color = worldColor;
+        weatherTimer = 10;
+    }
+    private void FixedUpdate()
+    {
+        weatherTimer -= 1 * Time.deltaTime;
+        if (weatherTimer < 0)
+        {
+            weather = Random.Range(0, 6);
+            ChangeWeather();
+        }
     }
 }

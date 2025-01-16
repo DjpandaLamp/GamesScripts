@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using TMPro;
 using UnityEngine.UI;
+using UnityEngine.Rendering.PostProcessing;
 
 public class OverworldMenuManager : MonoBehaviour
 {
@@ -23,8 +24,8 @@ public class OverworldMenuManager : MonoBehaviour
 
     public float yPos = 0;
     public float yPosSet = -500;
-    public float cameraXOffset = 0;
-    public float cameraXOffsetSet = -5;
+    public float cameradepth = 5;
+    public float cameradepthSet = 5;
 
 
     public bool isUp;
@@ -40,6 +41,9 @@ public class OverworldMenuManager : MonoBehaviour
     public JSONSave JSONSave;
 
     public Camera mainCamera;
+    private PostProcessVolume post_c;
+    private DepthOfField depth;
+    private ColorGrading ColorGrading;
 
     public StateMachine State;
 
@@ -63,7 +67,12 @@ public class OverworldMenuManager : MonoBehaviour
         GlobalPersistant = perst.GetComponent<GlobalPersistantScript>();
         config = perst.GetComponent<ConfigScript>();
         JSONSave = perst.GetComponent<JSONSave>();
+
         mainCamera = GameObject.FindWithTag("MainCamera").GetComponent<Camera>();
+        post_c = GameObject.FindWithTag("MainCamera").GetComponent<PostProcessVolume>();
+        post_c.profile.TryGetSettings(out depth);
+        post_c.profile.TryGetSettings(out ColorGrading);
+
         inventory = perst.GetComponent<InventoryItemManager>();
         StateSetter(0);
     }
@@ -74,6 +83,7 @@ public class OverworldMenuManager : MonoBehaviour
         if (mainCamera == null)
         {
             mainCamera = GameObject.FindWithTag("MainCamera").GetComponent<Camera>();
+            post_c = GameObject.FindWithTag("MainCamera").GetComponent<PostProcessVolume>();
         }
         if (SceneManager.GetActiveScene().buildIndex != 0 && SceneManager.GetActiveScene().buildIndex != 1 && SceneManager.GetActiveScene().buildIndex != 2)
         {
@@ -123,17 +133,20 @@ public class OverworldMenuManager : MonoBehaviour
                     yPos = 0;
                 }
             }
-
-            if (cameraXOffset > cameraXOffsetSet)
+            if (cameradepth > 0)
             {
-                cameraXOffset -= 20 * Time.deltaTime;
-                if (cameraXOffset < cameraXOffsetSet)
+                cameradepth -= 15 * Time.deltaTime;
+                if (cameradepth < 0.1f)
                 {
-                    cameraXOffset = cameraXOffsetSet;
+                    cameradepth = 0.1f;
                 }
             }
-            mainCamera.transform.localPosition = new Vector3(cameraXOffset, 0, -45);
-            transform.localPosition = new Vector3(-180, yPos, 0);
+
+
+            //mainCamera.transform.localPosition = new Vector3(cameradepth, 0, -45);
+            ColorGrading.colorFilter.value = Color.Lerp(ColorGrading.colorFilter, new Color32(150, 20, 100, 1), 0.02f);
+            depth.focusDistance.value = cameradepth;
+            transform.localPosition = new Vector3(0, yPos, 0);
         }
         else
         {
@@ -145,16 +158,18 @@ public class OverworldMenuManager : MonoBehaviour
                     yPos = yPosSet;
                 }
             }
-            if (cameraXOffset < 0)
+            if (cameradepth < cameradepthSet)
             {
-                cameraXOffset += 20 * Time.deltaTime;
-                if (cameraXOffset > 0)
+                cameradepth += 15 * Time.deltaTime;
+                if (cameradepth > cameradepthSet)
                 {
-                    cameraXOffset = 0;
+                    cameradepth = cameradepthSet;
                 }
             }
-            mainCamera.transform.localPosition = new Vector3(cameraXOffset, 0, -45);
-            transform.localPosition = new Vector3(-180, yPos, 0);
+            //mainCamera.transform.localPosition = new Vector3(cameradepth, 0, -45);
+            ColorGrading.colorFilter.value = Color.Lerp(ColorGrading.colorFilter, Color.white, 0.02f);
+            depth.focusDistance.value = cameradepth;
+            transform.localPosition = new Vector3(0, yPos, 0);
         }
     }
 

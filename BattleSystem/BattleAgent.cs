@@ -1,6 +1,9 @@
+using CartoonFX;
+using Coffee.UIExtensions;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Xml;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -20,6 +23,7 @@ public class BattleAgent : MonoBehaviour, IComparable
     public Slider agentHealthSlider;
     public Slider agentEnergySlider;
 
+    public bool agentIdentity;
     public int agentId;
     public int agentType;
     public int agentCount;
@@ -41,6 +45,10 @@ public class BattleAgent : MonoBehaviour, IComparable
     public int agentEATKFull;
     public int agentDEFFull;
     public int agentEDEFFull;
+
+    public UIParticle agentUIParticle;
+    public ParticleSystem agentParticleSystem;
+
 
     public bool isDefending;
 
@@ -193,7 +201,13 @@ public class BattleAgent : MonoBehaviour, IComparable
             agentDEFFull = attackValue-1;
         }
         agentHPCurrent -= attackValue - agentDEFFull;
-        
+
+        CFXR_ParticleText _ParticleText = agentParticleSystem.GetComponent<CFXR_ParticleText>();
+        _ParticleText.UpdateText((attackValue-agentDEFFull).ToString());
+        agentParticleSystem.Play();
+        agentUIParticle.RefreshParticles();
+
+
         if(agentHPCurrent <= 0)
         {
             agentHPCurrent = 0;

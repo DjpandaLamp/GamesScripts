@@ -1,7 +1,7 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
+using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.TextCore.Text;
@@ -50,7 +50,9 @@ public class BattleSystem : MonoBehaviour
 
     public MoveInfo[] moves; //contains the data for moves.
     public GameObject movesContainer;
+    private int moveIndex;
     public List<BattleAgent> AgentOrder; //calculated at the start of each turn.
+    public int startingAgentOrderSize;
     public Image[] battleImages; //Images sorted
     public int removedAgentCount;
 
@@ -107,11 +109,13 @@ public class BattleSystem : MonoBehaviour
     IEnumerator BattleInitalize()
     {
         LoadPlayerUnit();
-        LoadEnemyUnit();
+        yield return StartCoroutine(LoadEnemyUnit());
+
 
         currentActiveAgent = EnemyArray[0];
         yield return new WaitForEndOfFrame();
         CalculateSpeed();
+        startingAgentOrderSize = AgentOrder.ToArray().Length;
         yield return new WaitForEndOfFrame();
 
         state = battleStateMachine.EnemyTurn;
@@ -126,25 +130,66 @@ public class BattleSystem : MonoBehaviour
         {
             GameObject NewPlayer = Instantiate(PlayerPrefab, PlayerTransformArray[i].position, Quaternion.identity, visualCanvasElement.transform);
             BattleAgent battleAgent = NewPlayer.GetComponent<BattleAgent>();
+            battleAgent.agentIdentity = true;
             battleAgent.agentCount = i;
             battleAgent.agentId = i+1;
             PlayerArray.Add(NewPlayer);
            AgentOrder.Add(NewPlayer.GetComponent<BattleAgent>());
         }
     }
-    void LoadEnemyUnit()
+    IEnumerator LoadEnemyUnit()
     {
+        int[] nameInts = new int[EnemyCount];
         for (int i = 0; i < EnemyCount; i++)
         {
+
             GameObject NewEnemy = Instantiate(EnemyPrefab, EnemyTransformArray[i].position, Quaternion.identity, visualCanvasElement.transform);
             BattleAgent battleAgent = NewEnemy.GetComponent<BattleAgent>();
+            battleAgent.agentIdentity = false;
             battleAgent.agentCount = i;
             battleAgent.agentId = 0;
 
             EnemyArray[i] = NewEnemy;
+            yield return new WaitForSeconds(0.01f);
+            for (int j = 0; j < EnemyCount; j++)
+            {
+                if (EnemyArray[j] == null || i == j)
+                {
+                    continue;
+                }
+                if (EnemyArray[j].GetComponent<BattleAgent>().agentName == battleAgent.agentName)
+                {
+                    Debug.Log("work");
+                    nameInts[j] += 1; 
+                }
+            }
            AgentOrder.Add(NewEnemy.GetComponent<BattleAgent>());
         }
-
+        for (int i = 0; i < EnemyCount; i++)
+        {
+            string battleName = EnemyArray[i].GetComponent<BattleAgent>().agentName;
+            switch (nameInts[i])
+            {
+                case 0:
+                    battleName = battleName + " D";
+                    EnemyArray[i].GetComponent<BattleAgent>().agentName = battleName;
+                    
+                    continue;
+                case 1:
+                    battleName = battleName + " C";
+                    EnemyArray[i].GetComponent<BattleAgent>().agentName = battleName;
+                    continue;
+                case 2:
+                    battleName = battleName + " B";
+                    EnemyArray[i].GetComponent<BattleAgent>().agentName = battleName;
+                    continue;
+                case 3:
+                    battleName = battleName + " A";
+                    EnemyArray[i].GetComponent<BattleAgent>().agentName = battleName;
+                    continue;
+            }
+        }
+        yield return null;
     }
 
     void CalculateSpeed()
@@ -169,6 +214,7 @@ public class BattleSystem : MonoBehaviour
         targetedAgent = null;
         StartCoroutine(AgentScale(currentActiveAgent, new Vector3(1f, 1f, 1f)));
         baseMenuFlavorText.fullText = "What's Your Move?";
+        
     }
 
     IEnumerator EnemyTurn(int enemyIndex)
@@ -180,12 +226,12 @@ public class BattleSystem : MonoBehaviour
             
             //Enemy Basic Attack
             #region
-            StartCoroutine(AgentScale(currentActiveAgent, new Vector3(1f, 1f, 1f)));
+            //StartCoroutine(AgentScale(currentActiveAgent, new Vector3(1f, 1f, 1f)));
             string agentName = "";
             agentName = EnemyArray[enemyIndex].GetComponent<BattleAgent>().agentName;
-            baseMenuFlavorText.fullText = agentName + " attacks!";
-            yield return StartCoroutine(TextPrinterWait(0));
-
+            //baseMenuFlavorText.fullText = agentName + " attacks!";
+            //yield return StartCoroutine(TextPrinterWait(0));
+            yield return new WaitForSeconds(0.01f);
             targetedAgentNumber = UnityEngine.Random.Range(0, PlayerArray.ToArray().Length);
             targetedAgent = PlayerArray[targetedAgentNumber].GetComponent<BattleAgent>();
             while (targetedAgent.gameObject.activeSelf == false)
@@ -323,12 +369,12 @@ public class BattleSystem : MonoBehaviour
     IEnumerator PlayerTargeting()
     {
         bool dir = false;
-        if (Input.GetKeyDown("s") || Input.GetKeyDown("down"))
+        if (Input.GetKeyDown("d") || Input.GetKeyDown("right"))
         {
             playerCursorPos += 1;
             dir = false;
         }
-        if (Input.GetKeyDown("w") || Input.GetKeyDown("up"))
+        if (Input.GetKeyDown("a") || Input.GetKeyDown("left"))
         {
             playerCursorPos -= 1;
             dir = true;
@@ -390,6 +436,7 @@ public class BattleSystem : MonoBehaviour
 
     IEnumerator BasicAttack(BattleAgent attackingAgent, bool attackDirection)
     {
+        string agentName = attackingAgent.agentName;
         Debug.Log("Attack");
         if (attackDirection)
         {
@@ -415,6 +462,8 @@ public class BattleSystem : MonoBehaviour
         {
 
             state = battleStateMachine.Text;
+            baseMenuFlavorText.fullText = agentName + " attacks!";
+            yield return StartCoroutine(TextPrinterWait(0));
             if (isDefeated)
             {
                 
@@ -433,13 +482,14 @@ public class BattleSystem : MonoBehaviour
                     {
                         if (EnemyCount == 0)
                         {
+
                             baseMenuFlavorText.fullText = targetedAgent.agentName.ToString() + " took " + (agentPreDamageHealth - targetedAgent.agentHPCurrent).ToString() + " damage!";
                             yield return StartCoroutine(TextPrinterWait(0));
                             targetedAgent.gameObject.SetActive(false);
                             baseMenuFlavorText.fullText = targetedAgent.agentName.ToString() + " was Defeated.";
                             yield return StartCoroutine(TextPrinterWait(0));
                             state = battleStateMachine.Win;
-                            StartCoroutine(EndBattle());
+                            yield return StartCoroutine(EndBattle());
                         }
                         else
                         {
@@ -466,6 +516,8 @@ public class BattleSystem : MonoBehaviour
         {
 
             state = battleStateMachine.Text;
+            baseMenuFlavorText.fullText = agentName + " attacks!";
+            yield return StartCoroutine(TextPrinterWait(0));
             if (isDefeated)
             {
                 PlayerArray.Remove(PlayerArray[targetedAgentNumber]);
@@ -481,7 +533,7 @@ public class BattleSystem : MonoBehaviour
                             baseMenuFlavorText.fullText = targetedAgent.agentName.ToString() + " was Defeated.";
                             yield return StartCoroutine(TextPrinterWait(0));
                             state = battleStateMachine.Lose;
-                            StartCoroutine(EndBattle());
+                            yield return  StartCoroutine(EndBattle());
                         }
                         else
                         {
@@ -580,10 +632,11 @@ public class BattleSystem : MonoBehaviour
 
     void ChangeCurrentAgent()
     {
-        StartCoroutine(AgentScale(currentActiveAgent,new Vector3(0.9f,0.9f,.9f)));
+        StartCoroutine(AgentScale(currentActiveAgent,new Vector3(0.6f,0.6f,.6f)));
         state = battleStateMachine.Text;
+        int orderOffset = (startingAgentOrderSize - AgentOrder.ToArray().Length);
 
-        if (currentActiveAgentInt >= AgentOrder.ToArray().Length - 1)
+        if (currentActiveAgentInt >= (AgentOrder.ToArray().Length-1))
         {
             StartCoroutine(ExecuteTurn());
             return;
@@ -593,22 +646,23 @@ public class BattleSystem : MonoBehaviour
         {
             if (currentActiveAgent == PlayerArray[i])
             {
+                
                 if (PlayerCount > i + 1)
                 {
+                    Debug.Log("PlayerPlayer Turn" + currentActiveAgentInt.ToString());
                     currentActiveAgent = PlayerArray[i + 1];
-                    currentActiveAgentInt = i + 5; 
                     state = battleStateMachine.PlayerTurn;
+                    currentActiveAgentInt = EnemyCount + i + 1;
                     PlayerTurn();
-                    Debug.Log("PlayerTurnToPlayerTurn");
                     return;
                 }
                 else
                 {
+                    Debug.Log("PlayerEnemy Turn" + currentActiveAgentInt.ToString());
                     currentActiveAgent = EnemyArray[0];
-                    currentActiveAgentInt = 0;
+                    currentActiveAgentInt = 0 + orderOffset;
                     state = battleStateMachine.EnemyTurn;
                     StartCoroutine(EnemyTurn(0));
-                    Debug.Log("PlayerTurnToEnemyTurn");
                     return;
                 }
                 
@@ -617,7 +671,7 @@ public class BattleSystem : MonoBehaviour
 
         for (int i = 0; i <= EnemyArray.Length; i++)
         {
-            Debug.Log(i.ToString());
+            
             if (i == EnemyArray.Length)
             {
                 for (int j = 0; j < EnemyArray.Length; j++)
@@ -626,25 +680,26 @@ public class BattleSystem : MonoBehaviour
                     EnemyArray[j].GetComponent<BattleAgent>().agentHasGone = false;
                 }
                 currentActiveAgent = PlayerArray[0];
-                currentActiveAgentInt = 4;
+                currentActiveAgentInt = i;
                 state = battleStateMachine.PlayerTurn;
+                Debug.Log("EnemyPlayer Turn" + currentActiveAgentInt.ToString());
                 PlayerTurn();
-                Debug.Log("EnemyTurnToPlayerTurn");
                 return;
             }
             if (EnemyArray[i].GetComponent<BattleAgent>().agentHasGone == true || EnemyArray[i].activeSelf == false)
             {
-                currentActiveAgent = EnemyArray[i];
-                currentActiveAgentInt = i;
+                //currentActiveAgent = EnemyArray[i];
+                //currentActiveAgentInt = i + orderOffset;
+                
                 continue;
             }
             else
             {
+                Debug.Log("EnemyEnemy Turn" + currentActiveAgentInt.ToString());
                 currentActiveAgent = EnemyArray[i];
                 currentActiveAgentInt = i;
                 state = battleStateMachine.EnemyTurn;
                 StartCoroutine(EnemyTurn(i));
-                Debug.Log("EnemyTurnToEnemyTurn");
                 return;
             }
         }
@@ -692,15 +747,48 @@ public class BattleSystem : MonoBehaviour
         {
             if (moves[i] == null)
             {
+                for (int j = 0; j < moves.Length; j++)
+                {
+                    moves[j] = null;
+                    currentActiveAgentInt = 0;
+                }
+                CalculateSpeed();
+                ChangeCurrentAgent();
+                yield return null;
+            }
+            
+
+            if (!moves[i].attackingAgent.GetComponent<BattleAgent>().isActiveAndEnabled)
+            {
+                continue;
+            }
+
+            if (moves[i] == null)
+            {
                 Debug.Log("Null Move");
                 continue; 
             }
             if (moves[i].move == "Attack")
             {
+                battleImages[i].GetComponent<Image>().color = Color.red;
                 Debug.Log("Attack Move");
                 currentActiveAgent = moves[i].attackingAgent;
                 targetedAgent = moves[i].targetedAgent;
+                while (!targetedAgent.isActiveAndEnabled)
+                {
+                    if (currentActiveAgent.GetComponent<BattleAgent>().agentIdentity == true)
+                    {
+                        int ran = UnityEngine.Random.Range(0, BaseEnemyCount);
+                        targetedAgent = EnemyArray[ran].GetComponent<BattleAgent>();
+                    }
+                    if (currentActiveAgent.GetComponent<BattleAgent>().agentIdentity == false)
+                    {
+                        int ran = UnityEngine.Random.Range(0, BasePlayerCount);
+                        targetedAgent = PlayerArray[ran].GetComponent<BattleAgent>();
+                    }
+                }
                 yield return StartCoroutine(BasicAttack(currentActiveAgent.GetComponent<BattleAgent>(), true));
+                battleImages[i].GetComponent<Image>().color = Color.white;
                 continue;
             }
             if (moves[i].move == "Defend")
@@ -710,10 +798,26 @@ public class BattleSystem : MonoBehaviour
             }
             if (moves[i].move == "Heal")
             {
-
+                battleImages[i].GetComponent<Image>().color = Color.green;
                 currentActiveAgent = moves[i].attackingAgent;
                 targetedAgent = moves[i].targetedAgent;
+
+                while (!targetedAgent.isActiveAndEnabled)
+                {
+                    if (currentActiveAgent.GetComponent<BattleAgent>().agentIdentity == false)
+                    {
+                        int ran = UnityEngine.Random.Range(0, EnemyCount);
+                        targetedAgent = EnemyArray[ran].GetComponent<BattleAgent>();
+                    }
+                    if (currentActiveAgent.GetComponent<BattleAgent>().agentIdentity == true)
+                    {
+                        int ran = UnityEngine.Random.Range(0, PlayerCount);
+                        targetedAgent = PlayerArray[ran].GetComponent<BattleAgent>();
+                    }
+                }
+
                 yield return StartCoroutine(BasicHeal(moves[i].targetedAgent));
+                battleImages[i].GetComponent<Image>().color = Color.white;
                 continue;
             }
         }

@@ -255,6 +255,14 @@ public class JSONSave : MonoBehaviour
 
     public void LoadSavedGames()
     {
+        if (menuManager != null)
+        {
+            if (saveContainer == null)
+            {
+                saveContainer = GameObject.FindWithTag("SaveContainer");
+            } 
+        }
+
         if (Directory.Exists(Application.persistentDataPath))
         {
             DirectoryInfo d = new DirectoryInfo(persistantPath);

@@ -22,9 +22,9 @@ public class TextFull : MonoBehaviour
     // Start is called before the first frame update
     void Awake()
     {
-        strings = new string[600];
-        stringsJP = new string[600];
-        faces = new float[600];
+        strings = new string[6000];
+        stringsJP = new string[6000];
+        faces = new float[6000];
 
 
 
@@ -48,8 +48,16 @@ public class TextFull : MonoBehaviour
         strings[21] = "To quit the application, Press the Quit Button. To Save Press New Save on the Save Menu";
         faces[21] = 0.2f;
         strings[22] = "0";
-        strings[499] = "0";
-        strings[500] = "Wow, Those walls sure do look walkable!";
+        strings[23] = "Long, Long ago, in a land before time had been concieved, the goddess was born.";
+        strings[24] = "Held down by the chains of chaos, she sat silently on the surface of the primordial sea, waiting.";
+        strings[25] = "One day, she saw something, a small white dot sitting on the brink of chaos and order.";
+        strings[26] = "Absurdly small, yet captivating all the same, the goddess stood and moved toward the dot.";
+        strings[27] = "Effortlessly, the chains of chaos melted away, leaving the goddess alone.";
+        strings[28] = "Moving forward, she picked up the fragile orb, observing it for a moment before cradling it.";
+        strings[29] = "It was then our world was born.";
+        strings[30] = "0";
+        strings[499] = "Is it me, or...";
+        strings[500] = "...do those walls look walkable?";
         strings[501] = "0";
 
     }

@@ -146,7 +146,7 @@ public class OverworldMenuManager : MonoBehaviour
             //mainCamera.transform.localPosition = new Vector3(cameradepth, 0, -45);
             ColorGrading.colorFilter.value = Color.Lerp(ColorGrading.colorFilter, new Color32(150, 20, 100, 1), 0.02f);
             depth.focusDistance.value = cameradepth;
-            transform.localPosition = new Vector3(0, yPos, 0);
+            transform.localPosition = new Vector3(-125, yPos, 0);
         }
         else
         {
@@ -169,7 +169,7 @@ public class OverworldMenuManager : MonoBehaviour
             //mainCamera.transform.localPosition = new Vector3(cameradepth, 0, -45);
             ColorGrading.colorFilter.value = Color.Lerp(ColorGrading.colorFilter, Color.white, 0.02f);
             depth.focusDistance.value = cameradepth;
-            transform.localPosition = new Vector3(0, yPos, 0);
+            transform.localPosition = new Vector3(-125, yPos, 0);
         }
     }
 

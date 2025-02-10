@@ -6,6 +6,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.TextCore.Text;
 using UnityEngine.UI;
+using Mathfunctions;
 
 public enum battleStateMachine
 {
@@ -35,6 +36,7 @@ public class BattleSystem : MonoBehaviour
     public GameObject[] baseMenuButtons;
     public GameObject TextArrow;
     public GameObject skillMenu;
+    public GameObject AgentOrderBox;
 
     public JSONSave JSONSave;
     public battleStateMachine state;
@@ -58,8 +60,8 @@ public class BattleSystem : MonoBehaviour
 
     public int playerCursorPos;
     public bool isBackPressed;
-    
 
+    private Coroutine activeAgentOrderBoxCoroutine;
 
     public Transform[] PlayerTransformArray;
     public Transform[] EnemyTransformArray;
@@ -74,6 +76,8 @@ public class BattleSystem : MonoBehaviour
     public int EnemyCount; //Number of Enemies to be Generated
     public int currentActiveAgentInt;
     public int targetedAgentNumber;
+
+    public BattleOverlayAnimationScript BattleOverlayAnimationScript;
     
 
     public SceneLoader sceneLoader;
@@ -195,9 +199,15 @@ public class BattleSystem : MonoBehaviour
     void CalculateSpeed()
     {
         AgentOrder.Sort();
+        moves = new MoveInfo[PlayerCount + EnemyCount];
+
+        int _n = 20;
+        int _y = -362;
+        RectTransform rect = AgentOrderBox.GetComponent<RectTransform>();
+
         for (int i = 0; i < battleImages.Length; i++)
         {
-
+            battleImages[i].gameObject.SetActive(true);
             battleImages[i].sprite = null;
         }
 
@@ -206,6 +216,25 @@ public class BattleSystem : MonoBehaviour
             AgentOrder[i].currentBattleSpeedIndex = i;
             battleImages[i].sprite = AgentOrder[i].agentImage.sprite;
         }
+        for (int i = 0; i < battleImages.Length; i++)
+        {
+            if (battleImages[i].sprite == null)
+            {
+                battleImages[i].gameObject.SetActive(false);
+            }
+            else
+            {
+                _n += 70;
+                
+            }
+            
+        }
+        if (activeAgentOrderBoxCoroutine != null)
+        {
+            StopCoroutine(activeAgentOrderBoxCoroutine);
+        }
+        StartCoroutine(PrivMath.Vector2LerpRect(rect, new Vector2(rect.sizeDelta.x, _n), 0.05f, 100, 0));
+        activeAgentOrderBoxCoroutine = StartCoroutine(PrivMath.Vector2LerpRect(rect, new Vector2(rect.localPosition.x, _y), 0.05f, 100, 1));
     }
 
     void PlayerTurn()
@@ -671,16 +700,19 @@ public class BattleSystem : MonoBehaviour
 
         for (int i = 0; i <= EnemyArray.Length; i++)
         {
-            
             if (i == EnemyArray.Length)
             {
+                int enemylength = EnemyArray.Length;
                 for (int j = 0; j < EnemyArray.Length; j++)
-                {
-                    
+                { 
                     EnemyArray[j].GetComponent<BattleAgent>().agentHasGone = false;
+                    if (EnemyArray[j].activeSelf == false)
+                    {
+                        enemylength--;
+                    }
                 }
                 currentActiveAgent = PlayerArray[0];
-                currentActiveAgentInt = i;
+                currentActiveAgentInt = enemylength;
                 state = battleStateMachine.PlayerTurn;
                 Debug.Log("EnemyPlayer Turn" + currentActiveAgentInt.ToString());
                 PlayerTurn();
@@ -735,16 +767,32 @@ public class BattleSystem : MonoBehaviour
         
         while (Mathf.Abs(agent.transform.localScale.x - desiredScale.x) > 0.01f)
         {
+            yield return new WaitForFixedUpdate();
             agent.transform.localScale = Vector3.Lerp(agent.transform.localScale, desiredScale, 5f * Time.deltaTime);
-            yield return null;
         }
-        
+        yield return null;
+
     }
 
     IEnumerator ExecuteTurn()
     {
+        yield return StartCoroutine(BattleOverlayAnimationScript.Animation(0, 0));
+        yield return StartCoroutine(BattleOverlayAnimationScript.Animation(1, 0));
+        RectTransform rect = AgentOrderBox.GetComponent<RectTransform>();
+        int _yo = -362;
+        int _yn = 0;
         for (int i = 0; i < moves.Length; i++)
         {
+
+            if (i != 0)
+            {
+                _yn -= 70;
+                if (activeAgentOrderBoxCoroutine != null)
+                {
+                    StopCoroutine(activeAgentOrderBoxCoroutine);
+                }
+                activeAgentOrderBoxCoroutine = StartCoroutine(PrivMath.Vector2LerpRect(rect, new Vector2(rect.localPosition.x, (_yo+_yn)), 0.05f, 100, 1));
+            }
             if (moves[i] == null)
             {
                 for (int j = 0; j < moves.Length; j++)
@@ -845,7 +893,7 @@ public class BattleSystem : MonoBehaviour
         }
         if (state == battleStateMachine.Lose)
         {
-            baseMenuFlavorText.fullText = "You have lost. Regret your actions and try again";
+            baseMenuFlavorText.fullText = "You have lost.";
             yield return StartCoroutine(TextPrinterWait(0));
             //give gameover screen
             yield return new WaitForSeconds(3);
@@ -853,7 +901,7 @@ public class BattleSystem : MonoBehaviour
         }
         if (state == battleStateMachine.Flee)
         {
-            baseMenuFlavorText.fullText = "You have fleed. Regret your actions and try again";
+            baseMenuFlavorText.fullText = "You have fleed.";
             yield return StartCoroutine(TextPrinterWait(0));
             //give gameover screen
             yield return new WaitForSeconds(3);

@@ -7,6 +7,7 @@ using System.Xml;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using Mathfunctions;
 
 public class BattleAgent : MonoBehaviour, IComparable
 {

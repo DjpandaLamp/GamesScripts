@@ -61,7 +61,7 @@ public class TypeWriter : MonoBehaviour
         {
             if (Input.GetMouseButton(0) == true || Input.GetKey("z") == true)
             {
-                if (allowSkipText == true && hasSkipped == false)
+                if (allowSkipText == true && hasSkipped == false && i >= 2)
                 {
                     i = fullText.Length;
                 }

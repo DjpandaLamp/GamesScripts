@@ -9,7 +9,7 @@ using UnityEngine.UI;
 public class TypeWriter : MonoBehaviour
 {
     public TextMeshProUGUI textComp;
-    public AudioSource audio;
+    public AudioSource audioSource;
     public float delay;
     public Image image;
 
@@ -26,6 +26,7 @@ public class TypeWriter : MonoBehaviour
     {
         lastFrameFullText = fullText;
         textComp = GetComponent<TextMeshProUGUI>();
+        audioSource = GetComponent<AudioSource>();
         StartCoroutine(ShowText());
     }
 
@@ -72,7 +73,7 @@ public class TypeWriter : MonoBehaviour
                 hasSkipped = false;
             }
             currentText = fullText.Substring(0, i);
-            audio.Play();
+            audioSource.Play();
             if (i > 0)
             {
                 char[] chars = currentText.ToCharArray();
@@ -81,11 +82,11 @@ public class TypeWriter : MonoBehaviour
                     textComp.text = currentText;
                     if (chars[i-1] == char.Parse("."))
                     {
-                        yield return new WaitForSeconds(delay * 8f);
+                        yield return new WaitForSeconds(delay * 12f);
                     }
                     else if (chars[i - 1] == char.Parse(","))
                     {
-                        yield return new WaitForSeconds(delay * 4f);
+                        yield return new WaitForSeconds(delay * 6f);
                     }
                     else
                     {

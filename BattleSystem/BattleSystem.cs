@@ -78,7 +78,8 @@ public class BattleSystem : MonoBehaviour
     public int targetedAgentNumber;
 
     public BattleOverlayAnimationScript BattleOverlayAnimationScript;
-    
+
+    public bool turnEND = false;
 
     public SceneLoader sceneLoader;
 
@@ -665,17 +666,30 @@ public class BattleSystem : MonoBehaviour
         state = battleStateMachine.Text;
         int orderOffset = (startingAgentOrderSize - AgentOrder.ToArray().Length);
 
+        if (turnEND)
+        {
+            Debug.Log("EnemyEnemy Turn" + currentActiveAgentInt.ToString());
+            currentActiveAgent = EnemyArray[0];
+            currentActiveAgentInt = 0;
+            state = battleStateMachine.EnemyTurn;
+            StartCoroutine(EnemyTurn(0));
+            turnEND = false;
+            return;
+        }
+
+
         if (currentActiveAgentInt >= (AgentOrder.ToArray().Length-1))
         {
             StartCoroutine(ExecuteTurn());
             return;
         }
 
+
         for (int i = 0; i < PlayerCount; i++)
         {
-            if (currentActiveAgent == PlayerArray[i])
+            if (currentActiveAgent == PlayerArray[i] && currentActiveAgentInt >= EnemyCount)
             {
-                
+
                 if (PlayerCount > i + 1)
                 {
                     Debug.Log("PlayerPlayer Turn" + currentActiveAgentInt.ToString());
@@ -694,25 +708,18 @@ public class BattleSystem : MonoBehaviour
                     StartCoroutine(EnemyTurn(0));
                     return;
                 }
-                
+
             }
         }
+
 
         for (int i = 0; i <= EnemyArray.Length; i++)
         {
             if (i == EnemyArray.Length)
             {
-                int enemylength = EnemyArray.Length;
-                for (int j = 0; j < EnemyArray.Length; j++)
-                { 
-                    EnemyArray[j].GetComponent<BattleAgent>().agentHasGone = false;
-                    if (EnemyArray[j].activeSelf == false)
-                    {
-                        enemylength--;
-                    }
-                }
+
                 currentActiveAgent = PlayerArray[0];
-                currentActiveAgentInt = enemylength;
+                currentActiveAgentInt = EnemyCount;
                 state = battleStateMachine.PlayerTurn;
                 Debug.Log("EnemyPlayer Turn" + currentActiveAgentInt.ToString());
                 PlayerTurn();
@@ -776,8 +783,10 @@ public class BattleSystem : MonoBehaviour
 
     IEnumerator ExecuteTurn()
     {
+        StartCoroutine(BattleOverlayAnimationScript.Animation(3, 0));
         yield return StartCoroutine(BattleOverlayAnimationScript.Animation(0, 0));
         yield return StartCoroutine(BattleOverlayAnimationScript.Animation(1, 0));
+        
         RectTransform rect = AgentOrderBox.GetComponent<RectTransform>();
         int _yo = -362;
         int _yn = 0;
@@ -804,18 +813,19 @@ public class BattleSystem : MonoBehaviour
                 ChangeCurrentAgent();
                 yield return null;
             }
-            
+
+            if (moves[i] == null)
+            {
+                Debug.Log("Null Move");
+                continue;
+            }
 
             if (!moves[i].attackingAgent.GetComponent<BattleAgent>().isActiveAndEnabled)
             {
                 continue;
             }
 
-            if (moves[i] == null)
-            {
-                Debug.Log("Null Move");
-                continue; 
-            }
+
             if (moves[i].move == "Attack")
             {
                 battleImages[i].GetComponent<Image>().color = Color.red;
@@ -873,7 +883,16 @@ public class BattleSystem : MonoBehaviour
         {
             moves[i] = null;
             currentActiveAgentInt = 0;
+            
         }
+
+        currentActiveAgent = PlayerArray[PlayerCount - 1];
+        turnEND = true;
+
+        StartCoroutine(BattleOverlayAnimationScript.Animation(2, 0));
+        yield return StartCoroutine(BattleOverlayAnimationScript.Animation(0, 0));
+        yield return StartCoroutine(BattleOverlayAnimationScript.Animation(1, 0));
+
         CalculateSpeed();
         ChangeCurrentAgent(); 
         yield return null;

@@ -22,6 +22,9 @@ public class BattleAgent : MonoBehaviour, IComparable
     public Color agentBaseColor;
 
     public Slider agentHealthSlider;
+    public Slider agentHealthSliderPotental;
+    public Color agentHealthSliderPotentalColor;
+
     public Slider agentEnergySlider;
 
     public bool agentIdentity;
@@ -50,6 +53,7 @@ public class BattleAgent : MonoBehaviour, IComparable
     public UIParticle agentUIParticle;
     public ParticleSystem agentParticleSystem;
 
+    public bool noEN;
 
     public bool isDefending;
 
@@ -80,7 +84,11 @@ public class BattleAgent : MonoBehaviour, IComparable
 
         Slider[] sliderComponents = GetComponentsInChildren<Slider>();
         agentHealthSlider = sliderComponents[0];
-        agentEnergySlider = sliderComponents[1];
+        if (!noEN)
+        {
+            agentEnergySlider = sliderComponents[1];
+        }
+        
 
 
         Image[] imageComponents = GetComponentsInChildren<Image>();
@@ -122,10 +130,13 @@ public class BattleAgent : MonoBehaviour, IComparable
         agentHealthSlider.maxValue = agentHPMax;
         agentHealthSlider.value = agentHPCurrent;
         agentHealthSlider.minValue = 0;
+        if (!noEN)
+        {
+            agentEnergySlider.maxValue = agentENMax;
+            agentEnergySlider.value = agentENCurrent;
+            agentEnergySlider.minValue = 0;
+        }
 
-        agentEnergySlider.maxValue = agentENMax;
-        agentEnergySlider.value = agentENCurrent;
-        agentEnergySlider.minValue = 0;
 
         if (!data.agentPlayerCheck[agentId])
         {
@@ -179,13 +190,16 @@ public class BattleAgent : MonoBehaviour, IComparable
         {
             agentHealthSlider.value = agentHPCurrent;
         }
-
-        agentEnergySlider.maxValue = agentENMax;
-        agentEnergySlider.value = Mathf.Lerp(agentEnergySlider.value, agentENCurrent, Time.deltaTime);
-        if (agentEnergySlider.value-agentENCurrent < (agentENMax / 100) && agentEnergySlider.value - agentENCurrent > -(agentENMax/100))
+        if (!noEN)
         {
-            agentEnergySlider.value = agentENCurrent;
+            agentEnergySlider.maxValue = agentENMax;
+            agentEnergySlider.value = Mathf.Lerp(agentEnergySlider.value, agentENCurrent, Time.deltaTime);
+            if (agentEnergySlider.value - agentENCurrent < (agentENMax / 100) && agentEnergySlider.value - agentENCurrent > -(agentENMax / 100))
+            {
+                agentEnergySlider.value = agentENCurrent;
+            }
         }
+
         
         agentHeaderText.text = agentName + " - LV" + agentLV.ToString();
         if (HasText)

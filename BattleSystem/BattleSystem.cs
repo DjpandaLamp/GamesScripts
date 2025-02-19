@@ -86,6 +86,9 @@ public class BattleSystem : MonoBehaviour
     public string[] SkillsDescs;
 
 
+
+   
+
     // Start is called before the first frame update
     void Start()
     {
@@ -249,7 +252,7 @@ public class BattleSystem : MonoBehaviour
 
     IEnumerator EnemyTurn(int enemyIndex)
     {
-
+        yield return new WaitForSeconds(0.01f);
         EnemyArray[enemyIndex].GetComponent<BattleAgent>().agentHasGone = true;
         if (EnemyArray[enemyIndex].activeSelf == true)
         {
@@ -467,15 +470,7 @@ public class BattleSystem : MonoBehaviour
     IEnumerator BasicAttack(BattleAgent attackingAgent, bool attackDirection)
     {
         string agentName = attackingAgent.agentName;
-        Debug.Log("Attack");
-        if (attackDirection)
-        {
-            Debug.Log("PlayerAttack");
-        }
-        else
-        {
-            Debug.Log("EnemyAttack");
-        }
+
         //attackDirection = true means player is attacking
         //attackDirection = false means Enemy is attacking
 
@@ -662,19 +657,21 @@ public class BattleSystem : MonoBehaviour
 
     void ChangeCurrentAgent()
     {
-        StartCoroutine(AgentScale(currentActiveAgent,new Vector3(0.6f,0.6f,.6f)));
+        StartCoroutine(AgentScale(currentActiveAgent,new Vector3(0.9f,0.9f,.9f)));
         state = battleStateMachine.Text;
         int orderOffset = (startingAgentOrderSize - AgentOrder.ToArray().Length);
 
-        if (turnEND)
+        if (turnEND == true)
         {
-            Debug.Log("EnemyEnemy Turn" + currentActiveAgentInt.ToString());
+
+                
             currentActiveAgent = EnemyArray[0];
-            currentActiveAgentInt = 0;
-            state = battleStateMachine.EnemyTurn;
+                currentActiveAgentInt = 0;
+                state = battleStateMachine.EnemyTurn;
             StartCoroutine(EnemyTurn(0));
-            turnEND = false;
-            return;
+                turnEND = false;
+                return;
+            
         }
 
 
@@ -691,8 +688,7 @@ public class BattleSystem : MonoBehaviour
             {
 
                 if (PlayerCount > i + 1)
-                {
-                    Debug.Log("PlayerPlayer Turn" + currentActiveAgentInt.ToString());
+                {  
                     currentActiveAgent = PlayerArray[i + 1];
                     state = battleStateMachine.PlayerTurn;
                     currentActiveAgentInt = EnemyCount + i + 1;
@@ -701,9 +697,8 @@ public class BattleSystem : MonoBehaviour
                 }
                 else
                 {
-                    Debug.Log("PlayerEnemy Turn" + currentActiveAgentInt.ToString());
                     currentActiveAgent = EnemyArray[0];
-                    currentActiveAgentInt = 0 + orderOffset;
+                    currentActiveAgentInt = 0;
                     state = battleStateMachine.EnemyTurn;
                     StartCoroutine(EnemyTurn(0));
                     return;
@@ -717,11 +712,9 @@ public class BattleSystem : MonoBehaviour
         {
             if (i == EnemyArray.Length)
             {
-
                 currentActiveAgent = PlayerArray[0];
                 currentActiveAgentInt = EnemyCount;
                 state = battleStateMachine.PlayerTurn;
-                Debug.Log("EnemyPlayer Turn" + currentActiveAgentInt.ToString());
                 PlayerTurn();
                 return;
             }
@@ -734,7 +727,6 @@ public class BattleSystem : MonoBehaviour
             }
             else
             {
-                Debug.Log("EnemyEnemy Turn" + currentActiveAgentInt.ToString());
                 currentActiveAgent = EnemyArray[i];
                 currentActiveAgentInt = i;
                 state = battleStateMachine.EnemyTurn;
@@ -885,7 +877,10 @@ public class BattleSystem : MonoBehaviour
             currentActiveAgentInt = 0;
             
         }
-
+        for (int i = 0; i < BaseEnemyCount; i++)
+        {
+            EnemyArray[i].GetComponent<BattleAgent>().agentHasGone = false;
+        }
         currentActiveAgent = PlayerArray[PlayerCount - 1];
         turnEND = true;
 

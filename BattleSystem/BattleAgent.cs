@@ -22,8 +22,8 @@ public class BattleAgent : MonoBehaviour, IComparable
     public Color agentBaseColor;
 
     public Slider agentHealthSlider;
-    public Slider agentHealthSliderPotental;
-    public Color agentHealthSliderPotentalColor;
+    public Image agentHealthFillRect;
+    public Color agentHealthSliderBaseColor;
 
     public Slider agentEnergySlider;
 
@@ -88,8 +88,9 @@ public class BattleAgent : MonoBehaviour, IComparable
         {
             agentEnergySlider = sliderComponents[1];
         }
-        
 
+        agentHealthFillRect = agentHealthSlider.fillRect.GetComponent<Image>();
+        agentHealthSliderBaseColor = agentHealthFillRect.color;
 
         Image[] imageComponents = GetComponentsInChildren<Image>();
         agentImage = imageComponents[0];
@@ -108,6 +109,7 @@ public class BattleAgent : MonoBehaviour, IComparable
             HasText = false;
         }
 
+        
 
         agentImage = GetComponentInChildren<Image>();
         agentImage.sprite = data.agentSprite[agentId];

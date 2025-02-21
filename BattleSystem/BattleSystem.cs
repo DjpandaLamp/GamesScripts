@@ -443,7 +443,7 @@ public class BattleSystem : MonoBehaviour
 
         }
         
-        EnemyArray[playerCursorPos].GetComponent<BattleAgent>().agentBoxImage.color = ColorTarget();
+        EnemyArray[playerCursorPos].GetComponent<BattleAgent>().agentHealthFillRect.color = ColorTarget();
 
         if (Input.GetKeyDown("z") && EnemyArray[playerCursorPos].activeSelf == true)
         {
@@ -454,15 +454,15 @@ public class BattleSystem : MonoBehaviour
         {
             yield return null;
         }
-        EnemyArray[playerCursorPos].GetComponent<BattleAgent>().agentBoxImage.color = EnemyArray[playerCursorPos].GetComponent<BattleAgent>().agentBaseColor;
+        EnemyArray[playerCursorPos].GetComponent<BattleAgent>().agentHealthFillRect.color = EnemyArray[playerCursorPos].GetComponent<BattleAgent>().agentHealthSliderBaseColor;
         yield break;
     }
 
     Color ColorTarget()
     {
         targetColorBlend = Mathf.Clamp01( 0.6f+Mathf.Sin(Time.time) / 2);
-        Color baseColor = EnemyArray[playerCursorPos].GetComponent<BattleAgent>().agentBaseColor;
-        Color blend = new Color(1, 1, 0, 1);
+        Color baseColor = EnemyArray[playerCursorPos].GetComponent<BattleAgent>().agentHealthSliderBaseColor;
+        Color blend = new Color(1, 0, 1, 1);
         Color blendColor = (Color.Lerp(baseColor, blend, 0.5f+Mathf.PingPong(Time.time,0.5f)));
         return blendColor;
     }

@@ -46,6 +46,7 @@ public class BattleSystem : MonoBehaviour
     public GameObject visualCanvasElement;
 
     public List<GameObject> PlayerArray;
+    public List<GameObject> PlayerStartingArray; 
     public GameObject[] EnemyArray;
     public GameObject[] PlayerCurrentArray;
     public GameObject[] EnemyCurrentArray;
@@ -78,6 +79,7 @@ public class BattleSystem : MonoBehaviour
     public int targetedAgentNumber;
 
     public BattleOverlayAnimationScript BattleOverlayAnimationScript;
+    public PlayerDataModifiableScript modifiableScript;
 
     public bool turnEND = false;
 
@@ -92,6 +94,7 @@ public class BattleSystem : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        modifiableScript = GameObject.FindWithTag("Persistant").GetComponent<PlayerDataModifiableScript>();
         SkillsDescs = new string[20]; 
 
         
@@ -142,6 +145,7 @@ public class BattleSystem : MonoBehaviour
             battleAgent.agentCount = i;
             battleAgent.agentId = i+1;
             PlayerArray.Add(NewPlayer);
+            PlayerStartingArray.Add(NewPlayer);
            AgentOrder.Add(NewPlayer.GetComponent<BattleAgent>());
         }
     }
@@ -445,7 +449,7 @@ public class BattleSystem : MonoBehaviour
         
         EnemyArray[playerCursorPos].GetComponent<BattleAgent>().agentHealthFillRect.color = ColorTarget();
 
-        if (Input.GetKeyDown("z") && EnemyArray[playerCursorPos].activeSelf == true)
+        if ((Input.GetKeyDown("z") || Input.GetMouseButtonDown(0))&& EnemyArray[playerCursorPos].activeSelf == true)
         {
             targetedAgent = EnemyArray[playerCursorPos].GetComponent<BattleAgent>();
         }
@@ -478,7 +482,7 @@ public class BattleSystem : MonoBehaviour
 
         Debug.Log("AgentTargeted: " + targetedAgent.agentName);
 
-        int agentPreDamageHealth = targetedAgent.agentHPCurrent;
+        float agentPreDamageHealth = targetedAgent.agentHPCurrent;
 
         bool isDefeated = targetedAgent.TakeDamage(attackingAgent.agentATKFull);
 
@@ -587,7 +591,7 @@ public class BattleSystem : MonoBehaviour
     IEnumerator BasicHeal(BattleAgent attackingAgent)
     {
         state = battleStateMachine.Text;
-        int agentPreDamageHealth = targetedAgent.agentHPCurrent;
+        float agentPreDamageHealth = targetedAgent.agentHPCurrent;
         targetedAgent.ReceiveHeal(attackingAgent.agentEATKFull);
         if (agentPreDamageHealth - targetedAgent.agentHPCurrent == 0)
         {
@@ -902,8 +906,8 @@ public class BattleSystem : MonoBehaviour
             baseMenuFlavorText.fullText = "YOU WIN!!!!";
             yield return StartCoroutine(TextPrinterWait(0));
             //return to overworld
-            yield return new WaitForSeconds(3);
-            JSONSave.LoadFromJSON(1, 0);
+            yield return new WaitForSeconds(1);
+            yield return StartCoroutine(GrantLV());
         }
         if (state == battleStateMachine.Lose)
         {
@@ -921,6 +925,17 @@ public class BattleSystem : MonoBehaviour
             yield return new WaitForSeconds(3);
             JSONSave.LoadFromJSON(1, 0);
         }
+    }
+
+    IEnumerator GrantLV()
+    {
+        int enemyLVTotal = 0;
+        for (int i = 0; i < EnemyArray.Length; i++)
+        {
+            enemyLVTotal += EnemyArray[i].GetComponent<BattleAgent>().agentLV;
+        }
+        yield return new WaitForSeconds(0.5f);
+        JSONSave.LoadFromJSON(1, 0);
     }
         
 }

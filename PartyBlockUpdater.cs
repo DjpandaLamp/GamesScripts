@@ -25,10 +25,10 @@ public class PartyBlockUpdater : MonoBehaviour
     public Slider hpSlider;
     public Slider enSlider;
 
-    public int currentHP;
-    public int maxHP;
-    public int currentEN;
-    public int maxEN;
+    public float currentHP;
+    public float maxHP;
+    public float currentEN;
+    public float maxEN;
     public int ID;
 
     public float transparency = -0.5f;

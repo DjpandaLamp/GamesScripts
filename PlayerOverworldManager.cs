@@ -11,6 +11,7 @@ public class PlayerOverworldManager : MonoBehaviour
     public JSONSave JSONSave;
     public TextStartEnd textSE;
     public OverworldMenuManager overworldMenuManager;
+    public Camera Camera;
 
     public string currentAnimation;
 
@@ -156,7 +157,7 @@ public class PlayerOverworldManager : MonoBehaviour
             if (xVector == 0 && yVector == 0)
             {
 
-                animator.Play(currentAnimation, -1, 0.60f);
+                animator.Play(currentAnimation, -1, 0f);
                 animator.speed = 0f;
 
             }
@@ -173,12 +174,22 @@ public class PlayerOverworldManager : MonoBehaviour
         {
             if (textSE.isActiveAndEnabled == false && overworldMenuManager.isUp == false && overworldMenuManager.yPos < -440)
             {
-                JSONSave.SaveToJSON(1);
-                SceneManager.LoadScene(1);
+                StartCoroutine(EnemyBattle());
             }
 
         }
 
+    }
+    IEnumerator EnemyBattle()
+    {
+       
+        for (int i = 0; i < 50; i++)
+        {
+            Camera.orthographicSize = Mathf.Lerp(Camera.orthographicSize, 0.01f, 0.1f);
+            yield return new WaitForSeconds(0.01f);
+        }
+        JSONSave.SaveToJSON(1);
+        SceneManager.LoadScene(1);
     }
 
 }

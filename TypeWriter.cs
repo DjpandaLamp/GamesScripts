@@ -62,7 +62,7 @@ public class TypeWriter : MonoBehaviour
         {
             if (Input.GetMouseButton(0) == true || Input.GetKey("z") == true)
             {
-                if (allowSkipText == true && hasSkipped == false && i >= 2)
+                if (allowSkipText == true && hasSkipped == false && i >= 4)
                 {
                     i = fullText.Length;
                 }
@@ -82,11 +82,11 @@ public class TypeWriter : MonoBehaviour
                     textComp.text = currentText;
                     if (chars[i-1] == char.Parse("."))
                     {
-                        yield return new WaitForSeconds(delay * 12f);
+                        yield return new WaitForSeconds(delay * 8f);
                     }
                     else if (chars[i - 1] == char.Parse(","))
                     {
-                        yield return new WaitForSeconds(delay * 6f);
+                        yield return new WaitForSeconds(delay * 4f);
                     }
                     else
                     {
@@ -106,7 +106,15 @@ public class TypeWriter : MonoBehaviour
                 yield return new WaitForSeconds(delay);
             }
             
-        }  
+        }
+        if (hasSkipped == true)
+        {
+            yield return new WaitForSeconds(delay * 3);
+        }
+        else
+        {
+            yield return new WaitForSeconds(delay * 1.5f);
+        }
         isFinished= true;
     }
 }

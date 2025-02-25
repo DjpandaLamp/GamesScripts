@@ -8,6 +8,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using Mathfunctions;
+using System.Runtime.CompilerServices;
 
 public class BattleAgent : MonoBehaviour, IComparable
 {
@@ -33,22 +34,22 @@ public class BattleAgent : MonoBehaviour, IComparable
     public int agentCount;
     public string agentName;
     public int agentLV;
-    public int agentHPMax;
-    public int agentHPCurrent;
-    public int agentENMax;
-    public int agentENCurrent;
-    public int agentATKBase;
-    public int agentEATKBase;
-    public int agentDEFBase;
-    public int agentEDEFBase;
-    public int agentSPD;
+    public float agentHPMax;
+    public float agentHPCurrent;
+    public float agentENMax;
+    public float agentENCurrent;
+    public float agentATKBase;
+    public float agentEATKBase;
+    public float agentDEFBase;
+    public float agentEDEFBase;
+    public float agentSPD;
 
     public int currentBattleSpeedIndex;
 
-    public int agentATKFull;
-    public int agentEATKFull;
-    public int agentDEFFull;
-    public int agentEDEFFull;
+    public float agentATKFull;
+    public float agentEATKFull;
+    public float agentDEFFull;
+    public float agentEDEFFull;
 
     public UIParticle agentUIParticle;
     public ParticleSystem agentParticleSystem;
@@ -67,10 +68,10 @@ public class BattleAgent : MonoBehaviour, IComparable
         var b = obj as BattleAgent;
 
         if (a.agentSPD < b.agentSPD)
-            return -1;
+            return 1;
 
         if (a.agentSPD > b.agentSPD)
-            return 1;
+            return -1;
 
         return 0;
     }
@@ -211,7 +212,30 @@ public class BattleAgent : MonoBehaviour, IComparable
         }
     }
 
-    public bool TakeDamage(int attackValue)
+    private void OnMouseOver()
+    {
+        if (system.state == battleStateMachine.PlayerTargeting)
+        {
+            int pos = 0;
+            bool player = true;
+            for (int i = 0; i < system.EnemyArray.Length; i++)
+            {
+                if (GetComponent<BattleAgent>() == system.EnemyArray[i].GetComponent<BattleAgent>())
+                {
+                    pos = i;
+                    player = false;
+                    break;
+                }
+            }
+            if (player == false)
+            {
+                system.EnemyArray[system.playerCursorPos].GetComponent<BattleAgent>().agentHealthFillRect.color = system.EnemyArray[system.playerCursorPos].GetComponent<BattleAgent>().agentHealthSliderBaseColor;
+                system.playerCursorPos = pos;
+            }
+        }
+    }
+
+    public bool TakeDamage(float attackValue)
     {
         if (attackValue - agentDEFFull <= 0)
         {
@@ -233,7 +257,7 @@ public class BattleAgent : MonoBehaviour, IComparable
         return false;
     }
 
-    public void ReceiveHeal(int eAttackValue)
+    public void ReceiveHeal(float eAttackValue)
     {
         agentHPCurrent += Mathf.RoundToInt(eAttackValue/2.5f);
         if (agentHPCurrent > agentHPMax)

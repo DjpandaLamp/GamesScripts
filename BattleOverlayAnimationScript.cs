@@ -42,7 +42,7 @@ public class BattleOverlayAnimationScript : MonoBehaviour
             for (int i = 0; i < 100; i++) //fade in color
             {
                 overlayImage.color = Color.Lerp(overlayImage.color, new Color(0, 0, 0, 0f), 0.1f);
-                screenOverlayObject.transform.localScale = Vector2.Lerp(screenOverlayObject.transform.localScale, new Vector2(0.5f, 0.5f), 0.1f);
+                screenOverlayObject.transform.localScale = Vector2.Lerp(screenOverlayObject.transform.localScale, new Vector2(1f, 1f), 0.1f);
                 yield return new WaitForSeconds(0.01f);
             }
             overlayImage.enabled = false;

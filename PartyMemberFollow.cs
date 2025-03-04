@@ -102,7 +102,9 @@ public class PartyMemberFollow : MonoBehaviour
     void MovePlayer()
     {
         //playerRigidbody.AddForce(movement);
-        transform.position = movement + offsetPos;
+
+        transform.position = player.positionArray[0];
+        player.positionArray.Remove(player.positionArray[0]);
     }
 
     void SetAnimation()

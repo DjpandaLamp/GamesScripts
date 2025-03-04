@@ -22,6 +22,7 @@ public class PlayerOverworldManager : MonoBehaviour
     public float yVector;
     public Vector2 pastPos;
     public float moveSpd;
+    public List<Vector2> positionArray;
 
     public float disSinceLastEncounter;
 
@@ -120,6 +121,11 @@ public class PlayerOverworldManager : MonoBehaviour
 
         //playerRigidbody.AddForce(movement);
         playerRigidbody.velocity = movement;
+        if (movement != Vector2.zero)
+        {
+            positionArray.Add(transform.position);
+        }
+
     }
     void SetAnimation()
     {

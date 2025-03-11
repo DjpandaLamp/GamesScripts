@@ -22,69 +22,48 @@ public class PartyMemberFollow : MonoBehaviour
     public Vector2 playerPos;
     public Vector2 dir;
     public Vector2 offsetPos; //The Offset
+    public int spacing;
+
     // Start is called before the first frame update
     void Start()
     {
         player = GetComponentInParent<PlayerOverworldManager>();
         perst = GameObject.FindWithTag("Persistant");
         GlobalPersistant = perst.GetComponent<GlobalPersistantScript>();
+        if (spacing <= 0)
+        {
+            spacing = 1;
+        }
     }
 
     // Update is called once per frame
     void FixedUpdate()
     {
+        
         if (player.xVector != 0 || player.yVector != 0)
         {
             movement = player.transform.position;
             switch (player.dir)
             {
                 case 0:
-                    if (memberPos == 1)
-                    {
-                        offsetPos = new Vector2(.05f, .05f);
-                    }
-                    else if (memberPos == 2)
-                    {
-                        offsetPos = new Vector2(.05f, -.05f);
-                    }
                     movement += new Vector2(0.5f, 0);
                     break;
                 case 1:
-                    if (memberPos == 1)
-                    {
-                        offsetPos = new Vector2(-.05f, .05f);
-                    }
-                    else if (memberPos == 2)
-                    {
-                        offsetPos = new Vector2(-.05f, -.05f);
-                    }
+
                     movement += new Vector2(-0.5f, 0);
                     break;
                 case 2:
-                    if (memberPos == 1)
-                    {
-                        offsetPos = new Vector2(-.05f, .05f);
-                    }
-                    else if (memberPos == 2)
-                    {
-                        offsetPos = new Vector2(.05f, .05f);
-                    }
+
                     movement += new Vector2(0, 0.5f);
                     break;
                 case 3:
-                    if (memberPos == 1)
-                    {
-                        offsetPos = new Vector2(-.05f, -.05f);
-                    }
-                    else if (memberPos == 2)
-                    {
-                        offsetPos = new Vector2(.05f, -.05f);
-                    }
+
                     movement += new Vector2(0, -0.5f);
                     break;
             }
             dir = -Vector2.MoveTowards(transform.localPosition, transform.InverseTransformPoint(movement), 1);
-            movement = Vector2.Lerp(transform.position, movement, 0.07f);
+            
+
             MovePlayer();
         }
        else
@@ -92,19 +71,29 @@ public class PartyMemberFollow : MonoBehaviour
             dir = Vector2.zero;
             
         }
-       
+        
+        
+
         //dist = Vector2.Distance()
 
-        
+
         SetAnimation();
     }
 
     void MovePlayer()
     {
+        bool hasMoved = false;
         //playerRigidbody.AddForce(movement);
+        if (player.positionArray.ToArray().Length > spacing*memberIndex)
+        {
+            transform.position = player.positionArray[spacing * memberIndex - 1];
+            hasMoved = true;
+        }
+        if (memberIndex == 3 && hasMoved)
+        {
+            player.positionArray.Remove(player.positionArray[player.positionArray.ToArray().Length - 1]);
+        }
 
-        transform.position = player.positionArray[0];
-        player.positionArray.Remove(player.positionArray[0]);
     }
 
     void SetAnimation()

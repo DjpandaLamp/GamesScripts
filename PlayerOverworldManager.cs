@@ -123,7 +123,15 @@ public class PlayerOverworldManager : MonoBehaviour
         playerRigidbody.velocity = movement;
         if (movement != Vector2.zero)
         {
-            positionArray.Add(transform.position);
+            if (positionArray.ToArray().Length == 0)
+            {
+                positionArray.Insert(0, transform.position);
+            }
+            if ((Vector2)transform.position != positionArray[0])
+            {
+                positionArray.Insert(0, transform.position);
+            }
+            
         }
 
     }

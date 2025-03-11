@@ -11,6 +11,7 @@ public class WeatherController : MonoBehaviour
     public ParticleSystem ParticleSystemSnow;
     public int weather;
     public float weatherTimer;
+    public bool enableWeatherChange;
 
     private void Start()
     {
@@ -83,6 +84,18 @@ public class WeatherController : MonoBehaviour
                 worldColor = new Color32(100, 100, 100, 100);
                 SnowMain.startColor = new Color(1, 1, 1, 1);
                 break;
+            case 7: //Clear
+                ParticleSystemRain.gameObject.SetActive(false);
+                ParticleSystemSplash.gameObject.SetActive(false);
+                ParticleSystemSnow.gameObject.SetActive(false);
+                worldColor = new Color32(100, 100, 100, 10);
+                break;
+            case 8: //Overcast
+                ParticleSystemRain.gameObject.SetActive(false);
+                ParticleSystemSplash.gameObject.SetActive(false);
+                ParticleSystemSnow.gameObject.SetActive(false);
+                worldColor = new Color32(100, 100, 100, 100);
+                break;
 
         }
         sprite.color = worldColor;
@@ -91,7 +104,7 @@ public class WeatherController : MonoBehaviour
     private void FixedUpdate()
     {
         weatherTimer -= 1 * Time.deltaTime;
-        if (weatherTimer < 0)
+        if (weatherTimer < 0 & enableWeatherChange)
         {
             weather = Random.Range(0, 6);
             ChangeWeather();

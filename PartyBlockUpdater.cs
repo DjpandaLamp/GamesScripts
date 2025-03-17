@@ -25,10 +25,10 @@ public class PartyBlockUpdater : MonoBehaviour
     public Slider hpSlider;
     public Slider enSlider;
 
-    public float currentHP;
-    public float maxHP;
-    public float currentEN;
-    public float maxEN;
+    public double currentHP;
+    public double maxHP;
+    public double currentEN;
+    public double maxEN;
     public int ID;
 
     public float transparency = -0.5f;
@@ -58,12 +58,12 @@ public class PartyBlockUpdater : MonoBehaviour
 
         currentHP = data.healthPoints[ID];
         maxHP = data.maxHealthPoints[ID];
-        hpSlider.maxValue = maxHP;
-        hpSlider.value = currentHP;
+        hpSlider.maxValue = (float)maxHP;
+        hpSlider.value = (float)currentHP;
         currentEN = data.energyPoints[ID];
         maxEN = data.maxEnergyPoints[ID];
-        enSlider.maxValue = maxEN;
-        enSlider.value = currentEN;
+        enSlider.maxValue = (float)maxEN;
+        enSlider.value = (float)currentEN;
         if (isBig)
         {
             objName.text = data.partyname[ID] + " - LV " + data.levels[0].ToString();

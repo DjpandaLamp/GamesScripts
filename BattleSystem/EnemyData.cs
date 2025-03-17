@@ -13,15 +13,18 @@ public class EnemyData : MonoBehaviour
     public Sprite[] agentSprite; //Sprite of the Enemy
 
     public int[] agentLV; //EnemyLevel, used for scaling
-    public float[] agentHPMax; //Enemy Max HP
-    public float[] agentHPCurrent; //Enemy Current HP
-    public float[] agentENMax; //Enemy Max Energy
-    public float[] agentENCurrent; //Enemy current Energy
-    public float[] agentATK; //Enemy attack stat
-    public float[] agentEATK;
-    public float[] agentDEF; //Enemy defense stat
-    public float[] agentEDEF;
-    public float[] agentSPD; //Enemy speed stat
+    public double[] agentHPMax; //Enemy Max HP
+    public double[] agentHPCurrent; //Enemy Current HP
+    public double[] agentENMax; //Enemy Max Energy
+    public double[] agentENCurrent; //Enemy current Energy
+    public double[] agentATK; //Enemy attack stat
+    public double[] agentEATK;
+    public double[] agentDEF; //Enemy defense stat
+    public double[] agentEDEF;
+    public double[] agentSPD; //Enemy speed stat
+    public double[] agentCritRate;
+    public double[] agentCritDamage;
+
     public int[] agentEXP;
     
 
@@ -42,17 +45,19 @@ public class EnemyData : MonoBehaviour
 
         agentPlayerCheck = new bool[count];
         agentLV = new int[count];//EnemyLevel, used for scaling
-        agentHPMax = new float[count]; //Enemy Max HP
-        agentHPCurrent = new float[count]; //Enemy Current HP
-        agentENMax = new float[count]; //Enemy Max Energy
-        agentENCurrent = new float[count]; //Enemy current Energy
-        agentATK = new float[count]; //Enemy attack stat
-        agentEATK= new float[count];
-        agentDEF = new float[count];//Enemy defense stat
-        agentEDEF = new float[count];
-        agentSPD = new float[count];//Enemy speed stat
+        agentHPMax = new double[count]; //Enemy Max HP
+        agentHPCurrent = new double[count]; //Enemy Current HP
+        agentENMax = new double[count]; //Enemy Max Energy
+        agentENCurrent = new double[count]; //Enemy current Energy
+        agentATK = new double[count]; //Enemy attack stat
+        agentEATK= new double[count];
+        agentDEF = new double[count];//Enemy defense stat
+        agentEDEF = new double[count];
+        agentSPD = new double[count];//Enemy speed stat
+        agentCritRate = new double[count];//Enemy Critical Rating stat
+        agentCritDamage = new double[count];//Enemy Critical Damage stat
 
-        
+
 
 
 
@@ -71,6 +76,8 @@ public class EnemyData : MonoBehaviour
         agentDEF[0] = 75;
         agentEDEF[0] = 75;
         agentSPD[0] = 50;
+        agentCritDamage[0] = 1.5f;
+        agentCritRate[0] = 10;
         agentPlayerCheck[0] = false;
         #endregion
 
@@ -89,6 +96,8 @@ public class EnemyData : MonoBehaviour
         agentDEF[1] = modifiableScript.agentDEF[1];
         agentEDEF[1] = modifiableScript.agentEDEF[1];
         agentSPD[1] = modifiableScript.agentSPD[1];
+        agentCritDamage[1] = modifiableScript.agentCritDamage[1];
+        agentCritRate[1] = modifiableScript.agentCritRate[1];
         agentPlayerCheck[1] = true;
         #endregion
 
@@ -107,6 +116,8 @@ public class EnemyData : MonoBehaviour
         agentDEF[2] = modifiableScript.agentDEF[2];
         agentEDEF[2] = modifiableScript.agentEDEF[2];
         agentSPD[2] = modifiableScript.agentSPD[2];
+        agentCritDamage[2] = modifiableScript.agentCritDamage[2];
+        agentCritRate[2] = modifiableScript.agentCritRate[2];
         agentPlayerCheck[2] = true;
         #endregion
 
@@ -125,6 +136,8 @@ public class EnemyData : MonoBehaviour
         agentDEF[3] = modifiableScript.agentDEF[3];
         agentEDEF[3] = modifiableScript.agentEDEF[3];
         agentSPD[3] = modifiableScript.agentSPD[3];
+        agentCritDamage[3] = modifiableScript.agentCritDamage[3];
+        agentCritRate[3] = modifiableScript.agentCritRate[3];
         agentPlayerCheck[3] = true;
         #endregion
 

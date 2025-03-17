@@ -34,22 +34,24 @@ public class BattleAgent : MonoBehaviour, IComparable
     public int agentCount;
     public string agentName;
     public int agentLV;
-    public float agentHPMax;
-    public float agentHPCurrent;
-    public float agentENMax;
-    public float agentENCurrent;
-    public float agentATKBase;
-    public float agentEATKBase;
-    public float agentDEFBase;
-    public float agentEDEFBase;
-    public float agentSPD;
+    public double agentHPMax;
+    public double agentHPCurrent;
+    public double agentENMax;
+    public double agentENCurrent;
+    public double agentATKBase;
+    public double agentEATKBase;
+    public double agentDEFBase;
+    public double agentEDEFBase;
+    public double agentSPD;
+    public double agentCritRate;
+    public double agentCritDamage;
 
     public int currentBattleSpeedIndex;
 
-    public float agentATKFull;
-    public float agentEATKFull;
-    public float agentDEFFull;
-    public float agentEDEFFull;
+    public double agentATKFull;
+    public double agentEATKFull;
+    public double agentDEFFull;
+    public double agentEDEFFull;
 
     public UIParticle agentUIParticle;
     public ParticleSystem agentParticleSystem;
@@ -128,30 +130,33 @@ public class BattleAgent : MonoBehaviour, IComparable
         agentDEFBase= data.agentDEF[agentId];
         agentEDEFBase= data.agentEDEF[agentId];
         agentSPD= data.agentSPD[agentId];
+        agentCritDamage = data.agentCritDamage[agentId];
+        agentCritRate = data.agentCritRate[agentId];
 
 
-        agentHealthSlider.maxValue = agentHPMax;
-        agentHealthSlider.value = agentHPCurrent;
+
+        agentHealthSlider.maxValue = (float)agentHPMax;
+        agentHealthSlider.value = (float)agentHPCurrent;
         agentHealthSlider.minValue = 0;
         if (!noEN)
         {
-            agentEnergySlider.maxValue = agentENMax;
-            agentEnergySlider.value = agentENCurrent;
+            agentEnergySlider.maxValue = (float)agentENMax;
+            agentEnergySlider.value = (float)agentENCurrent;
             agentEnergySlider.minValue = 0;
         }
 
 
         if (!data.agentPlayerCheck[agentId])
         {
-            agentHPMax = (int)MathF.Round(agentHPMax*UnityEngine.Random.Range(0.9f,1.1f));
-            agentENMax = (int)MathF.Round(agentENMax * UnityEngine.Random.Range(0.9f, 1.1f));
+            agentHPMax = (int)Math.Round(agentHPMax*UnityEngine.Random.Range(0.9f,1.1f));
+            agentENMax = (int)Math.Round(agentENMax * UnityEngine.Random.Range(0.9f, 1.1f));
             agentHPCurrent = agentHPMax;
             agentENCurrent = agentENMax;
-            agentATKBase = (int)MathF.Round(agentATKBase * UnityEngine.Random.Range(0.9f, 1.1f));
-            agentEATKBase = (int)MathF.Round(agentEATKBase * UnityEngine.Random.Range(0.9f, 1.1f));
-            agentDEFBase = (int)MathF.Round(agentDEFBase * UnityEngine.Random.Range(0.9f, 1.1f));
-            agentEDEFBase = (int)MathF.Round(agentEDEFBase * UnityEngine.Random.Range(0.9f, 1.1f));
-            agentSPD = (int)MathF.Round(agentSPD * UnityEngine.Random.Range(0.9f, 1.1f));
+            agentATKBase = (int)Math.Round(agentATKBase * UnityEngine.Random.Range(0.9f, 1.1f));
+            agentEATKBase = (int)Math.Round(agentEATKBase * UnityEngine.Random.Range(0.9f, 1.1f));
+            agentDEFBase = (int)Math.Round(agentDEFBase * UnityEngine.Random.Range(0.9f, 1.1f));
+            agentEDEFBase = (int)Math.Round(agentEDEFBase * UnityEngine.Random.Range(0.9f, 1.1f));
+            agentSPD = (int)Math.Round(agentSPD * UnityEngine.Random.Range(0.9f, 1.1f));
             
         }
 
@@ -187,19 +192,19 @@ public class BattleAgent : MonoBehaviour, IComparable
 
     void UIUpdate()
     {
-        agentHealthSlider.maxValue = agentHPMax;
-        agentHealthSlider.value = Mathf.Lerp(agentHealthSlider.value, agentHPCurrent, Time.deltaTime);
+        agentHealthSlider.maxValue = (float)agentHPMax;
+        agentHealthSlider.value = Mathf.Lerp(agentHealthSlider.value, (float)agentHPCurrent, Time.deltaTime);
         if (agentHealthSlider.value - agentHPCurrent < (agentHPMax / 100) && agentHealthSlider.value - agentHPCurrent > -(agentHPMax / 100))
         {
-            agentHealthSlider.value = agentHPCurrent;
+            agentHealthSlider.value = (float)agentHPCurrent;
         }
         if (!noEN)
         {
-            agentEnergySlider.maxValue = agentENMax;
-            agentEnergySlider.value = Mathf.Lerp(agentEnergySlider.value, agentENCurrent, Time.deltaTime);
+            agentEnergySlider.maxValue = (float)agentENMax;
+            agentEnergySlider.value = Mathf.Lerp(agentEnergySlider.value, (float)agentENCurrent, Time.deltaTime);
             if (agentEnergySlider.value - agentENCurrent < (agentENMax / 100) && agentEnergySlider.value - agentENCurrent > -(agentENMax / 100))
             {
-                agentEnergySlider.value = agentENCurrent;
+                agentEnergySlider.value = (float)agentENCurrent;
             }
         }
 
@@ -235,31 +240,48 @@ public class BattleAgent : MonoBehaviour, IComparable
         }
     }
 
-    public bool TakeDamage(float attackValue)
+    public Vector2 TakeDamage(double attackValue, float RateValue, float DamageValue)
     {
-        if (attackValue - agentDEFFull <= 0)
+        int isDefeated = 0;
+        bool hasNotCrit = false;
+        int critLevel = 0;
+
+        while(!hasNotCrit)
         {
-            agentDEFFull = attackValue-1;
+            if ((RateValue/(critLevel+1)) > UnityEngine.Random.Range(0,101))
+            {
+                critLevel += 1;
+                continue;
+            }
+            else
+            {
+                hasNotCrit = true;
+            }
         }
-        agentHPCurrent -= attackValue - agentDEFFull;
+
+        if (Math.Round(attackValue * Mathf.Pow(DamageValue, critLevel)) - agentDEFFull <= 0)
+        {
+            agentDEFFull = Math.Floor((attackValue * (Mathf.Pow(DamageValue, critLevel)))) - 1;
+        }
+        agentHPCurrent -= Math.Round(attackValue*(Mathf.Pow(DamageValue,critLevel))) - agentDEFFull;
+
+        if (agentHPCurrent <= 0)
+        {
+            agentHPCurrent = 0;
+            isDefeated = 1;
+        }
 
         CFXR_ParticleText _ParticleText = agentParticleSystem.GetComponent<CFXR_ParticleText>();
-        _ParticleText.UpdateText((attackValue-agentDEFFull).ToString());
+        _ParticleText.UpdateText((Math.Round(attackValue * (Mathf.Pow(DamageValue, critLevel))) - agentDEFFull).ToString());
         agentParticleSystem.Play();
         agentUIParticle.RefreshParticles();
 
-
-        if(agentHPCurrent <= 0)
-        {
-            agentHPCurrent = 0;
-            return true;
-        }
-        return false;
+        return new Vector2(isDefeated, critLevel);
     }
 
-    public void ReceiveHeal(float eAttackValue)
+    public void ReceiveHeal(double eAttackValue)
     {
-        agentHPCurrent += Mathf.RoundToInt(eAttackValue/2.5f);
+        agentHPCurrent += Math.Round(eAttackValue/2.5f);
         if (agentHPCurrent > agentHPMax)
         {
             agentHPCurrent = agentHPMax;

@@ -13,14 +13,14 @@ public class GlobalPersistantScript : MonoBehaviour
     public int[] partyIDs;
 
     public string[] partyname;
-    public float[] healthPoints;
-    public float[] energyPoints;
-    public float[] attackPhysicalStat;
-    public float[] defencePhysicalStat;
-    public float[] attackEnergyStat;
-    public float[] defenceEnergyStat;
-    public float[] maxHealthPoints;
-    public float[] maxEnergyPoints;
+    public double[] healthPoints;
+    public double[] energyPoints;
+    public double[] attackPhysicalStat;
+    public double[] defencePhysicalStat;
+    public double[] attackEnergyStat;
+    public double[] defenceEnergyStat;
+    public double[] maxHealthPoints;
+    public double[] maxEnergyPoints;
     public int[] levels;
     
     public int[] agentLevelPoint;
@@ -51,14 +51,14 @@ public class GlobalPersistantScript : MonoBehaviour
     {
         
         partyname = new string[4];
-        healthPoints = new float[4];
-        energyPoints = new float[4];
-        attackPhysicalStat = new float[4];
-        defencePhysicalStat = new float[4];
-        attackEnergyStat = new float[4];
-        defenceEnergyStat = new float[4];
-        maxHealthPoints = new float[4];
-        maxEnergyPoints = new float[4];
+        healthPoints = new double[4];
+        energyPoints = new double[4];
+        attackPhysicalStat = new double[4];
+        defencePhysicalStat = new double[4];
+        attackEnergyStat = new double[4];
+        defenceEnergyStat = new double[4];
+        maxHealthPoints = new double[4];
+        maxEnergyPoints = new double[4];
         levels = new int[4];
 
         if (overworldMenu == null & GameObject.FindWithTag("MainUI") != null)

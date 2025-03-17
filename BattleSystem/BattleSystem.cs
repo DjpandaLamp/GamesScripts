@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
+using System;
 using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -482,9 +483,9 @@ public class BattleSystem : MonoBehaviour
 
         Debug.Log("AgentTargeted: " + targetedAgent.agentName);
 
-        float agentPreDamageHealth = targetedAgent.agentHPCurrent;
+        double agentPreDamageHealth = targetedAgent.agentHPCurrent;
 
-        bool isDefeated = targetedAgent.TakeDamage(attackingAgent.agentATKFull);
+        Vector2 isDefeated = targetedAgent.TakeDamage(attackingAgent.agentATKFull, (float)attackingAgent.agentCritRate, (float)attackingAgent.agentCritDamage);
 
         //Player Attack
         if (attackDirection == true)
@@ -493,7 +494,57 @@ public class BattleSystem : MonoBehaviour
             state = battleStateMachine.Text;
             baseMenuFlavorText.fullText = agentName + " attacks!";
             yield return StartCoroutine(TextPrinterWait(0));
-            if (isDefeated)
+            switch(isDefeated.y)
+            {
+                case 0:
+                    break;
+                case 1:
+                    baseMenuFlavorText.fullText = "The attack was Critical (x" + Math.Pow(attackingAgent.agentCritDamage,isDefeated.y).ToString() + ")";
+                    yield return StartCoroutine(TextPrinterWait(0));
+                    break;
+                case 2:
+                    baseMenuFlavorText.fullText = "The attack was Supercritical (x" + Math.Pow(attackingAgent.agentCritDamage,isDefeated.y).ToString() + ")";
+                    yield return StartCoroutine(TextPrinterWait(0));
+                    break;
+                case 3:
+                    baseMenuFlavorText.fullText = "The attack was Megacritical(x" + Math.Pow(attackingAgent.agentCritDamage,isDefeated.y).ToString() + ")";;
+                    yield return StartCoroutine(TextPrinterWait(0));
+                    break;
+                case 4:
+                    baseMenuFlavorText.fullText = "The attack was Ultracritical (x" + Math.Pow(attackingAgent.agentCritDamage,isDefeated.y).ToString() + ")";;
+                    yield return StartCoroutine(TextPrinterWait(0));
+                    break;
+                case 5:
+                    baseMenuFlavorText.fullText = "The attack was Gigacritical (x" + Math.Pow(attackingAgent.agentCritDamage,isDefeated.y).ToString() + ")";;
+                    yield return StartCoroutine(TextPrinterWait(0));
+                    break;
+                case 6:
+                    baseMenuFlavorText.fullText = "The attack was Hypercritical (x" + Math.Pow(attackingAgent.agentCritDamage, isDefeated.y).ToString() + ")";
+                    yield return StartCoroutine(TextPrinterWait(0));
+                    break;
+                case 7:
+                    baseMenuFlavorText.fullText = "The attack was Teracritical (x" + Math.Pow(attackingAgent.agentCritDamage, isDefeated.y).ToString() + ")";
+                    yield return StartCoroutine(TextPrinterWait(0));
+                    break;
+                case 8:
+                    baseMenuFlavorText.fullText = "The attack was a Demi-Critical (x" + Math.Pow(attackingAgent.agentCritDamage, isDefeated.y).ToString() + ")"; ;
+                    yield return StartCoroutine(TextPrinterWait(0));
+                    break;
+                case 9:
+                    baseMenuFlavorText.fullText = "The attack was a Demonic Critical (x" + Math.Pow(attackingAgent.agentCritDamage, isDefeated.y).ToString() + ")"; ;
+                    yield return StartCoroutine(TextPrinterWait(0));
+                    break;
+                case 10:
+                    baseMenuFlavorText.fullText = "The attack was a Divine Critical (x" + Math.Pow(attackingAgent.agentCritDamage, isDefeated.y).ToString() + ")"; ;
+                    yield return StartCoroutine(TextPrinterWait(0));
+                    break;
+                default:
+                    baseMenuFlavorText.fullText = "The attack was Beyond Critical (x" + Math.Pow(attackingAgent.agentCritDamage, isDefeated.y).ToString() + ") (Crit Level: " + isDefeated.y.ToString() + ")" ;
+                    yield return StartCoroutine(TextPrinterWait(0));
+                    break;
+            }
+
+            if (isDefeated.x == 1)
             {
                 
                 EnemyCount = BaseEnemyCount;
@@ -547,7 +598,7 @@ public class BattleSystem : MonoBehaviour
             state = battleStateMachine.Text;
             baseMenuFlavorText.fullText = agentName + " attacks!";
             yield return StartCoroutine(TextPrinterWait(0));
-            if (isDefeated)
+            if (isDefeated.x == 1)
             {
                 PlayerArray.Remove(PlayerArray[targetedAgentNumber]);
                 AgentOrder.Remove(PlayerArray[targetedAgentNumber].GetComponent<BattleAgent>());
@@ -591,7 +642,7 @@ public class BattleSystem : MonoBehaviour
     IEnumerator BasicHeal(BattleAgent attackingAgent)
     {
         state = battleStateMachine.Text;
-        float agentPreDamageHealth = targetedAgent.agentHPCurrent;
+        double agentPreDamageHealth = targetedAgent.agentHPCurrent;
         targetedAgent.ReceiveHeal(attackingAgent.agentEATKFull);
         if (agentPreDamageHealth - targetedAgent.agentHPCurrent == 0)
         {
@@ -600,7 +651,7 @@ public class BattleSystem : MonoBehaviour
         else
         {
             state = battleStateMachine.Text;
-            baseMenuFlavorText.fullText = targetedAgent.agentName.ToString() + " is healed " + Mathf.Abs(agentPreDamageHealth - targetedAgent.agentHPCurrent).ToString() + " Health!";
+            baseMenuFlavorText.fullText = targetedAgent.agentName.ToString() + " is healed " + Math.Abs(agentPreDamageHealth - targetedAgent.agentHPCurrent).ToString() + " Health!";
         }
         
         yield return StartCoroutine(TextPrinterWait(0));
@@ -691,6 +742,13 @@ public class BattleSystem : MonoBehaviour
             if (currentActiveAgent == PlayerArray[i] && currentActiveAgentInt >= EnemyCount)
             {
 
+                if (PlayerArray[i].activeSelf == false)
+                {
+                    //currentActiveAgent = EnemyArray[i];
+                    //currentActiveAgentInt = i + orderOffset;
+
+                    continue;
+                }
                 if (PlayerCount > i + 1)
                 {  
                     currentActiveAgent = PlayerArray[i + 1];

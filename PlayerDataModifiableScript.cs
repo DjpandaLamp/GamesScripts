@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 public class PlayerDataModifiableScript : MonoBehaviour
 {
@@ -59,15 +60,15 @@ public class PlayerDataModifiableScript : MonoBehaviour
         agentType[1] = 0;
 
         agentLV[1] = 1550;
-        agentHPMax[1] = 13 + (0.1f * agentLV[1]);
-        agentHPCurrent[1] = 13 + (0.1f * agentLV[1]);
-        agentENMax[1] = 20 + (0.1f * agentLV[1]);
-        agentENCurrent[1] = 20 + (0.1f * agentLV[1]);
-        agentATK[1] = 10 + (0.1f * agentLV[1]);
-        agentEATK[1] = 15 + (0.1f * agentLV[1]);
-        agentDEF[1] = 4 + (0.1f * agentLV[1]);
-        agentEDEF[1] = 2 + (0.1f * agentLV[1]);
-        agentSPD[1] = 5 + (0.1f * agentLV[1]);
+        agentHPMax[1] = Math.Round(13 + (0.1f * agentLV[1]),4);
+        agentHPCurrent[1] = Math.Round(13 + (0.1f * agentLV[1]), 4);
+        agentENMax[1] = Math.Round(20 + (0.1f * agentLV[1]),4);
+        agentENCurrent[1] = Math.Round(20 + (0.1f * agentLV[1]),4);
+        agentATK[1] = Math.Round(10 + (0.1f * agentLV[1]),4);
+        agentEATK[1] = Math.Round(15 + (0.1f * agentLV[1]),4);
+        agentDEF[1] = Math.Round(4 + (0.1f * agentLV[1]),4);
+        agentEDEF[1] = Math.Round(2 + (0.1f * agentLV[1]),4);
+        agentSPD[1] = Math.Round(5 + (0.1f * agentLV[1]),4);
         agentCritDamage[0] = 1.5f;
         agentCritRate[0] = 10;
         agentPlayerCheck[1] = true;
@@ -79,15 +80,15 @@ public class PlayerDataModifiableScript : MonoBehaviour
         agentType[2] = 0;
 
         agentLV[2] = 1410;
-        agentHPMax[2] = 12 + (0.1f * agentLV[2]);
-        agentHPCurrent[2] = 12 + (0.1f * agentLV[2]);
-        agentENMax[2] = 30 + (0.1f * agentLV[2]); ;
-        agentENCurrent[2] = 30 + (0.1f * agentLV[2]); ;
-        agentATK[2] = 8 + (0.1f * agentLV[2]); ;
-        agentEATK[2] = 16 + (0.1f * agentLV[2]); ;
-        agentDEF[2] = 5 + (0.1f * agentLV[2]);
-        agentEDEF[2] = 7 + (0.1f * agentLV[2]);
-        agentSPD[2] = 6 + (0.1f * agentLV[2]);
+        agentHPMax[2] = Math.Round(12 + (0.1f * agentLV[2]), 4);
+        agentHPCurrent[2] = Math.Round(12 + (0.1f * agentLV[2]), 4);
+        agentENMax[2] = Math.Round(30 + (0.1f * agentLV[2]), 4);
+        agentENCurrent[2] = Math.Round(30 + (0.1f * agentLV[2]), 4);
+        agentATK[2] = Math.Round(8 + (0.1f * agentLV[2]), 4);
+        agentEATK[2] = Math.Round(16 + (0.1f * agentLV[2]), 4);
+        agentDEF[2] = Math.Round(5 + (0.1f * agentLV[2]), 4);
+        agentEDEF[2] = Math.Round(7 + (0.1f * agentLV[2]), 4);
+        agentSPD[2] = Math.Round(6 + (0.1f * agentLV[2]), 4);
         agentCritDamage[0] = 1.5f;
         agentCritRate[0] = 10;
         agentPlayerCheck[2] = true;
@@ -99,15 +100,15 @@ public class PlayerDataModifiableScript : MonoBehaviour
         agentType[3] = 0;
 
         agentLV[3] = 2179;
-        agentHPMax[3] = 20 + (0.1f * agentLV[3]);
-        agentHPCurrent[3] = 20 + (0.1f * agentLV[3]);
-        agentENMax[3] = 30 + (0.1f * agentLV[3]);
-        agentENCurrent[3] = 30 + (0.1f * agentLV[3]);
-        agentATK[3] = 13 + (0.1f * agentLV[3]);
-        agentEATK[3] = 7 + (0.1f * agentLV[3]);
-        agentDEF[3] = 9 + (0.1f * agentLV[3]);
-        agentEDEF[3] = 90 + (0.1f * agentLV[3]);
-        agentSPD[3] = 3 + (0.1f * agentLV[3]);
+        agentHPMax[3] = Math.Round(20 + (0.1f * agentLV[3]), 4);
+        agentHPCurrent[3] = Math.Round(20 + (0.1f * agentLV[3]), 4);
+        agentENMax[3] = Math.Round(30 + (0.1f * agentLV[3]), 4);
+        agentENCurrent[3] = Math.Round(30 + (0.1f * agentLV[3]), 4);
+        agentATK[3] = Math.Round(13 + (0.1f * agentLV[3]), 4);
+        agentEATK[3] = Math.Round(7 + (0.1f * agentLV[3]), 4);
+        agentDEF[3] = Math.Round(9 + (0.1f * agentLV[3]), 4);
+        agentEDEF[3] = Math.Round(90 + (0.1f * agentLV[3]), 4);
+        agentSPD[3] = Math.Round(3 + (0.1f * agentLV[3]), 4);
         agentCritDamage[0] = 1.5f;
         agentCritRate[0] = 10;
         agentPlayerCheck[3] = true;

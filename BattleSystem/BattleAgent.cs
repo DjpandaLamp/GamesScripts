@@ -248,7 +248,7 @@ public class BattleAgent : MonoBehaviour, IComparable
 
         while(!hasNotCrit)
         {
-            if ((RateValue/(critLevel+1)) > UnityEngine.Random.Range(0,101))
+            if ((RateValue/Math.Pow(2,critLevel+1)) > UnityEngine.Random.Range(0,101))
             {
                 critLevel += 1;
                 continue;

@@ -600,10 +600,12 @@ public class BattleSystem : MonoBehaviour
             yield return StartCoroutine(TextPrinterWait(0));
             if (isDefeated.x == 1)
             {
-                PlayerArray.Remove(PlayerArray[targetedAgentNumber]);
                 AgentOrder.Remove(PlayerArray[targetedAgentNumber].GetComponent<BattleAgent>());
+                
                 removedAgentCount += 1;
+                PlayerArray.RemoveAt(targetedAgentNumber);
                 PlayerCount = PlayerArray.ToArray().Length;
+                Debug.Log(PlayerCount);
                     if (PlayerArray.ToArray().Length == 0)
                         {
 
@@ -774,7 +776,8 @@ public class BattleSystem : MonoBehaviour
         {
             if (i == EnemyArray.Length)
             {
-                currentActiveAgent = PlayerArray[0];
+                int index = 0;
+                currentActiveAgent = PlayerArray[index];
                 currentActiveAgentInt = EnemyCount;
                 state = battleStateMachine.PlayerTurn;
                 PlayerTurn();
@@ -892,6 +895,7 @@ public class BattleSystem : MonoBehaviour
                     {
                         int ran = UnityEngine.Random.Range(0, BaseEnemyCount);
                         targetedAgent = EnemyArray[ran].GetComponent<BattleAgent>();
+
                     }
                     if (currentActiveAgent.GetComponent<BattleAgent>().agentIdentity == false)
                     {
@@ -899,7 +903,15 @@ public class BattleSystem : MonoBehaviour
                         targetedAgent = PlayerArray[ran].GetComponent<BattleAgent>();
                     }
                 }
-                yield return StartCoroutine(BasicAttack(currentActiveAgent.GetComponent<BattleAgent>(), true));
+                if (currentActiveAgent.GetComponent<BattleAgent>().agentIdentity == true)
+                {
+                    yield return StartCoroutine(BasicAttack(currentActiveAgent.GetComponent<BattleAgent>(), true));
+                }
+                if (currentActiveAgent.GetComponent<BattleAgent>().agentIdentity == false)
+                {
+                    yield return StartCoroutine(BasicAttack(currentActiveAgent.GetComponent<BattleAgent>(), false));
+                }
+                
                 battleImages[i].GetComponent<Image>().color = Color.white;
                 continue;
             }

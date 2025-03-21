@@ -77,7 +77,7 @@ public class EnemyData : MonoBehaviour
         agentEDEF[0] = 75;
         agentSPD[0] = 50;
         agentCritDamage[0] = 1.5f;
-        agentCritRate[0] = 10;
+        agentCritRate[0] = 200000;
         agentPlayerCheck[0] = false;
         #endregion
 

@@ -58,4 +58,10 @@ public class ConfigScript : MonoBehaviour
         }
 
     }
+
+    public void Update()
+    {
+        Application.targetFrameRate = fpsSetting;
+    }
+
 }

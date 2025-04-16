@@ -32,5 +32,11 @@ public class DoNotDestroyOnLoad : MonoBehaviour
         }
         yield return null;
     }
-
+    /*private void FixedUpdate()
+    {
+        if (GetComponent<Canvas>() != null && tag == "MainUI" && GetComponent<Canvas>().worldCamera == null)
+        {
+            GetComponent<Canvas>().worldCamera = GameObject.Find("PlayerObject").GetComponentInChildren<Camera>();
+        }
+    }*/
 }

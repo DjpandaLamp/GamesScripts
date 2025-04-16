@@ -12,10 +12,15 @@ public class PlayerOverworldManager : MonoBehaviour
     public TextStartEnd textSE;
     public OverworldMenuManager overworldMenuManager;
     public Camera Camera;
+    public WarningControler warning;
+    public GlobalPersistantScript persistantScript;
+
+    public GameObject[] enemyArray;
 
     public string currentAnimation;
 
     public bool canMove;
+    public bool isChased;
 
     public int dir = 0;
     public float xVector;
@@ -29,11 +34,13 @@ public class PlayerOverworldManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+        persistantScript = GameObject.Find("PersistantObject").GetComponent<GlobalPersistantScript>();
+        warning = GameObject.FindObjectOfType<WarningControler>(true);
         textSE = GameObject.FindObjectOfType<TextStartEnd>(true);
         overworldMenuManager = GameObject.FindObjectOfType<OverworldMenuManager>(true);
         animator = GetComponent<Animator>();
         JSONSave = GameObject.Find("PersistantObject").GetComponent<JSONSave>();
+        enemyArray = GameObject.FindGameObjectsWithTag("Enemy");
     }
 
     // Update is called once per frame
@@ -77,6 +84,14 @@ public class PlayerOverworldManager : MonoBehaviour
         }
 
         SetAnimation();
+        isChased = false;
+        foreach (GameObject enemy in enemyArray)
+        {
+            if (enemy.GetComponent<EnemyOverworldManager>().isChasing)
+            {
+                isChased = true;
+            }
+        }
 
     }
 
@@ -196,12 +211,9 @@ public class PlayerOverworldManager : MonoBehaviour
     }
     IEnumerator EnemyBattle()
     {
-       
-        for (int i = 0; i < 50; i++)
-        {
-            Camera.orthographicSize = Mathf.Lerp(Camera.orthographicSize, 0.01f, 0.1f);
-            yield return new WaitForSeconds(0.01f);
-        }
+        persistantScript.isPaused = true;
+        warning.isClosed = true;
+        yield return new WaitUntil(() => warning.animationStep >= 25);
         JSONSave.SaveToJSON(1);
         SceneManager.LoadScene(1);
     }

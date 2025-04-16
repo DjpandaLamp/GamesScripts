@@ -6,29 +6,71 @@ public class WarningControler : MonoBehaviour
 {
     public GameObject barTop;
     public GameObject barBottom;
-    public GameObject barLeft;
-    public GameObject barRight;
     public GameObject steelTop;
     public GameObject steelBottom;
-    public GameObject steelRight;
-    public GameObject steelLeft;
+    public PlayerOverworldManager player;
 
     public bool isClosed;
     public bool abortClose;
+    public int animationStep;
 
-    private void Update()
+    private void Start()
     {
-        if (isClosed)
-        {
-            barTop.GetComponent<RectTransform>().localPosition = new Vector2(0, 12.5f);
-            barBottom.GetComponent<RectTransform>().localPosition = new Vector2(0, -12.5f);
-            //barLeft.GetComponent<RectTransform>().localPosition = new Vector2(0, 0);
-            //barRight.GetComponent<RectTransform>().localPosition = new Vector2(0, 0);
-            steelTop.GetComponent<RectTransform>().localPosition = new Vector2(0, 140);
-            steelBottom.GetComponent<RectTransform>().localPosition = new Vector2(0, -140);
-           // steelRight.GetComponent<RectTransform>().localPosition = new Vector2(0, 0);
-        }
+        player = GameObject.Find("PlayerObject").GetComponent<PlayerOverworldManager>();
     }
 
+    private void FixedUpdate()
+    {
+        if (player == null)
+        {
+            player = GameObject.Find("PlayerObject").GetComponent<PlayerOverworldManager>();
+        }
+        else
+        {
+            if (player.isChased)
+            {
+                if (isClosed)
+                {
+                    if (animationStep < 25)
+                    {
+                        animationStep++;
+                    }
+                }
+                else
+                {
+                    if (animationStep > 0)
+                    {
+                        animationStep--;
+                    }
+                    else if (animationStep < 0)
+                    {
+                        animationStep++;
+                    }
+                }
+                barTop.GetComponent<RectTransform>().localPosition = new Vector2(0, Mathf.Clamp((180 - Mathf.Pow(1.23f, animationStep)), 0, 180) - Mathf.Clamp((animationStep) * 2, -20, 0));
+                barBottom.GetComponent<RectTransform>().localPosition = new Vector2(0, Mathf.Clamp(-180 + (Mathf.Pow(1.23f, animationStep)), -180, 0) + Mathf.Clamp((animationStep) * 2, -20, 0));
+                steelTop.GetComponent<RectTransform>().localPosition = new Vector2(0, Mathf.Clamp(300 - (Mathf.Pow(1.23f, animationStep)), 140, 300) - Mathf.Clamp((animationStep) * 2, -20, 0));
+                steelBottom.GetComponent<RectTransform>().localPosition = new Vector2(0, Mathf.Clamp(-300 + (Mathf.Pow(1.23f, animationStep)), -300, -140) + Mathf.Clamp((animationStep) * 2, -20, 0));
+            }
+            else
+            {
+                {
+                    if (animationStep > -10)
+                    {
+                        animationStep--;
+                    }
 
+                }
+                barTop.GetComponent<RectTransform>().localPosition = new Vector2(0, Mathf.Clamp((180 - Mathf.Pow(1.23f, animationStep)), 0, 180) - Mathf.Clamp((animationStep) * 2, -20, 0));
+                barBottom.GetComponent<RectTransform>().localPosition = new Vector2(0, Mathf.Clamp(-180 + (Mathf.Pow(1.23f, animationStep)), -180, 0) + Mathf.Clamp((animationStep) * 2, -20, 0));
+                steelTop.GetComponent<RectTransform>().localPosition = new Vector2(0, Mathf.Clamp(300 - (Mathf.Pow(1.23f, animationStep)), 140, 300) - Mathf.Clamp((animationStep) * 2, -20, 0));
+                steelBottom.GetComponent<RectTransform>().localPosition = new Vector2(0, Mathf.Clamp(-300 + (Mathf.Pow(1.23f, animationStep)), -300, -140) + Mathf.Clamp((animationStep) * 2, -20, 0));
+            }
+
+
+
+        }
+    }
+        
 }
+

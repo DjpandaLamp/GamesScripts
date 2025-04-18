@@ -8,11 +8,13 @@ public class WarningControler : MonoBehaviour
     public GameObject barBottom;
     public GameObject steelTop;
     public GameObject steelBottom;
+    public ParticleSystem ParticleSystem;
     public PlayerOverworldManager player;
 
     public bool isClosed;
     public bool abortClose;
     public int animationStep;
+    
 
     private void Start()
     {
@@ -35,6 +37,10 @@ public class WarningControler : MonoBehaviour
                     {
                         animationStep++;
                     }
+                    if (animationStep == 24)
+                    {
+                        ParticleSystem.Play();
+                    }
                 }
                 else
                 {
@@ -47,8 +53,8 @@ public class WarningControler : MonoBehaviour
                         animationStep++;
                     }
                 }
-                barTop.GetComponent<RectTransform>().localPosition = new Vector2(0, Mathf.Clamp((180 - Mathf.Pow(1.23f, animationStep)), 0, 180) - Mathf.Clamp((animationStep) * 2, -20, 0));
-                barBottom.GetComponent<RectTransform>().localPosition = new Vector2(0, Mathf.Clamp(-180 + (Mathf.Pow(1.23f, animationStep)), -180, 0) + Mathf.Clamp((animationStep) * 2, -20, 0));
+                barTop.GetComponent<RectTransform>().localPosition = new Vector2(0, Mathf.Clamp((180 - Mathf.Pow(1.23f, animationStep)), 12, 180) - Mathf.Clamp((animationStep) * 2, -20, 0));
+                barBottom.GetComponent<RectTransform>().localPosition = new Vector2(0, Mathf.Clamp(-180 + (Mathf.Pow(1.23f, animationStep)), -180, -12) + Mathf.Clamp((animationStep) * 2, -20, 0));
                 steelTop.GetComponent<RectTransform>().localPosition = new Vector2(0, Mathf.Clamp(300 - (Mathf.Pow(1.23f, animationStep)), 140, 300) - Mathf.Clamp((animationStep) * 2, -20, 0));
                 steelBottom.GetComponent<RectTransform>().localPosition = new Vector2(0, Mathf.Clamp(-300 + (Mathf.Pow(1.23f, animationStep)), -300, -140) + Mathf.Clamp((animationStep) * 2, -20, 0));
             }
@@ -61,14 +67,11 @@ public class WarningControler : MonoBehaviour
                     }
 
                 }
-                barTop.GetComponent<RectTransform>().localPosition = new Vector2(0, Mathf.Clamp((180 - Mathf.Pow(1.23f, animationStep)), 0, 180) - Mathf.Clamp((animationStep) * 2, -20, 0));
-                barBottom.GetComponent<RectTransform>().localPosition = new Vector2(0, Mathf.Clamp(-180 + (Mathf.Pow(1.23f, animationStep)), -180, 0) + Mathf.Clamp((animationStep) * 2, -20, 0));
+                barTop.GetComponent<RectTransform>().localPosition = new Vector2(0, Mathf.Clamp((180 - Mathf.Pow(1.23f, animationStep)), 12, 180) - Mathf.Clamp((animationStep) * 2, -20, 0));
+                barBottom.GetComponent<RectTransform>().localPosition = new Vector2(0, Mathf.Clamp(-180 + (Mathf.Pow(1.23f, animationStep)), -180, -12) + Mathf.Clamp((animationStep) * 2, -20, 0));
                 steelTop.GetComponent<RectTransform>().localPosition = new Vector2(0, Mathf.Clamp(300 - (Mathf.Pow(1.23f, animationStep)), 140, 300) - Mathf.Clamp((animationStep) * 2, -20, 0));
                 steelBottom.GetComponent<RectTransform>().localPosition = new Vector2(0, Mathf.Clamp(-300 + (Mathf.Pow(1.23f, animationStep)), -300, -140) + Mathf.Clamp((animationStep) * 2, -20, 0));
             }
-
-
-
         }
     }
         

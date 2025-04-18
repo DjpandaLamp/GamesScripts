@@ -83,7 +83,7 @@ public class PartyBlockUpdater : MonoBehaviour
 
             if (!isBig)
             {
-                if (player.xVector == 0 && player.yVector == 0)
+                if (player.xVector == 0 && player.yVector == 0 && !player.isChased)
                 {
 
                     if (transparency >= 0.99f)

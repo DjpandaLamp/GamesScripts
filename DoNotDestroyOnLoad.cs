@@ -17,26 +17,21 @@ public class DoNotDestroyOnLoad : MonoBehaviour
         if (GameObject.FindGameObjectsWithTag("Persistant").Length == 1 && transform.tag == "Persistant")
         {
             DontDestroyOnLoad(transform.gameObject);
+            gameObject.name = "PersistantObject_DDOL";
         }
         else if (transform.tag == "Persistant")
         {
             GameObject.Destroy(transform.gameObject);
         }
-        if (GameObject.FindGameObjectsWithTag("MainUI").Length == 1 && transform.tag == "MainUI")
+        /*if (GameObject.FindGameObjectsWithTag("MainUI").Length == 1 && transform.tag == "MainUI")
         {
             DontDestroyOnLoad(transform.gameObject);
+            //gameObject.GetComponent<Canvas>().worldCamera = GameObject.FindWithTag("MainCamera").GetComponent<Camera>();
         }
         else if (transform.tag == "MainUI")
         {
             GameObject.Destroy(transform.gameObject);
-        }
+        }*/
         yield return null;
     }
-    /*private void FixedUpdate()
-    {
-        if (GetComponent<Canvas>() != null && tag == "MainUI" && GetComponent<Canvas>().worldCamera == null)
-        {
-            GetComponent<Canvas>().worldCamera = GameObject.Find("PlayerObject").GetComponentInChildren<Camera>();
-        }
-    }*/
 }

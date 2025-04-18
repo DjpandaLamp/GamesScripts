@@ -33,8 +33,7 @@ public class JSONSave : MonoBehaviour
     }
 
     private void Start()
-    {
-        PlayerOverworldManager = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerOverworldManager>();
+    { 
 
 
     }
@@ -72,6 +71,12 @@ public class JSONSave : MonoBehaviour
 
     private void Update()
     {
+        if (PlayerOverworldManager == null)
+        {
+            PlayerOverworldManager = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerOverworldManager>();
+        }
+
+
         GetInput();
         if (menuManager != null)
         {
@@ -173,7 +178,7 @@ public class JSONSave : MonoBehaviour
         {
             string filePath = persistantPath + "/SaveData" + num.ToString() + ".json";
             string SaveData = System.IO.File.ReadAllText(filePath);
-            AutoSave = JsonUtility.FromJson<AutoSave>(SaveData);
+            Save = JsonUtility.FromJson<Save>(SaveData);
 
             LoadSave(0);
             menuManager.isUp = false;
@@ -215,13 +220,13 @@ public class JSONSave : MonoBehaviour
         {
             
             SceneManager.LoadSceneAsync(Save.playerCurrentScene);
-            StartCoroutine(SceneValueGrabber());
+            StartCoroutine(SceneValueGrabber(type));
             persistantScript.globalTimeElapsed = Save.timeElapsed;
         }
         if (type == 1)
         {
             SceneManager.LoadSceneAsync(AutoSave.playerCurrentScene);
-            StartCoroutine(SceneValueGrabber());
+            StartCoroutine(SceneValueGrabber(type));
             
         }
         if (type == 2)
@@ -230,7 +235,7 @@ public class JSONSave : MonoBehaviour
         }
     }
 
-    IEnumerator SceneValueGrabber()
+    IEnumerator SceneValueGrabber(int type)
     {
         
         yield return new WaitForSeconds(0.05f);
@@ -241,12 +246,23 @@ public class JSONSave : MonoBehaviour
           
             menuManager = GameObject.Find("BaseMenuBlock").GetComponent<OverworldMenuManager>();
           
-            
-            PlayerOverworldManager = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerOverworldManager>();
+            while(PlayerOverworldManager == null)
+            {
+                PlayerOverworldManager = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerOverworldManager>();
+            }
+           
             persistantScript = GetComponent<GlobalPersistantScript>();
             configScript = GetComponent<ConfigScript>();
             loadObjects = new GameObject[new DirectoryInfo(persistantPath).GetFiles().Length - 1];
-            PlayerOverworldManager.transform.position = new Vector3(AutoSave.playerTransform.x, AutoSave.playerTransform.y);
+            if (type == 1)
+            {
+                PlayerOverworldManager.transform.position = new Vector3(AutoSave.playerTransform.x, AutoSave.playerTransform.y);
+            }
+            if (type == 0)
+            {
+                PlayerOverworldManager.transform.position = new Vector3(Save.playerTransform.x, Save.playerTransform.y);
+            }
+
             //menuManager.mainCamera = GameObject.FindWithTag("MainCamera").GetComponent<Camera>();
             //canvas.worldCamera = menuManager.mainCamera;
         }

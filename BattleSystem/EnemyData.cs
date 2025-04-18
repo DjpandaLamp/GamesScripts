@@ -32,16 +32,11 @@ public class EnemyData : MonoBehaviour
     public int[] agentLevelPoint;
 
 
-    private void Awake()
+    private void OnEnable()
     {
-
-        modifiableScript = GameObject.FindWithTag("Persistant").GetComponent<PlayerDataModifiableScript>();
-        
-        
-
         agentName = new string[count]; //Name of Enemy
         agentType = new int[count]; //Basic or Boss Enemy
-                                 //  agentSprite = new Sprite[count]; //Sprite of the Enemy
+                                    //  agentSprite = new Sprite[count]; //Sprite of the Enemy
 
         agentPlayerCheck = new bool[count];
         agentLV = new int[count];//EnemyLevel, used for scaling
@@ -50,15 +45,17 @@ public class EnemyData : MonoBehaviour
         agentENMax = new double[count]; //Enemy Max Energy
         agentENCurrent = new double[count]; //Enemy current Energy
         agentATK = new double[count]; //Enemy attack stat
-        agentEATK= new double[count];
+        agentEATK = new double[count];
         agentDEF = new double[count];//Enemy defense stat
         agentEDEF = new double[count];
         agentSPD = new double[count];//Enemy speed stat
         agentCritRate = new double[count];//Enemy Critical Rating stat
         agentCritDamage = new double[count];//Enemy Critical Damage stat
 
-
-
+        while (modifiableScript == null)
+        {
+            modifiableScript = GameObject.FindObjectOfType<PlayerDataModifiableScript>();
+        }
 
 
         //Testy - 0
@@ -140,13 +137,6 @@ public class EnemyData : MonoBehaviour
         agentCritRate[3] = modifiableScript.agentCritRate[3];
         agentPlayerCheck[3] = true;
         #endregion
-
-
-
-
-
-
-
 
     }
 

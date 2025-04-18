@@ -46,51 +46,59 @@ public class PlayerOverworldManager : MonoBehaviour
     // Update is called once per frame
     void FixedUpdate()
     {
-        if (textSE.isActiveAndEnabled == false && overworldMenuManager.isUp == false && overworldMenuManager.yPos < -440)
-
+        if (textSE == null)
         {
-            GetInput(false, 0, 0);
-            if (xVector != 0 || yVector != 0)
-            {
-
-                if (yVector == 0)
-                {
-                    if (xVector < 0)
-                    {
-                        dir = 0; //left
-                    }
-                    if (xVector > 0)
-                    {
-                        dir = 1; //right
-                    }
-                }
-
-
-                if (yVector < 0)
-                {
-                    dir = 2; //up
-                }
-                if (yVector > 0)
-                {
-                    dir = 3; //down
-                }
-            }
-            MovePlayer();
+            textSE = GameObject.FindObjectOfType<TextStartEnd>(true);
         }
         else
         {
-            GetInput(true, 0, 0);
-            MovePlayer();
-        }
+            if (textSE.isActiveAndEnabled == false && overworldMenuManager.isUp == false && overworldMenuManager.yPos < -440)
 
-        SetAnimation();
-        isChased = false;
-        foreach (GameObject enemy in enemyArray)
-        {
-            if (enemy.GetComponent<EnemyOverworldManager>().isChasing)
             {
-                isChased = true;
+                GetInput(false, 0, 0);
+                if (xVector != 0 || yVector != 0)
+                {
+
+                    if (yVector == 0)
+                    {
+                        if (xVector < 0)
+                        {
+                            dir = 0; //left
+                        }
+                        if (xVector > 0)
+                        {
+                            dir = 1; //right
+                        }
+                    }
+
+
+                    if (yVector < 0)
+                    {
+                        dir = 2; //up
+                    }
+                    if (yVector > 0)
+                    {
+                        dir = 3; //down
+                    }
+                }
+                MovePlayer();
             }
+            else
+            {
+                GetInput(true, 0, 0);
+                MovePlayer();
+            }
+
+            SetAnimation();
+            isChased = false;
+            foreach (GameObject enemy in enemyArray)
+            {
+                if (enemy.GetComponent<EnemyOverworldManager>().isChasing)
+                {
+                    isChased = true;
+                }
+            }
+
         }
 
     }
@@ -214,6 +222,7 @@ public class PlayerOverworldManager : MonoBehaviour
         persistantScript.isPaused = true;
         warning.isClosed = true;
         yield return new WaitUntil(() => warning.animationStep >= 25);
+        yield return new WaitForSeconds(2.5f);
         JSONSave.SaveToJSON(1);
         SceneManager.LoadScene(1);
     }

@@ -42,12 +42,14 @@ public class TextFull : MonoBehaviour
         strings[2] = "No Name Assigned";
         strings[3] = "A Mythical skill, Known to all as 'Starsearing Flame'. Wield with Care.";
         strings[4] = "0";
+
         strings[19] = "0";
         strings[20] = "Use the Arrow Keys to Move. Use the Left Mouse Button or Z to close this text box. Press Esc to open the Menu";
         faces[20] = 0.1f;
         strings[21] = "To quit the application, Press the Quit Button. To Save Press New Save on the Save Menu";
         faces[21] = 0.2f;
         strings[22] = "0";
+
         strings[23] = "Long, Long ago, in a land before time had been concieved, the goddess was born.";
         strings[24] = "Held down by the chains of chaos, she sat silently on the surface of the primordial sea, waiting.";
         strings[25] = "One day, she saw something, a small white dot sitting on the brink of chaos and order.";
@@ -56,9 +58,12 @@ public class TextFull : MonoBehaviour
         strings[28] = "Moving forward, she picked up the fragile orb, observing it for a moment before cradling it.";
         strings[29] = "It was then our world was born.";
         strings[30] = "0";
-        strings[499] = "Is it me, or...";
-        strings[500] = "...do those walls look walkable?";
-        strings[501] = "0";
+
+        strings[499] = "Sweet Sweet atmosphere.";
+        faces[499] = 0.1f;
+        strings[500] = "...";
+        strings[501] = "...Lets start killing some monsters!";
+        strings[502] = "0";
 
     }
 }

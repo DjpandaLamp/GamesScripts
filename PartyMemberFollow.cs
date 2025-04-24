@@ -9,6 +9,7 @@ public class PartyMemberFollow : MonoBehaviour
     public Rigidbody2D rigidbody2d;
     public GameObject perst;
     public GlobalPersistantScript GlobalPersistant;
+    public ParticleSystem particleSystem;
 
     public float yVector;
     public float xVector;
@@ -20,14 +21,15 @@ public class PartyMemberFollow : MonoBehaviour
 
     public Vector2 movement;
     public Vector2 playerPos;
-    public Vector2 dir;
+    public int dir;
     public Vector2 offsetPos; //The Offset
     public int spacing;
 
     // Start is called before the first frame update
     void Start()
     {
-        player = GetComponentInParent<PlayerOverworldManager>();
+        player = GameObject.FindWithTag("Player").GetComponent<PlayerOverworldManager>();
+        particleSystem = GetComponentInChildren<ParticleSystem>();
         perst = GameObject.FindWithTag("Persistant");
         GlobalPersistant = perst.GetComponent<GlobalPersistantScript>();
         if (spacing <= 0)
@@ -43,7 +45,7 @@ public class PartyMemberFollow : MonoBehaviour
         if (player.xVector != 0 || player.yVector != 0)
         {
             movement = player.transform.position;
-            switch (player.dir)
+           /* switch (player.dir)
             {
                 case 0:
                     movement += new Vector2(0.5f, 0);
@@ -60,23 +62,12 @@ public class PartyMemberFollow : MonoBehaviour
 
                     movement += new Vector2(0, -0.5f);
                     break;
-            }
-            dir = -Vector2.MoveTowards(transform.localPosition, transform.InverseTransformPoint(movement), 1);
+            } */
+          
             
 
             MovePlayer();
         }
-       else
-        {
-            dir = Vector2.zero;
-            
-        }
-        
-        
-
-        //dist = Vector2.Distance()
-
-
         SetAnimation();
     }
 
@@ -87,48 +78,42 @@ public class PartyMemberFollow : MonoBehaviour
         if (player.positionArray.ToArray().Length > spacing*memberIndex)
         {
             transform.position = player.positionArray[spacing * memberIndex - 1];
+            dir = player.directionArray[spacing * memberIndex - 1];
             hasMoved = true;
         }
         if (memberIndex == 3 && hasMoved)
         {
             player.positionArray.Remove(player.positionArray[player.positionArray.ToArray().Length - 1]);
+            player.directionArray.Remove(player.directionArray[player.directionArray.ToArray().Length - 1]);
         }
 
     }
 
     void SetAnimation()
     {
-        xVector = dir.x;
-        yVector = dir.y;
         if (animator != null)
         {
-           
 
-            if (yVector < 0.4f && yVector > -0.4f)
-            {
-                yVector = 0;
-            }
-            if (yVector == 0)
-            {
-                if (xVector < 0)
+
+            if (dir == 0)
                 {
                     animator.SetTrigger("Left");
                     currentAnimation = "AnimationDevWalkLeft";
                 }
-                if (xVector > 0)
+                if (dir == 1)
                 {
                     animator.SetTrigger("Right");
                     currentAnimation = "AnimationDevWalkRight";
-                }
             }
 
 
-            if (yVector < 0)
+
+            if (dir == 2)
             {
                 animator.SetTrigger("Down");
                 currentAnimation = "AnimationDevWalkDown";
             }
-            if (yVector > 0)
+            if (dir == 3)
             {
                 animator.SetTrigger("Up");
                 currentAnimation = "AnimationDevWalkUp";
@@ -137,16 +122,24 @@ public class PartyMemberFollow : MonoBehaviour
 
 
 
-            if (xVector == 0 && yVector == 0)
+            if (player.playerRigidbody.velocity.x == 0 && player.playerRigidbody.velocity.y == 0)
             {
 
                 animator.Play(currentAnimation, -1, 0.60f);
                 animator.speed = 0f;
-
+                if (particleSystem.isPlaying)
+                {
+                    particleSystem.Stop();
+                }
             }
             else
             {
                 animator.speed = 1f;
+                if (particleSystem.isStopped)
+                {
+                    particleSystem.Play();
+                }
+
             }
         }
 

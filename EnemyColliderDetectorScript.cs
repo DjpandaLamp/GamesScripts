@@ -24,7 +24,7 @@ public class EnemyColliderDetectorScript : MonoBehaviour
     private void OnTriggerEnter2D(Collider2D collision)
     {
         Debug.Log("enter");
-        if (collision.gameObject.tag == "Player" && gameObject.name == "PlayerDetectorInner")
+        if (collision.gameObject.tag == "Player" && gameObject.name == "PlayerDetectorOuter")
         {
             if (!enemy.isChasing)
             {

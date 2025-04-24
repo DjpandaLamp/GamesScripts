@@ -12,6 +12,7 @@ public class WeatherController : MonoBehaviour
     public int weather;
     public float weatherTimer;
     public bool enableWeatherChange;
+    public bool isInside;
 
     private void Start()
     {
@@ -24,6 +25,11 @@ public class WeatherController : MonoBehaviour
         var rainEmis = ParticleSystemRain.emission;
         var splashMain = ParticleSystemSplash.emission;
         var splashEmis = ParticleSystemSplash.emission;
+
+        if (isInside)
+        {
+            weather = 7;
+        }
 
         switch (weather)
         {
@@ -88,7 +94,7 @@ public class WeatherController : MonoBehaviour
                 ParticleSystemRain.gameObject.SetActive(false);
                 ParticleSystemSplash.gameObject.SetActive(false);
                 ParticleSystemSnow.gameObject.SetActive(false);
-                worldColor = new Color32(100, 100, 100, 10);
+                worldColor = new Color32(100, 100, 100, 0);
                 break;
             case 8: //Overcast
                 ParticleSystemRain.gameObject.SetActive(false);

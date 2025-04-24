@@ -14,8 +14,10 @@ public class PlayerOverworldManager : MonoBehaviour
     public Camera Camera;
     public WarningControler warning;
     public GlobalPersistantScript persistantScript;
+    public ParticleSystem particleSystem;
 
     public GameObject[] enemyArray;
+    public GameObject[] teleporterArray;
 
     public string currentAnimation;
 
@@ -28,6 +30,7 @@ public class PlayerOverworldManager : MonoBehaviour
     public Vector2 pastPos;
     public float moveSpd;
     public List<Vector2> positionArray;
+    public List<int> directionArray;
 
     public float disSinceLastEncounter;
 
@@ -41,18 +44,28 @@ public class PlayerOverworldManager : MonoBehaviour
         animator = GetComponent<Animator>();
         JSONSave = GameObject.Find("PersistantObject").GetComponent<JSONSave>();
         enemyArray = GameObject.FindGameObjectsWithTag("Enemy");
+        teleporterArray = GameObject.FindGameObjectsWithTag("Teleporter");
     }
 
     // Update is called once per frame
     void FixedUpdate()
     {
+        canMove = true;
+        foreach (GameObject Teleporter in teleporterArray)
+        {
+            if (Teleporter.GetComponent<PlayerTeleporter>().coroutine != null)
+            {
+                canMove = false;
+            }
+        }
+
         if (textSE == null)
         {
             textSE = GameObject.FindObjectOfType<TextStartEnd>(true);
         }
         else
         {
-            if (textSE.isActiveAndEnabled == false && overworldMenuManager.isUp == false && overworldMenuManager.yPos < -440)
+            if (textSE.isActiveAndEnabled == false && overworldMenuManager.isUp == false && overworldMenuManager.yPos < -440 && canMove == true && warning.isClosed == false)
 
             {
                 GetInput(false, 0, 0);
@@ -141,18 +154,18 @@ public class PlayerOverworldManager : MonoBehaviour
         Vector2 movement = new Vector2(xVector, yVector);
         movement *= Time.deltaTime * moveSpd;
         disSinceLastEncounter += Vector2.Distance(Vector2.zero, movement) / 15;
-
-        //playerRigidbody.AddForce(movement);
         playerRigidbody.velocity = movement;
         if (movement != Vector2.zero)
         {
             if (positionArray.ToArray().Length == 0)
             {
                 positionArray.Insert(0, transform.position);
+                directionArray.Insert(0, dir);
             }
             if ((Vector2)transform.position != positionArray[0])
             {
                 positionArray.Insert(0, transform.position);
+                directionArray.Insert(0, dir);
             }
             
         }
@@ -164,12 +177,12 @@ public class PlayerOverworldManager : MonoBehaviour
         {
             if (yVector == 0)
             {
-                if (xVector < 0)
+                if (dir == 0)
                 {
                     animator.SetTrigger("Left");
                     currentAnimation = "AnimationDevWalkLeft";
                 }
-                if (xVector > 0)
+                if (dir == 1)
                 {
                     animator.SetTrigger("Right");
                     currentAnimation = "AnimationDevWalkRight";
@@ -177,12 +190,12 @@ public class PlayerOverworldManager : MonoBehaviour
             }
 
 
-            if (yVector < 0)
+            if (dir == 2)
             {
                 animator.SetTrigger("Down");
                 currentAnimation = "AnimationDevWalkDown";
             }
-            if (yVector > 0)
+            if (dir == 3)
             {
                 animator.SetTrigger("Up");
                 currentAnimation = "AnimationDevWalkUp";
@@ -193,17 +206,23 @@ public class PlayerOverworldManager : MonoBehaviour
 
             if (xVector == 0 && yVector == 0)
             {
-
                 animator.Play(currentAnimation, -1, 0f);
-                animator.speed = 0f;
-
+                if (particleSystem.isPlaying)
+                {
+                    particleSystem.Stop();
+                }
             }
             else
             {
                 animator.speed = 1f;
+                if (particleSystem.isStopped)
+                {
+                    particleSystem.Clear();
+                    particleSystem.Play();
+                }
+
             }
         }
-
     }
     private void OnCollisionEnter2D(Collision2D collision)
     {
@@ -220,7 +239,10 @@ public class PlayerOverworldManager : MonoBehaviour
     IEnumerator EnemyBattle()
     {
         persistantScript.isPaused = true;
+        
         warning.isClosed = true;
+        playerRigidbody.constraints = RigidbodyConstraints2D.FreezePositionX;
+        playerRigidbody.constraints = RigidbodyConstraints2D.FreezePositionY;
         yield return new WaitUntil(() => warning.animationStep >= 25);
         yield return new WaitForSeconds(2.5f);
         JSONSave.SaveToJSON(1);

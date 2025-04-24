@@ -71,7 +71,7 @@ public class JSONSave : MonoBehaviour
 
     private void Update()
     {
-        if (PlayerOverworldManager == null)
+        while(PlayerOverworldManager == null)
         {
             PlayerOverworldManager = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerOverworldManager>();
         }

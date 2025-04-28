@@ -68,13 +68,13 @@ public class EnemyData : MonoBehaviour
         agentHPCurrent[0] = 100;
         agentENMax[0] = 100;
         agentENCurrent[0] = 100;
-        agentATK[0] = 100;
+        agentATK[0] = 200;
         agentEATK[0] = 100;
         agentDEF[0] = 75;
         agentEDEF[0] = 75;
         agentSPD[0] = 50;
         agentCritDamage[0] = 1.5f;
-        agentCritRate[0] = 200000;
+        agentCritRate[0] = 20;
         agentPlayerCheck[0] = false;
         #endregion
 

@@ -38,7 +38,7 @@ public class BattleOverlayAnimationScript : MonoBehaviour
         }
         if (type == 1) //Move to corner
         {
-            StartCoroutine(PrivMath.Vector2LerpRect(rect, new Vector2(-500, -275), 0.1f, 100, 1));
+            StartCoroutine(PrivMath.Vector2LerpRect(rect, new Vector2(-250, 275), 0.1f, 100, 1));
             for (int i = 0; i < 100; i++) //fade in color
             {
                 overlayImage.color = Color.Lerp(overlayImage.color, new Color(0, 0, 0, 0f), 0.1f);

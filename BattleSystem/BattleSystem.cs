@@ -6,6 +6,7 @@ using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.TextCore.Text;
+using UnityEditor;
 using UnityEngine.UI;
 using Mathfunctions;
 
@@ -43,6 +44,7 @@ public class BattleSystem : MonoBehaviour
     public battleStateMachine state;
     public GameObject PlayerPrefab;
     public GameObject EnemyPrefab;
+    public AudioSource audioSource;
 
     public GameObject visualCanvasElement;
 
@@ -306,6 +308,9 @@ public class BattleSystem : MonoBehaviour
 
     public IEnumerator AttackButtonPlayer()
     {
+        AudioClip clip = (AudioClip)AssetDatabase.LoadAssetAtPath("Assets/Sound/SFX/MenuValidInput2.wav", typeof(AudioClip));
+        audioSource.clip = clip;
+        audioSource.Play();
         Debug.Log("AttackButtonPressed");
         if (state != battleStateMachine.PlayerTurn && state != battleStateMachine.PlayerTargeting)
         {
@@ -322,6 +327,7 @@ public class BattleSystem : MonoBehaviour
                     isBackPressed = false;
                     state = battleStateMachine.PlayerTurn;
                     PlayerTurn();
+                    audioSource.Play();
                     yield break;
                 }
 
@@ -339,17 +345,25 @@ public class BattleSystem : MonoBehaviour
 
     public void OnFleeButton()
     {
+
+
+
         if (state != battleStateMachine.PlayerTurn)
         {
             return;
         }
+        AudioClip clip = (AudioClip)AssetDatabase.LoadAssetAtPath("Assets/Sound/SFX/MenuValidInput2.wav", typeof(AudioClip));
+        audioSource.clip = clip;
+        audioSource.Play();
         state = battleStateMachine.Flee;
         StartCoroutine(EndBattle());
     }
 
     public void OnSkillButton()
     {
-        
+        AudioClip clip = (AudioClip)AssetDatabase.LoadAssetAtPath("Assets/Sound/SFX/MenuValidInput2.wav", typeof(AudioClip));
+        audioSource.clip = clip;
+        audioSource.Play();
         state = battleStateMachine.PlayerSkill;
     }
 

@@ -7,6 +7,7 @@ using System.Xml;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEditor;
 using Mathfunctions;
 using System.Runtime.CompilerServices;
 
@@ -55,6 +56,7 @@ public class BattleAgent : MonoBehaviour, IComparable
 
     public UIParticle agentUIParticle;
     public ParticleSystem agentParticleSystem;
+    public AudioSource audioSource;
 
     public bool noEN;
 
@@ -84,6 +86,7 @@ public class BattleAgent : MonoBehaviour, IComparable
 
         system = GameObject.Find("BattleSystem").GetComponent<BattleSystem>();
         data = GameObject.Find("BattleSystem").GetComponent<EnemyData>();
+        audioSource = GetComponent<AudioSource>();
 
         Slider[] sliderComponents = GetComponentsInChildren<Slider>();
         agentHealthSlider = sliderComponents[0];
@@ -96,9 +99,9 @@ public class BattleAgent : MonoBehaviour, IComparable
         agentHealthSliderBaseColor = agentHealthFillRect.color;
 
         Image[] imageComponents = GetComponentsInChildren<Image>();
-        agentImage = imageComponents[0];
-        agentBoxImage = imageComponents[1];
-        agentBaseColor = imageComponents[1].color;
+        agentImage = imageComponents[1];
+        agentBoxImage = imageComponents[0];
+        agentBaseColor = imageComponents[0].color; 
 
         TextMeshProUGUI[] textMeshes = GetComponentsInChildren<TextMeshProUGUI>();
         agentHeaderText = textMeshes[0];
@@ -112,9 +115,14 @@ public class BattleAgent : MonoBehaviour, IComparable
             HasText = false;
         }
 
-        
-
-        agentImage = GetComponentInChildren<Image>();
+        if (agentId != 0)
+        {
+            agentImage = GetComponentsInChildren<Image>()[1];
+        }
+        else
+        {
+            agentImage = GetComponentsInChildren<Image>()[0];
+        }
         agentImage.sprite = data.agentSprite[agentId];
          
         //Grabs Unit Data according to its ID from database
@@ -265,8 +273,16 @@ public class BattleAgent : MonoBehaviour, IComparable
         }
         agentHPCurrent -= Math.Round(attackValue*(Mathf.Pow(DamageValue,critLevel))) - agentDEFFull;
 
+        if (agentHPMax*0.5f < Math.Round(attackValue * (Mathf.Pow(DamageValue, critLevel))) - agentDEFFull)
+        {
+            AudioClip clip = (AudioClip)AssetDatabase.LoadAssetAtPath("Assets/Sound/SFX/BattleHeavyHit.wav", typeof(AudioClip));
+            audioSource.clip = clip;
+        }
+
         if (agentHPCurrent <= 0)
         {
+            AudioClip clip = (AudioClip)AssetDatabase.LoadAssetAtPath("Assets/Sound/SFX/EnemyDefeated.wav", typeof(AudioClip));
+            audioSource.clip = clip;
             agentHPCurrent = 0;
             isDefeated = 1;
         }
@@ -274,6 +290,7 @@ public class BattleAgent : MonoBehaviour, IComparable
         CFXR_ParticleText _ParticleText = agentParticleSystem.GetComponent<CFXR_ParticleText>();
         _ParticleText.UpdateText((Math.Round(attackValue * (Mathf.Pow(DamageValue, critLevel))) - agentDEFFull).ToString());
         agentParticleSystem.Play();
+        audioSource.Play();
         agentUIParticle.RefreshParticles();
 
         return new Vector2(isDefeated, critLevel);

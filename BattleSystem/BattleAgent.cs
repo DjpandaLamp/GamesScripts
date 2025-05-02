@@ -15,6 +15,7 @@ public class BattleAgent : MonoBehaviour, IComparable
 {
     public BattleSystem system;
     public EnemyData data;
+    public ShakeTransformS shake;
 
     public TextMeshProUGUI agentHeaderText;
     public TextMeshProUGUI agentHealthText;
@@ -87,6 +88,7 @@ public class BattleAgent : MonoBehaviour, IComparable
         system = GameObject.Find("BattleSystem").GetComponent<BattleSystem>();
         data = GameObject.Find("BattleSystem").GetComponent<EnemyData>();
         audioSource = GetComponent<AudioSource>();
+        shake = GetComponent<ShakeTransformS>();
 
         Slider[] sliderComponents = GetComponentsInChildren<Slider>();
         agentHealthSlider = sliderComponents[0];
@@ -292,6 +294,7 @@ public class BattleAgent : MonoBehaviour, IComparable
         agentParticleSystem.Play();
         audioSource.Play();
         agentUIParticle.RefreshParticles();
+        shake.Begin();
 
         return new Vector2(isDefeated, critLevel);
     }

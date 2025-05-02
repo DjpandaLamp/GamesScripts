@@ -843,11 +843,11 @@ public class BattleSystem : MonoBehaviour
     IEnumerator AgentScale(GameObject agent, Vector3 desiredScale)
     {
         
-        while (Mathf.Abs(agent.transform.localScale.x - desiredScale.x) > 0.01f)
+       /* while (Mathf.Abs(agent.transform.localScale.x - desiredScale.x) > 0.01f)
         {
             yield return new WaitForFixedUpdate();
             agent.transform.localScale = Vector3.Lerp(agent.transform.localScale, desiredScale, 5f * Time.deltaTime);
-        }
+        }*/
         yield return null;
 
     }

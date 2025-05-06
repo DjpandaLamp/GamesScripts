@@ -26,8 +26,6 @@ public class PlayerDataModifiableScript : MonoBehaviour
     public double[] agentCritDamage;
     public double[] agentEXP;
 
-
-
     public bool[] agentPlayerCheck;
     public int[] agentLevelPoint;
 

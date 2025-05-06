@@ -250,13 +250,13 @@ public class BattleAgent : MonoBehaviour, IComparable
         }
     }
 
-    public Vector2 TakeDamage(double attackValue, float RateValue, float DamageValue)
+    public Vector2 TakeDamage(double attackValue, float RateValue, float DamageValue, int damageType)
     {
         int isDefeated = 0;
         bool hasNotCrit = false;
         int critLevel = 0;
 
-        while(!hasNotCrit)
+        while(!hasNotCrit) //Critcal Loop
         {
             if ((RateValue/Math.Pow(2,critLevel+1)) > UnityEngine.Random.Range(0,101))
             {
@@ -269,28 +269,104 @@ public class BattleAgent : MonoBehaviour, IComparable
             }
         }
 
-        if (Math.Round(attackValue * Mathf.Pow(DamageValue, critLevel)) - agentDEFFull <= 0)
+        if (Math.Round(attackValue * Mathf.Pow(DamageValue, critLevel)) - agentDEFFull <= 0) // If final damage is below 1, set defense to attack-1
         {
-            agentDEFFull = Math.Floor((attackValue * (Mathf.Pow(DamageValue, critLevel)))) - 1;
+            double tempAgentDEFFull = Math.Floor((attackValue * (Mathf.Pow(DamageValue, critLevel)))) - 1;
+            agentHPCurrent -= Math.Round(attackValue * (Mathf.Pow(DamageValue, critLevel))) - tempAgentDEFFull;
         }
-        agentHPCurrent -= Math.Round(attackValue*(Mathf.Pow(DamageValue,critLevel))) - agentDEFFull;
-
-        if (agentHPMax*0.5f < Math.Round(attackValue * (Mathf.Pow(DamageValue, critLevel))) - agentDEFFull)
+        else //Regular Damage Formula
         {
-            AudioClip clip = (AudioClip)AssetDatabase.LoadAssetAtPath("Assets/Sound/SFX/BattleHeavyHit.wav", typeof(AudioClip));
+            agentHPCurrent -= Math.Round(attackValue * (Mathf.Pow(DamageValue, critLevel))) - agentDEFFull;
+        }
+        
+        AudioClip clip = (AudioClip)AssetDatabase.LoadAssetAtPath("Assets/Sound/SFX/BattleHeavyHit.wav", typeof(AudioClip));
+        Color color1New = Color.white;
+        Color color2New = Color.green;
+        Color colorBGNew = Color.white;
+        if (agentHPMax * 0.25f < Math.Round(attackValue * (Mathf.Pow(DamageValue, critLevel))) - agentDEFFull)
+        {
+            
+            switch (damageType)
+            {
+                case 0: //Physical
+                    clip = (AudioClip)AssetDatabase.LoadAssetAtPath("Assets/Sound/SFX/BattleHeavyHit.wav", typeof(AudioClip));
+                    color1New = Color.white;
+                    color2New = Color.white;
+                    colorBGNew = Color.grey;
+                    break;
+                case 1: //Fire
+                    clip = (AudioClip)AssetDatabase.LoadAssetAtPath("Assets/Sound/SFX/BattleFireAttackMedium.wav", typeof(AudioClip));
+                    color1New = Color.white;
+                    color2New = Color.red;
+                    colorBGNew = new Color(0.5f,0,0,1);
+                    break;
+                case 2: //Water
+                    //clip = (AudioClip)AssetDatabase.LoadAssetAtPath("Assets/Sound/SFX/BattleHeavyHit.wav", typeof(AudioClip));
+                    break;
+                case 3: //Earth
+                   // clip = (AudioClip)AssetDatabase.LoadAssetAtPath("Assets/Sound/SFX/BattleHeavyHit.wav", typeof(AudioClip));
+                    break;
+                case 4: //Psysic
+                    clip = (AudioClip)AssetDatabase.LoadAssetAtPath("Assets/Sound/SFX/BattleMentalAttackMedium.wav", typeof(AudioClip));
+                    break;
+                case 5: //Poison
+                    //clip = (AudioClip)AssetDatabase.LoadAssetAtPath("Assets/Sound/SFX/BattleHeavyHit.wav", typeof(AudioClip));
+                    break;
+                case 6: //Light
+                    //clip = (AudioClip)AssetDatabase.LoadAssetAtPath("Assets/Sound/SFX/BattleHeavyHit.wav", typeof(AudioClip));
+                    break;
+                case 7: //Dark
+                   // clip = (AudioClip)AssetDatabase.LoadAssetAtPath("Assets/Sound/SFX/BattleHeavyHit.wav", typeof(AudioClip));
+                    break;
+            }      
             audioSource.clip = clip;
         }
+        if (agentHPMax * 0.5f < Math.Round(attackValue * (Mathf.Pow(DamageValue, critLevel))) - agentDEFFull)
+        {
 
+            switch (damageType)
+            {
+                case 0: //Physical
+                    clip = (AudioClip)AssetDatabase.LoadAssetAtPath("Assets/Sound/SFX/BattleHeavyHit.wav", typeof(AudioClip));
+                    break;
+                case 1: //Fire
+                    clip = (AudioClip)AssetDatabase.LoadAssetAtPath("Assets/Sound/SFX/BattleFireAttackHeavy.wav", typeof(AudioClip));
+                    break;
+                case 2: //Water
+                        //clip = (AudioClip)AssetDatabase.LoadAssetAtPath("Assets/Sound/SFX/BattleHeavyHit.wav", typeof(AudioClip));
+                    break;
+                case 3: //Earth
+                        // clip = (AudioClip)AssetDatabase.LoadAssetAtPath("Assets/Sound/SFX/BattleHeavyHit.wav", typeof(AudioClip));
+                    break;
+                case 4: //Psysic
+                    clip = (AudioClip)AssetDatabase.LoadAssetAtPath("Assets/Sound/SFX/BattleMentalAttackHeavy.wav", typeof(AudioClip));
+                    break;
+                case 5: //Poison
+                        //clip = (AudioClip)AssetDatabase.LoadAssetAtPath("Assets/Sound/SFX/BattleHeavyHit.wav", typeof(AudioClip));
+                    break;
+                case 6: //Light
+                        //clip = (AudioClip)AssetDatabase.LoadAssetAtPath("Assets/Sound/SFX/BattleHeavyHit.wav", typeof(AudioClip));
+                    break;
+                case 7: //Dark
+                        // clip = (AudioClip)AssetDatabase.LoadAssetAtPath("Assets/Sound/SFX/BattleHeavyHit.wav", typeof(AudioClip));
+                    break;
+            }
+            audioSource.clip = clip;
+        }
         if (agentHPCurrent <= 0)
         {
-            AudioClip clip = (AudioClip)AssetDatabase.LoadAssetAtPath("Assets/Sound/SFX/EnemyDefeated.wav", typeof(AudioClip));
+            clip = (AudioClip)AssetDatabase.LoadAssetAtPath("Assets/Sound/SFX/EnemyDefeated.wav", typeof(AudioClip));
             audioSource.clip = clip;
             agentHPCurrent = 0;
             isDefeated = 1;
         }
 
         CFXR_ParticleText _ParticleText = agentParticleSystem.GetComponent<CFXR_ParticleText>();
+        _ParticleText.color1 = color1New;
+        _ParticleText.color2 = color2New;
+        _ParticleText.backgroundColor = colorBGNew;
         _ParticleText.UpdateText((Math.Round(attackValue * (Mathf.Pow(DamageValue, critLevel))) - agentDEFFull).ToString());
+
         agentParticleSystem.Play();
         audioSource.Play();
         agentUIParticle.RefreshParticles();

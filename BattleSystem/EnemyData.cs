@@ -2,6 +2,20 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+
+public class SpellData : MonoBehaviour
+{
+    public string spellName;
+    public bool isDamageorHeal; //0 is damage, 1 is heal
+    public float dmgRatio; //multiplier to the agent's damage value
+    public int hitNumber; //Number of Times it hits
+    public int dmgType; //elemental damage type (leave blank if heal)
+    public int fixedCritRate; // Leave null if you don't want a fixed crit rate
+    public int inflictedStatus; //leave 0 if no inflicted status * 1 is poison * 2 is burn * 3 is soggy * 4 is dazed * 5 is buried * 6 is healing aura * 7 is attack+ * 8 is attack- * 9 is def+ * 10 is def-
+    public int ENCost;
+}
+
+
 public class EnemyData : MonoBehaviour
 {
     private int count = 20;
@@ -11,6 +25,8 @@ public class EnemyData : MonoBehaviour
     public string[] agentName; //Name of Enemy
     public int[] agentType; //Basic or Boss Enemy
     public Sprite[] agentSprite; //Sprite of the Enemy
+
+    public SpellData[] spells;
 
     public int[] agentLV; //EnemyLevel, used for scaling
     public double[] agentHPMax; //Enemy Max HP
@@ -37,6 +53,7 @@ public class EnemyData : MonoBehaviour
         agentName = new string[count]; //Name of Enemy
         agentType = new int[count]; //Basic or Boss Enemy
                                     //  agentSprite = new Sprite[count]; //Sprite of the Enemy
+        spells = new SpellData[100];
 
         agentPlayerCheck = new bool[count];
         agentLV = new int[count];//EnemyLevel, used for scaling
@@ -57,7 +74,7 @@ public class EnemyData : MonoBehaviour
             modifiableScript = GameObject.FindObjectOfType<PlayerDataModifiableScript>();
         }
 
-
+        //ENEMY DATA
         //Testy - 0
         #region
         agentName[0] = "Testy";
@@ -138,19 +155,114 @@ public class EnemyData : MonoBehaviour
         agentPlayerCheck[3] = true;
         #endregion
 
+
+
+        //SPELL DATA
+
+        //Healing Spell 1
+        spells[0].spellName = "Quick Patch";
+        spells[0].isDamageorHeal = true;
+        spells[0].dmgRatio = 0.5f;
+        spells[0].ENCost = 8;
+
+        //Healing Spell 2
+        spells[1].spellName = "Flesh Fixer";
+        spells[1].isDamageorHeal = true;
+        spells[1].dmgRatio = 1f;
+        spells[1].ENCost = 12;
+
+        //Healing Spell 3
+        spells[2].spellName = "Refactor Body";
+        spells[2].isDamageorHeal = true;
+        spells[2].dmgRatio = 2f;
+        spells[2].ENCost = 20;
+
+        //Healing Spell 4
+        spells[3].spellName = "Rework Self";
+        spells[3].isDamageorHeal = true;
+        spells[3].dmgRatio = 4f;
+        spells[3].ENCost = 36;
+
+        //Healing Aura 1
+        spells[4].spellName = "Healing Maintenance";
+        spells[4].isDamageorHeal = true;
+        spells[4].dmgRatio = 0.25f;
+        spells[4].inflictedStatus = 6;
+        spells[4].ENCost = 22;
+
+        //Healing Aura 2
+        spells[5].spellName = "Squashing Zone";
+        spells[5].isDamageorHeal = true;
+        spells[5].dmgRatio = 0.50f;
+        spells[5].inflictedStatus = 6;
+        spells[5].ENCost = 46;
+
+        //Healing Aura 3
+        spells[6].spellName = "Redundacy Crusher";
+        spells[6].isDamageorHeal = true;
+        spells[6].dmgRatio = 1f;
+        spells[6].inflictedStatus = 6;
+        spells[6].ENCost = 122;
+
+        //Physical Spell 1
+        spells[14].spellName = "Hash it Out";
+        spells[14].isDamageorHeal = false;
+        spells[14].dmgRatio = 1.2f;
+        spells[14].hitNumber = 1;
+        spells[14].dmgType = 0;
+        spells[14].inflictedStatus = 0;
+        spells[14].ENCost = 8;
+
+        //Physical Multi Spell 1
+        spells[15].spellName = "Punchy Punchy Array";
+        spells[15].isDamageorHeal = false;
+        spells[15].dmgRatio = 0.8f;
+        spells[15].hitNumber = 3;
+        spells[15].dmgType = 0;
+        spells[15].inflictedStatus = 0;
+        spells[15].ENCost = 18;
+
+        //Physical Spell 2
+        spells[16].spellName = "Variable Strike";
+        spells[16].isDamageorHeal = false;
+        spells[16].dmgRatio = 2.2f;
+        spells[16].hitNumber = 1;
+        spells[16].dmgType = 0;
+        spells[16].inflictedStatus = 0;
+        spells[16].ENCost = 18;
+
+        //Physical Multi Spell 2
+        spells[17].spellName = "List of Grievences";
+        spells[17].isDamageorHeal = false;
+        spells[17].dmgRatio = 1f;
+        spells[17].hitNumber = 5;
+        spells[17].dmgType = 0;
+        spells[17].inflictedStatus = 0;
+        spells[17].ENCost = 50;
+
+        //Physical Spell 3
+        spells[18].spellName = "Classic Slice";
+        spells[18].isDamageorHeal = false;
+        spells[18].dmgRatio = 5.2f;
+        spells[18].hitNumber = 1;
+        spells[18].dmgType = 0;
+        spells[18].inflictedStatus = 0;
+        spells[18].ENCost = 35;
+
+        //Physical Multi Spell 3
+        spells[19].spellName = "String of Strikes";
+        spells[19].isDamageorHeal = false;
+        spells[19].dmgRatio = 1.6f;
+        spells[19].hitNumber = 5;
+        spells[19].dmgType = 0;
+        spells[19].inflictedStatus = 0;
+        spells[19].ENCost = 72;
+
+
     }
 
-    public void CallSkill(int skillIndex)
+    public SpellData CallSkill(int skillIndex)
     {
-        switch(skillIndex) { 
-            
-            case 0: break;
-        
-            case 1: 
-                
-                return;
-        }
-
-    
+        return spells[skillIndex];
     }
 }

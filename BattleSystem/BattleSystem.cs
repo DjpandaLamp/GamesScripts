@@ -28,6 +28,7 @@ public class MoveInfo : MonoBehaviour
     public string move;
     public GameObject attackingAgent;
     public BattleAgent targetedAgent;
+    public int attackType;
 }
 
 
@@ -283,6 +284,7 @@ public class BattleSystem : MonoBehaviour
             move.move = "Attack";
             move.attackingAgent = EnemyArray[enemyIndex];
             move.targetedAgent = targetedAgent;
+            move.attackType = 0;
             moves[EnemyArray[enemyIndex].GetComponent<BattleAgent>().currentBattleSpeedIndex] = move;
             ChangeCurrentAgent();
             //StartCoroutine(BasicAttack(EnemyArray[enemyIndex].GetComponent<BattleAgent>(), false));
@@ -338,6 +340,7 @@ public class BattleSystem : MonoBehaviour
         move.move = "Attack";
         move.attackingAgent = currentActiveAgent;
         move.targetedAgent = targetedAgent;
+        move.attackType = 0;
         moves[currentActiveAgent.GetComponent<BattleAgent>().currentBattleSpeedIndex] = move;
         ChangeCurrentAgent();
         //StartCoroutine(BasicAttack(currentActiveAgent.GetComponent<BattleAgent>(), true));
@@ -486,7 +489,7 @@ public class BattleSystem : MonoBehaviour
         return blendColor;
     }
 
-    IEnumerator BasicAttack(BattleAgent attackingAgent, bool attackDirection)
+    IEnumerator BasicAttack(BattleAgent attackingAgent, bool attackDirection, int attackType)
     {
         string agentName = attackingAgent.agentName;
 
@@ -499,7 +502,7 @@ public class BattleSystem : MonoBehaviour
 
         double agentPreDamageHealth = targetedAgent.agentHPCurrent;
 
-        Vector2 isDefeated = targetedAgent.TakeDamage(attackingAgent.agentATKFull, (float)attackingAgent.agentCritRate, (float)attackingAgent.agentCritDamage);
+        Vector2 isDefeated = targetedAgent.TakeDamage(attackingAgent.agentATKFull, (float)attackingAgent.agentCritRate, (float)attackingAgent.agentCritDamage, attackType);
 
         //Player Attack
         if (attackDirection == true)
@@ -663,11 +666,13 @@ public class BattleSystem : MonoBehaviour
         if (agentPreDamageHealth - targetedAgent.agentHPCurrent == 0)
         {
             baseMenuFlavorText.fullText = "But the healing had no effect!";
+            yield return StartCoroutine(TextPrinterWait(0));
         }
         else
         {
             state = battleStateMachine.Text;
             baseMenuFlavorText.fullText = targetedAgent.agentName.ToString() + " is healed " + Math.Abs(agentPreDamageHealth - targetedAgent.agentHPCurrent).ToString() + " Health!";
+            yield return StartCoroutine(TextPrinterWait(0));
         }
         
         yield return StartCoroutine(TextPrinterWait(0));
@@ -919,11 +924,11 @@ public class BattleSystem : MonoBehaviour
                 }
                 if (currentActiveAgent.GetComponent<BattleAgent>().agentIdentity == true)
                 {
-                    yield return StartCoroutine(BasicAttack(currentActiveAgent.GetComponent<BattleAgent>(), true));
+                    yield return StartCoroutine(BasicAttack(currentActiveAgent.GetComponent<BattleAgent>(), true, moves[i].attackType));
                 }
                 if (currentActiveAgent.GetComponent<BattleAgent>().agentIdentity == false)
                 {
-                    yield return StartCoroutine(BasicAttack(currentActiveAgent.GetComponent<BattleAgent>(), false));
+                    yield return StartCoroutine(BasicAttack(currentActiveAgent.GetComponent<BattleAgent>(), false, moves[i].attackType));
                 }
                 
                 battleImages[i].GetComponent<Image>().color = Color.white;

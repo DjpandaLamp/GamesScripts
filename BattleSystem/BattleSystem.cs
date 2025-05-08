@@ -29,6 +29,7 @@ public class MoveInfo : MonoBehaviour
     public GameObject attackingAgent;
     public BattleAgent targetedAgent;
     public int attackType;
+    public int skillIndex;
 }
 
 
@@ -36,6 +37,8 @@ public class BattleSystem : MonoBehaviour
 {
     public GameObject baseMenu;
     public TypeWriter baseMenuFlavorText;
+    public TypeWriter skillMenuText;
+    public TextMeshProUGUI skillMenuTitle;
     public GameObject[] baseMenuButtons;
     public GameObject TextArrow;
     public GameObject skillMenu;
@@ -46,6 +49,7 @@ public class BattleSystem : MonoBehaviour
     public GameObject PlayerPrefab;
     public GameObject EnemyPrefab;
     public AudioSource audioSource;
+    public EnemyData enemyData;
 
     public GameObject visualCanvasElement;
 
@@ -89,7 +93,7 @@ public class BattleSystem : MonoBehaviour
 
     public SceneLoader sceneLoader;
 
-    public string[] SkillsDescs;
+    
 
 
 
@@ -99,7 +103,7 @@ public class BattleSystem : MonoBehaviour
     void Start()
     {
         modifiableScript = GameObject.FindWithTag("Persistant").GetComponent<PlayerDataModifiableScript>();
-        SkillsDescs = new string[20]; 
+        enemyData = GetComponent<EnemyData>();
 
         
         EnemyArray = new GameObject[EnemyCount];
@@ -115,9 +119,7 @@ public class BattleSystem : MonoBehaviour
         state = battleStateMachine.Start;
         StartCoroutine(BattleInitalize());
 
-        SkillsDescs[0] = "THIS IS A DEBUG STRING. IF YOU ARE SEEING THIS, SOMETHING HAS GONE HORRIBLY WRONG"; //Error String
-        SkillsDescs[1] = "Through the power of self medication, you heal yourself by 40% of your Energy Attack."; //Basic Heal
-        SkillsDescs[2] = "You should thank your mom for those martal arts classes. You raise your defense by 1.25 times for this turn."; //Basic Defense
+  
 
     }
 
@@ -267,11 +269,8 @@ public class BattleSystem : MonoBehaviour
             
             //Enemy Basic Attack
             #region
-            //StartCoroutine(AgentScale(currentActiveAgent, new Vector3(1f, 1f, 1f)));
             string agentName = "";
             agentName = EnemyArray[enemyIndex].GetComponent<BattleAgent>().agentName;
-            //baseMenuFlavorText.fullText = agentName + " attacks!";
-            //yield return StartCoroutine(TextPrinterWait(0));
             yield return new WaitForSeconds(0.01f);
             targetedAgentNumber = UnityEngine.Random.Range(0, PlayerArray.ToArray().Length);
             targetedAgent = PlayerArray[targetedAgentNumber].GetComponent<BattleAgent>();
@@ -287,7 +286,7 @@ public class BattleSystem : MonoBehaviour
             move.attackType = 0;
             moves[EnemyArray[enemyIndex].GetComponent<BattleAgent>().currentBattleSpeedIndex] = move;
             ChangeCurrentAgent();
-            //StartCoroutine(BasicAttack(EnemyArray[enemyIndex].GetComponent<BattleAgent>(), false));
+        
             #endregion
         }
         else
@@ -296,6 +295,73 @@ public class BattleSystem : MonoBehaviour
         }
     }
 
+    public void CallSkillPublic(int index)
+    {
+        StartCoroutine(CallSkill(index));
+    }
+    IEnumerator CallSkill(int index)
+    {
+        SpellData spell = enemyData.CallSkill(index);
+
+
+        
+        MoveInfo move = movesContainer.AddComponent<MoveInfo>();
+        Debug.Log(index);
+        Debug.Log(spell.spellName);
+
+
+        if (spell.isDamageorHeal == true)
+        {
+            state = battleStateMachine.PlayerTargeting;
+            move.move = "Heal";
+            while (targetedAgent == null)
+            {
+
+                if (isBackPressed)
+                {
+                    isBackPressed = false;
+                    state = battleStateMachine.PlayerTurn;
+                    PlayerTurn();
+                    state = battleStateMachine.PlayerSkill;
+                    audioSource.Play();
+                    yield break;
+                }
+
+                yield return StartCoroutine(PlayerPlayerTargeting());
+            }
+        }
+        else
+        {
+            state = battleStateMachine.PlayerTargeting;
+            move.move = "Attack";
+            while (targetedAgent == null)
+            {
+                if (isBackPressed)
+                {
+                    isBackPressed = false;
+                    state = battleStateMachine.PlayerTurn;
+                    PlayerTurn();
+                    state = battleStateMachine.PlayerSkill;
+                    audioSource.Play();
+                    yield break;
+                }
+                yield return StartCoroutine(PlayerEnemyTargeting());
+            }
+        }
+        if (targetedAgent != null)
+        {
+            move.attackingAgent = currentActiveAgent;
+            move.targetedAgent = targetedAgent;
+            move.attackType = 0;
+            move.skillIndex = index;
+            moves[currentActiveAgent.GetComponent<BattleAgent>().currentBattleSpeedIndex] = move;
+            ChangeCurrentAgent();
+        }
+
+
+
+
+    }
 
     void StatusUpdate()
     {
@@ -333,7 +399,7 @@ public class BattleSystem : MonoBehaviour
                     yield break;
                 }
 
-                yield return StartCoroutine(PlayerTargeting());
+                yield return StartCoroutine(PlayerEnemyTargeting());
             }
 
         MoveInfo move = movesContainer.AddComponent<MoveInfo>();
@@ -375,30 +441,6 @@ public class BattleSystem : MonoBehaviour
         isBackPressed = true;
     }
 
-    public void OnHealSkillsButton(int grade)
-    {
-        BattleAgent activeAgent = currentActiveAgent.GetComponent<BattleAgent>();
-        if (grade == 0)
-        {
-            if (activeAgent.agentENCurrent < 10)
-            {
-                baseMenuFlavorText.fullText = activeAgent.agentName.ToString() + " doesn't have enough energy!";
-                return;
-            }
-            activeAgent.agentENCurrent -= 10;
-            targetedAgent = activeAgent;
-            //todo: add targeting system for heals;
-
-            MoveInfo move = movesContainer.AddComponent<MoveInfo>();
-            move.move = "Heal" + grade.ToString();
-            move.attackingAgent = currentActiveAgent;
-            move.targetedAgent = activeAgent;
-            moves[currentActiveAgent.GetComponent<BattleAgent>().currentBattleSpeedIndex] = move;
-
-            ChangeCurrentAgent();
-            //StartCoroutine(BasicHeal(activeAgent));
-        }
-    }
     public void OnDefenseButton()
     {
         MoveInfo move = movesContainer.AddComponent<MoveInfo>();
@@ -407,7 +449,6 @@ public class BattleSystem : MonoBehaviour
         move.targetedAgent = move.attackingAgent.GetComponent<BattleAgent>();
         moves[currentActiveAgent.GetComponent<BattleAgent>().currentBattleSpeedIndex] = move;
         ChangeCurrentAgent();
-        //StartCoroutine(OnDefenseEnumberable());
     }
 
 
@@ -421,7 +462,7 @@ public class BattleSystem : MonoBehaviour
         ChangeCurrentAgent();
     }
 
-    IEnumerator PlayerTargeting()
+    IEnumerator PlayerEnemyTargeting()
     {
         bool dir = false;
         if (Input.GetKeyDown("d") || Input.GetKeyDown("right"))
@@ -479,6 +520,69 @@ public class BattleSystem : MonoBehaviour
         EnemyArray[playerCursorPos].GetComponent<BattleAgent>().agentHealthFillRect.color = EnemyArray[playerCursorPos].GetComponent<BattleAgent>().agentHealthSliderBaseColor;
         yield break;
     }
+
+    IEnumerator PlayerPlayerTargeting()
+    {
+        bool dir = false;
+        if (Input.GetKeyDown("d") || Input.GetKeyDown("right"))
+        {
+            playerCursorPos += 1;
+            dir = false;
+        }
+        if (Input.GetKeyDown("a") || Input.GetKeyDown("left"))
+        {
+            playerCursorPos -= 1;
+            dir = true;
+        }
+
+        if (PlayerArray.ToArray().Length - 1 < playerCursorPos)
+        {
+            playerCursorPos = 0;
+        }
+        if (playerCursorPos < 0)
+        {
+            playerCursorPos = PlayerArray.ToArray().Length - 1;
+        }
+
+        while (PlayerArray[playerCursorPos].activeSelf == false)
+        {
+            if (dir == true)
+            {
+                playerCursorPos -= 1;
+            }
+            else
+            {
+                playerCursorPos += 1;
+            }
+            if (PlayerArray.ToArray().Length - 1 < playerCursorPos)
+            {
+                playerCursorPos = 0;
+            }
+            if (playerCursorPos < 0)
+            {
+                playerCursorPos = PlayerArray.ToArray().Length - 1;
+            }
+
+        }
+
+        PlayerArray[playerCursorPos].GetComponent<BattleAgent>().agentHealthFillRect.color = ColorTarget();
+
+        if ((Input.GetKeyDown("z") || Input.GetMouseButtonDown(0)) && PlayerArray[playerCursorPos].activeSelf == true)
+        {
+            targetedAgent = PlayerArray[playerCursorPos].GetComponent<BattleAgent>();
+        }
+
+        if (targetedAgent == null)
+        {
+            yield return null;
+        }
+        PlayerArray[playerCursorPos].GetComponent<BattleAgent>().agentHealthFillRect.color = PlayerArray[playerCursorPos].GetComponent<BattleAgent>().agentHealthSliderBaseColor;
+        yield break;
+    }
+
+
+
+
 
     Color ColorTarget()
     {
@@ -658,11 +762,25 @@ public class BattleSystem : MonoBehaviour
     }
 
 
-    IEnumerator BasicHeal(BattleAgent attackingAgent)
+    IEnumerator Heal(BattleAgent attackingAgent, SpellData spell)
     {
         state = battleStateMachine.Text;
+        
+        if (attackingAgent == targetedAgent)
+        {
+            baseMenuFlavorText.fullText = attackingAgent.agentName + "used " + spell.spellName + ".";
+            yield return StartCoroutine(TextPrinterWait(0));
+        }
+        else
+        {
+            baseMenuFlavorText.fullText = attackingAgent.agentName + "used " + spell.spellName + "on " + targetedAgent.agentName + ".";
+            yield return StartCoroutine(TextPrinterWait(0));
+        }
+
+
+
         double agentPreDamageHealth = targetedAgent.agentHPCurrent;
-        targetedAgent.ReceiveHeal(attackingAgent.agentEATKFull);
+        targetedAgent.ReceiveHeal(attackingAgent.agentEATKFull * spell.dmgRatio);
         if (agentPreDamageHealth - targetedAgent.agentHPCurrent == 0)
         {
             baseMenuFlavorText.fullText = "But the healing had no effect!";
@@ -941,6 +1059,7 @@ public class BattleSystem : MonoBehaviour
             }
             if (moves[i].move == "Heal")
             {
+                SpellData spell = enemyData.spells[moves[i].skillIndex];
                 battleImages[i].GetComponent<Image>().color = Color.green;
                 currentActiveAgent = moves[i].attackingAgent;
                 targetedAgent = moves[i].targetedAgent;
@@ -959,7 +1078,7 @@ public class BattleSystem : MonoBehaviour
                     }
                 }
 
-                yield return StartCoroutine(BasicHeal(moves[i].targetedAgent));
+                yield return StartCoroutine(Heal(moves[i].targetedAgent,spell));
                 battleImages[i].GetComponent<Image>().color = Color.white;
                 continue;
             }

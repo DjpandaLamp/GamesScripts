@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
-public class SpellData : MonoBehaviour
+public struct SpellData
 {
     public string spellName;
     public bool isDamageorHeal; //0 is damage, 1 is heal
@@ -53,7 +53,7 @@ public class EnemyData : MonoBehaviour
         agentName = new string[count]; //Name of Enemy
         agentType = new int[count]; //Basic or Boss Enemy
                                     //  agentSprite = new Sprite[count]; //Sprite of the Enemy
-        spells = new SpellData[100];
+        spells = new SpellData[25];
 
         agentPlayerCheck = new bool[count];
         agentLV = new int[count];//EnemyLevel, used for scaling
@@ -156,7 +156,7 @@ public class EnemyData : MonoBehaviour
         #endregion
 
 
-
+        Debug.Log("Spells Loading");
         //SPELL DATA
 
         //Healing Spell 1

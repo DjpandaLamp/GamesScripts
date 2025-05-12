@@ -16,7 +16,8 @@ public enum battleStateMachine
     PlayerTurn,
     EnemyTurn,
     Text,
-    PlayerTargeting,
+    PlayerPlayerTargeting,
+    PlayerEnemyTargeting,
     PlayerSkill,
     Win,
     Lose,
@@ -43,11 +44,13 @@ public class BattleSystem : MonoBehaviour
     public GameObject TextArrow;
     public GameObject skillMenu;
     public GameObject AgentOrderBox;
+    public GameObject skillContainer;
 
     public JSONSave JSONSave;
     public battleStateMachine state;
     public GameObject PlayerPrefab;
     public GameObject EnemyPrefab;
+    public GameObject SkillButtonPrefab;
     public AudioSource audioSource;
     public EnemyData enemyData;
 
@@ -71,6 +74,7 @@ public class BattleSystem : MonoBehaviour
     public bool isBackPressed;
 
     private Coroutine activeAgentOrderBoxCoroutine;
+    private Coroutine activeTargeting;
 
     public Transform[] PlayerTransformArray;
     public Transform[] EnemyTransformArray;
@@ -132,9 +136,10 @@ public class BattleSystem : MonoBehaviour
         currentActiveAgent = EnemyArray[0];
         yield return new WaitForEndOfFrame();
         CalculateSpeed();
+        PopulateSkills();
         startingAgentOrderSize = AgentOrder.ToArray().Length;
         yield return new WaitForEndOfFrame();
-
+        
         state = battleStateMachine.EnemyTurn;
         Debug.Log("Battle Loaded");
         StartCoroutine(EnemyTurn(0));
@@ -312,7 +317,7 @@ public class BattleSystem : MonoBehaviour
 
         if (spell.isDamageorHeal == true)
         {
-            state = battleStateMachine.PlayerTargeting;
+            state = battleStateMachine.PlayerPlayerTargeting;
             move.move = "Heal";
             while (targetedAgent == null)
             {
@@ -322,17 +327,20 @@ public class BattleSystem : MonoBehaviour
                     isBackPressed = false;
                     state = battleStateMachine.PlayerTurn;
                     PlayerTurn();
-                    state = battleStateMachine.PlayerSkill;
+                    targetedAgent = null;
                     audioSource.Play();
-                    yield break;
+                    PlayerArray[playerCursorPos].GetComponent<BattleAgent>().agentHealthFillRect.color = PlayerArray[playerCursorPos].GetComponent<BattleAgent>().agentHealthSliderBaseColor;
+                    StopCoroutine(activeTargeting);
+                    activeTargeting = null;
+                    yield return null;
                 }
-
-                yield return StartCoroutine(PlayerPlayerTargeting());
+                activeTargeting = StartCoroutine(PlayerPlayerTargeting());
+                yield return activeTargeting;
             }
         }
         else
         {
-            state = battleStateMachine.PlayerTargeting;
+            state = battleStateMachine.PlayerEnemyTargeting;
             move.move = "Attack";
             while (targetedAgent == null)
             {
@@ -341,9 +349,9 @@ public class BattleSystem : MonoBehaviour
                     isBackPressed = false;
                     state = battleStateMachine.PlayerTurn;
                     PlayerTurn();
-                    state = battleStateMachine.PlayerSkill;
+                    targetedAgent = null;
                     audioSource.Play();
-                    yield break;
+                    yield return null;
                 }
                 yield return StartCoroutine(PlayerEnemyTargeting());
             }
@@ -363,6 +371,11 @@ public class BattleSystem : MonoBehaviour
 
     }
 
+    void PopulateSkills()
+    {
+        Instantiate(SkillButtonPrefab, skillContainer.transform);
+    }
+
     void StatusUpdate()
     {
         BattleAgent agent = currentActiveAgent.GetComponent<BattleAgent>();
@@ -380,36 +393,44 @@ public class BattleSystem : MonoBehaviour
         audioSource.clip = clip;
         audioSource.Play();
         Debug.Log("AttackButtonPressed");
-        if (state != battleStateMachine.PlayerTurn && state != battleStateMachine.PlayerTargeting)
+        if (state != battleStateMachine.PlayerTurn && state != battleStateMachine.PlayerEnemyTargeting)
         {
             yield return 0;
         }
-        
-        state = battleStateMachine.PlayerTargeting;
-            baseMenuFlavorText.fullText = "Pick your Target.";
-            yield return StartCoroutine(TextPrinterWait(1));
-            while (targetedAgent == null)
+
+        state = battleStateMachine.PlayerEnemyTargeting;
+        baseMenuFlavorText.fullText = "Pick your Target.";
+        yield return StartCoroutine(TextPrinterWait(1));
+        while (targetedAgent == null)
+        {
+            if (isBackPressed || state != battleStateMachine.PlayerEnemyTargeting)
             {
-                if (isBackPressed)
-                {
-                    isBackPressed = false;
-                    state = battleStateMachine.PlayerTurn;
-                    PlayerTurn();
-                    audioSource.Play();
-                    yield break;
-                }
+                isBackPressed = false;
+                state = battleStateMachine.PlayerTurn;
+                PlayerTurn();
+                audioSource.Play();
+                playerCursorPos = 0;
+                targetedAgent = null;
+                yield break;
+            }
 
                 yield return StartCoroutine(PlayerEnemyTargeting());
             }
 
-        MoveInfo move = movesContainer.AddComponent<MoveInfo>();
-        move.move = "Attack";
-        move.attackingAgent = currentActiveAgent;
-        move.targetedAgent = targetedAgent;
-        move.attackType = 0;
-        moves[currentActiveAgent.GetComponent<BattleAgent>().currentBattleSpeedIndex] = move;
-        ChangeCurrentAgent();
-        //StartCoroutine(BasicAttack(currentActiveAgent.GetComponent<BattleAgent>(), true));
+            if (targetedAgent == null)
+            { 
+            yield return null;
+            }
+            else
+            {
+                MoveInfo move = movesContainer.AddComponent<MoveInfo>();
+                move.move = "Attack";
+                move.attackingAgent = currentActiveAgent;
+                move.targetedAgent = targetedAgent;
+                move.attackType = 0;
+                moves[currentActiveAgent.GetComponent<BattleAgent>().currentBattleSpeedIndex] = move;
+            ChangeCurrentAgent();
+        }
     }
 
     public void OnFleeButton()
@@ -435,6 +456,8 @@ public class BattleSystem : MonoBehaviour
         audioSource.Play();
         state = battleStateMachine.PlayerSkill;
     }
+
+   
 
     public void OnBackButton()
     {
@@ -464,6 +487,14 @@ public class BattleSystem : MonoBehaviour
 
     IEnumerator PlayerEnemyTargeting()
     {
+        if (state != battleStateMachine.PlayerEnemyTargeting)
+        {
+            yield break;
+        }
+        if (isBackPressed)
+        {
+            yield break;
+        }
         bool dir = false;
         if (Input.GetKeyDown("d") || Input.GetKeyDown("right"))
         {
@@ -505,10 +536,15 @@ public class BattleSystem : MonoBehaviour
             }
 
         }
-        
-        EnemyArray[playerCursorPos].GetComponent<BattleAgent>().agentHealthFillRect.color = ColorTarget();
+        targetColorBlend = Mathf.Clamp01(0.6f + Mathf.Sin(Time.time) / 2);
+        Color baseColor = EnemyArray[playerCursorPos].GetComponent<BattleAgent>().agentHealthSliderBaseColor;
+        Color blend = new Color(1, 0, 1, 1);
+        Color blendColor = (Color.Lerp(baseColor, blend, 0.5f + Mathf.PingPong(Time.time, 0.5f)));
+        EnemyArray[playerCursorPos].GetComponent<BattleAgent>().agentHealthFillRect.color = blendColor;
 
-        if ((Input.GetKeyDown("z") || Input.GetMouseButtonDown(0))&& EnemyArray[playerCursorPos].activeSelf == true)
+        
+
+        if (Input.GetKeyDown("z") && EnemyArray[playerCursorPos].activeSelf == true)
         {
             targetedAgent = EnemyArray[playerCursorPos].GetComponent<BattleAgent>();
         }
@@ -517,12 +553,22 @@ public class BattleSystem : MonoBehaviour
         {
             yield return null;
         }
+
         EnemyArray[playerCursorPos].GetComponent<BattleAgent>().agentHealthFillRect.color = EnemyArray[playerCursorPos].GetComponent<BattleAgent>().agentHealthSliderBaseColor;
         yield break;
     }
 
     IEnumerator PlayerPlayerTargeting()
     {
+        if (state != battleStateMachine.PlayerPlayerTargeting)
+        {
+            yield break;
+        }
+        if (isBackPressed)
+        {
+            yield break;
+        }
+
         bool dir = false;
         if (Input.GetKeyDown("d") || Input.GetKeyDown("right"))
         {
@@ -565,9 +611,14 @@ public class BattleSystem : MonoBehaviour
 
         }
 
-        PlayerArray[playerCursorPos].GetComponent<BattleAgent>().agentHealthFillRect.color = ColorTarget();
+        targetColorBlend = Mathf.Clamp01(0.6f + Mathf.Sin(Time.time) / 2);
+        Color baseColor = PlayerArray[playerCursorPos].GetComponent<BattleAgent>().agentHealthSliderBaseColor;
+        Color blend = new Color(1, 0, 1, 1);
+        Color blendColor = (Color.Lerp(baseColor, blend, 0.5f + Mathf.PingPong(Time.time, 0.5f)));
+        PlayerArray[playerCursorPos].GetComponent<BattleAgent>().agentHealthFillRect.color = blendColor;
 
-        if ((Input.GetKeyDown("z") || Input.GetMouseButtonDown(0)) && PlayerArray[playerCursorPos].activeSelf == true)
+
+        if (Input.GetKeyDown("z")  && PlayerArray[playerCursorPos].activeSelf == true)
         {
             targetedAgent = PlayerArray[playerCursorPos].GetComponent<BattleAgent>();
         }
@@ -581,17 +632,7 @@ public class BattleSystem : MonoBehaviour
     }
 
 
-
-
-
-    Color ColorTarget()
-    {
-        targetColorBlend = Mathf.Clamp01( 0.6f+Mathf.Sin(Time.time) / 2);
-        Color baseColor = EnemyArray[playerCursorPos].GetComponent<BattleAgent>().agentHealthSliderBaseColor;
-        Color blend = new Color(1, 0, 1, 1);
-        Color blendColor = (Color.Lerp(baseColor, blend, 0.5f+Mathf.PingPong(Time.time,0.5f)));
-        return blendColor;
-    }
+    
 
     IEnumerator BasicAttack(BattleAgent attackingAgent, bool attackDirection, int attackType)
     {
@@ -765,35 +806,52 @@ public class BattleSystem : MonoBehaviour
     IEnumerator Heal(BattleAgent attackingAgent, SpellData spell)
     {
         state = battleStateMachine.Text;
-        
-        if (attackingAgent == targetedAgent)
+
+        if (attackingAgent.agentENCurrent >= spell.ENCost)
         {
-            baseMenuFlavorText.fullText = attackingAgent.agentName + "used " + spell.spellName + ".";
+            double agentPreDamageHealth = targetedAgent.agentHPCurrent;
+            targetedAgent.ReceiveHeal(attackingAgent.agentEATKFull * spell.dmgRatio);
+            if (agentPreDamageHealth - targetedAgent.agentHPCurrent != 0)
+            {
+                attackingAgent.agentENCurrent -= spell.ENCost;
+            }
+     
+
+            if (attackingAgent == targetedAgent)
+            {
+                baseMenuFlavorText.fullText = attackingAgent.agentName + " used " + spell.spellName + ".";
+                yield return StartCoroutine(TextPrinterWait(0));
+            }
+            else
+            {
+                baseMenuFlavorText.fullText = attackingAgent.agentName + " used " + spell.spellName + " on " + targetedAgent.agentName + ".";
+                yield return StartCoroutine(TextPrinterWait(0));
+            }
+
+            if (agentPreDamageHealth - targetedAgent.agentHPCurrent == 0)
+            {
+                baseMenuFlavorText.fullText = "But the healing had no effect!";
+                yield return StartCoroutine(TextPrinterWait(0));
+            }
+            else
+            {
+                state = battleStateMachine.Text;
+                baseMenuFlavorText.fullText = targetedAgent.agentName.ToString() + " is healed " + Math.Abs(agentPreDamageHealth - targetedAgent.agentHPCurrent).ToString() + " Health!";
+                yield return StartCoroutine(TextPrinterWait(0));
+                
+            }
+
+
+
             yield return StartCoroutine(TextPrinterWait(0));
         }
         else
         {
-            baseMenuFlavorText.fullText = attackingAgent.agentName + "used " + spell.spellName + "on " + targetedAgent.agentName + ".";
+            baseMenuFlavorText.fullText = targetedAgent.agentName.ToString() + " Didn't have enough Energy to use " + spell.spellName +  "!";
             yield return StartCoroutine(TextPrinterWait(0));
         }
 
-
-
-        double agentPreDamageHealth = targetedAgent.agentHPCurrent;
-        targetedAgent.ReceiveHeal(attackingAgent.agentEATKFull * spell.dmgRatio);
-        if (agentPreDamageHealth - targetedAgent.agentHPCurrent == 0)
-        {
-            baseMenuFlavorText.fullText = "But the healing had no effect!";
-            yield return StartCoroutine(TextPrinterWait(0));
-        }
-        else
-        {
-            state = battleStateMachine.Text;
-            baseMenuFlavorText.fullText = targetedAgent.agentName.ToString() + " is healed " + Math.Abs(agentPreDamageHealth - targetedAgent.agentHPCurrent).ToString() + " Health!";
-            yield return StartCoroutine(TextPrinterWait(0));
-        }
-        
-        yield return StartCoroutine(TextPrinterWait(0));
+       
         
     }
 
@@ -814,7 +872,7 @@ public class BattleSystem : MonoBehaviour
             }
             baseMenuButtons[4].gameObject.SetActive(false);
         }
-        if (state == battleStateMachine.PlayerTargeting)
+        if (state == battleStateMachine.PlayerEnemyTargeting || state == battleStateMachine.PlayerPlayerTargeting)
         {
             for (int i = 0; i < 4; i++)
             {
@@ -839,7 +897,7 @@ public class BattleSystem : MonoBehaviour
         {
             skillMenu.SetActive(false);
         }
-        if (state != battleStateMachine.PlayerTurn && state != battleStateMachine.PlayerTargeting && state != battleStateMachine.PlayerSkill)
+        if (state != battleStateMachine.PlayerTurn && state != battleStateMachine.PlayerEnemyTargeting && state != battleStateMachine.PlayerPlayerTargeting && state != battleStateMachine.PlayerSkill)
         {
             for (int i = 0; i < baseMenuButtons.Length; i++)
             {

@@ -229,24 +229,38 @@ public class BattleAgent : MonoBehaviour, IComparable
 
     private void OnMouseOver()
     {
-        if (system.state == battleStateMachine.PlayerTargeting)
+        if (system.state == battleStateMachine.PlayerEnemyTargeting)
         {
             int pos = 0;
-            bool player = true;
+            
             for (int i = 0; i < system.EnemyArray.Length; i++)
             {
                 if (GetComponent<BattleAgent>() == system.EnemyArray[i].GetComponent<BattleAgent>())
                 {
                     pos = i;
-                    player = false;
+                    
                     break;
                 }
             }
-            if (player == false)
-            {
                 system.EnemyArray[system.playerCursorPos].GetComponent<BattleAgent>().agentHealthFillRect.color = system.EnemyArray[system.playerCursorPos].GetComponent<BattleAgent>().agentHealthSliderBaseColor;
                 system.playerCursorPos = pos;
+
+        }
+        if (system.state == battleStateMachine.PlayerPlayerTargeting)
+        {
+            int pos = 0;
+            
+            for (int i = 0; i < system.PlayerArray.ToArray().Length; i++)
+            {
+                if (GetComponent<BattleAgent>() == system.PlayerArray[i].GetComponent<BattleAgent>())
+                {
+                    pos = i;
+                    
+                    break;
+                }
             }
+            system.PlayerArray[system.playerCursorPos].GetComponent<BattleAgent>().agentHealthFillRect.color = system.PlayerArray[system.playerCursorPos].GetComponent<BattleAgent>().agentHealthSliderBaseColor;
+            system.playerCursorPos = pos;
         }
     }
 

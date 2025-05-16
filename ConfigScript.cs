@@ -6,7 +6,7 @@ public class ConfigScript : MonoBehaviour
 {
     [Header("Graphics Settings")]
     public int fpsSetting = 60;
-    public Vector2 resolutionSetting = new Vector2(1200,800);
+    public Vector2 resolutionSetting = new Vector2(1920,1080);
     public bool fullScreenToggle = false;
     public bool vSync;
     [Header("Audio Settings")]

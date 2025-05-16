@@ -53,10 +53,10 @@ public class WarningControler : MonoBehaviour
                         animationStep++;
                     }
                 }
-                barTop.GetComponent<RectTransform>().localPosition = new Vector2(0, Mathf.Clamp((180 - Mathf.Pow(1.23f, animationStep)), 12, 180) - Mathf.Clamp((animationStep) * 2, -20, 0));
-                barBottom.GetComponent<RectTransform>().localPosition = new Vector2(0, Mathf.Clamp(-180 + (Mathf.Pow(1.23f, animationStep)), -180, -12) + Mathf.Clamp((animationStep) * 2, -20, 0));
-                steelTop.GetComponent<RectTransform>().localPosition = new Vector2(0, Mathf.Clamp(300 - (Mathf.Pow(1.23f, animationStep)), 140, 300) - Mathf.Clamp((animationStep) * 2, -20, 0));
-                steelBottom.GetComponent<RectTransform>().localPosition = new Vector2(0, Mathf.Clamp(-300 + (Mathf.Pow(1.23f, animationStep)), -300, -140) + Mathf.Clamp((animationStep) * 2, -20, 0));
+                barTop.GetComponent<RectTransform>().localPosition = new Vector2(0, Mathf.Clamp((180 - Mathf.Pow(1.23f, animationStep)), 12, 180) - Mathf.Clamp((animationStep) * 5, -50, 0));
+                barBottom.GetComponent<RectTransform>().localPosition = new Vector2(0, Mathf.Clamp(-180 + (Mathf.Pow(1.23f, animationStep)), -180, -12) + Mathf.Clamp((animationStep) * 5, -50, 0));
+                steelTop.GetComponent<RectTransform>().localPosition = new Vector2(0, Mathf.Clamp(300 - (Mathf.Pow(1.23f, animationStep)), 140, 300) - Mathf.Clamp((animationStep) * 5, -50, 0));
+                steelBottom.GetComponent<RectTransform>().localPosition = new Vector2(0, Mathf.Clamp(-300 + (Mathf.Pow(1.23f, animationStep)), -300, -140) + Mathf.Clamp((animationStep) * 5, -50, 0));
             }
             else
             {
@@ -67,10 +67,10 @@ public class WarningControler : MonoBehaviour
                     }
 
                 }
-                barTop.GetComponent<RectTransform>().localPosition = new Vector2(0, Mathf.Clamp((180 - Mathf.Pow(1.23f, animationStep)), 12, 180) - Mathf.Clamp((animationStep) * 2, -20, 0));
-                barBottom.GetComponent<RectTransform>().localPosition = new Vector2(0, Mathf.Clamp(-180 + (Mathf.Pow(1.23f, animationStep)), -180, -12) + Mathf.Clamp((animationStep) * 2, -20, 0));
-                steelTop.GetComponent<RectTransform>().localPosition = new Vector2(0, Mathf.Clamp(300 - (Mathf.Pow(1.23f, animationStep)), 140, 300) - Mathf.Clamp((animationStep) * 2, -20, 0));
-                steelBottom.GetComponent<RectTransform>().localPosition = new Vector2(0, Mathf.Clamp(-300 + (Mathf.Pow(1.23f, animationStep)), -300, -140) + Mathf.Clamp((animationStep) * 2, -20, 0));
+                barTop.GetComponent<RectTransform>().localPosition = new Vector2(0, Mathf.Clamp((180 - Mathf.Pow(1.23f, animationStep)), 12, 180) - Mathf.Clamp((animationStep) * 5, -50, 0));
+                barBottom.GetComponent<RectTransform>().localPosition = new Vector2(0, Mathf.Clamp(-180 + (Mathf.Pow(1.23f, animationStep)), -180, -12) + Mathf.Clamp((animationStep) * 5, -50, 0));
+                steelTop.GetComponent<RectTransform>().localPosition = new Vector2(0, Mathf.Clamp(300 - (Mathf.Pow(1.23f, animationStep)), 140, 300) - Mathf.Clamp((animationStep) * 5, -50, 0));
+                steelBottom.GetComponent<RectTransform>().localPosition = new Vector2(0, Mathf.Clamp(-300 + (Mathf.Pow(1.23f, animationStep)), -300, -140) + Mathf.Clamp((animationStep) * 5, -50, 0));
             }
         }
     }

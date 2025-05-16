@@ -24,10 +24,10 @@ public class Scroller : MonoBehaviour
 
     void Start()
     {
-        rotOffset = 0;
-        speedMult = 1;
+       // rotOffset = 0;
+        //speedMult = 1;
         //rotOffset = Random.Range(0, 360);
-        //speedMult = Random.Range(0.8f, 1.2f);
+        speedMult = Random.Range(0.8f, 1.2f);
         
         rect = GetComponent<RectTransform>();
     }

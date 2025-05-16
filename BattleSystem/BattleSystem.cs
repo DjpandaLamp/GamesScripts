@@ -10,6 +10,7 @@ using UnityEditor;
 using UnityEngine.UI;
 using Mathfunctions;
 
+
 public enum battleStateMachine
 {
     Start,
@@ -62,6 +63,7 @@ public class BattleSystem : MonoBehaviour
     public GameObject[] PlayerCurrentArray;
     public GameObject[] EnemyCurrentArray;
 
+
     public MoveInfo[] moves; //contains the data for moves.
     public GameObject movesContainer;
     private int moveIndex;
@@ -97,11 +99,11 @@ public class BattleSystem : MonoBehaviour
 
     public SceneLoader sceneLoader;
 
-    
 
 
 
-   
+
+
 
     // Start is called before the first frame update
     void Start()
@@ -373,7 +375,27 @@ public class BattleSystem : MonoBehaviour
 
     void PopulateSkills()
     {
-        Instantiate(SkillButtonPrefab, skillContainer.transform);
+        for (int i = 0; i < 5; i++)
+        {
+            SkillPopulateScript skillScript = Instantiate(SkillButtonPrefab, skillContainer.transform).GetComponent<SkillPopulateScript>();
+            skillScript.spellIndex = i;
+            skillScript.spellText.text = enemyData.spells[i].spellName;
+            skillScript.costText.text = "Cost: " + enemyData.spells[i].ENCost.ToString();
+            skillScript.powerText.text = "Power: " +(enemyData.spells[i].dmgRatio*100).ToString();
+            if (enemyData.spells[i].isDamageorHeal)
+            {
+                skillScript.typeText.text = "Heal";
+            }
+            else
+            {
+                skillScript.typeText.text = "Attack";
+            }
+            skillScript.system = GetComponent<BattleSystem>();
+            skillScript.setButton();
+            
+
+        }
+
     }
 
     void StatusUpdate()
@@ -389,9 +411,10 @@ public class BattleSystem : MonoBehaviour
 
     public IEnumerator AttackButtonPlayer()
     {
-        AudioClip clip = (AudioClip)AssetDatabase.LoadAssetAtPath("Assets/Sound/SFX/MenuValidInput2.wav", typeof(AudioClip));
-        audioSource.clip = clip;
-        audioSource.Play();
+       
+       // AudioClip clip = (AudioClip)AssetDatabase.LoadAssetAtPath("Assets/Sound/SFX/MenuValidInput2.wav", typeof(AudioClip));
+       // audioSource.clip = audioClip.Result;
+       // audioSource.Play();
         Debug.Log("AttackButtonPressed");
         if (state != battleStateMachine.PlayerTurn && state != battleStateMachine.PlayerEnemyTargeting)
         {
@@ -442,18 +465,20 @@ public class BattleSystem : MonoBehaviour
         {
             return;
         }
-        AudioClip clip = (AudioClip)AssetDatabase.LoadAssetAtPath("Assets/Sound/SFX/MenuValidInput2.wav", typeof(AudioClip));
-        audioSource.clip = clip;
-        audioSource.Play();
+       
+        //AudioClip clip = (AudioClip)AssetDatabase.LoadAssetAtPath("Assets/Sound/SFX/MenuValidInput2.wav", typeof(AudioClip));
+        //audioSource.clip = audioClip.Result;
+       // audioSource.Play();
         state = battleStateMachine.Flee;
         StartCoroutine(EndBattle());
     }
 
     public void OnSkillButton()
     {
-        AudioClip clip = (AudioClip)AssetDatabase.LoadAssetAtPath("Assets/Sound/SFX/MenuValidInput2.wav", typeof(AudioClip));
-        audioSource.clip = clip;
-        audioSource.Play();
+        
+       // AudioClip clip = (AudioClip)AssetDatabase.LoadAssetAtPath("Assets/Sound/SFX/MenuValidInput2.wav", typeof(AudioClip));
+       // audioSource.clip = audioClip.Result;
+       // audioSource.Play();
         state = battleStateMachine.PlayerSkill;
     }
 
@@ -925,9 +950,16 @@ public class BattleSystem : MonoBehaviour
                 return;
             
         }
+        bool isMovesFull = true;
+        for (int m = 0; m < moves.Length; m++)
+        {
+            if (moves[m] == null)
+            {
+                isMovesFull = false;
+            }
+        }
 
-
-        if (currentActiveAgentInt >= (AgentOrder.ToArray().Length-1))
+        if (currentActiveAgentInt >= (AgentOrder.ToArray().Length-1) && isMovesFull)
         {
             StartCoroutine(ExecuteTurn());
             return;
@@ -966,7 +998,7 @@ public class BattleSystem : MonoBehaviour
             }
         }
 
-
+        int eliminatedEnemies = 0;
         for (int i = 0; i <= EnemyArray.Length; i++)
         {
             if (i == EnemyArray.Length)
@@ -980,15 +1012,28 @@ public class BattleSystem : MonoBehaviour
             }
             if (EnemyArray[i].GetComponent<BattleAgent>().agentHasGone == true || EnemyArray[i].activeSelf == false)
             {
+                if (i == EnemyArray.Length - 1)
+                {
+                    int index = 0;
+                    currentActiveAgent = PlayerArray[index];
+                    currentActiveAgentInt = EnemyCount;
+                    state = battleStateMachine.PlayerTurn;
+                    PlayerTurn();
+                    return;
+                }
                 //currentActiveAgent = EnemyArray[i];
                 //currentActiveAgentInt = i + orderOffset;
+                if (EnemyArray[i].activeSelf == false)
+                {
+                    eliminatedEnemies += 1;
+                }
                 
                 continue;
             }
             else
             {
                 currentActiveAgent = EnemyArray[i];
-                currentActiveAgentInt = i;
+                currentActiveAgentInt = i-eliminatedEnemies;
                 state = battleStateMachine.EnemyTurn;
                 StartCoroutine(EnemyTurn(i));
                 return;
@@ -1084,20 +1129,17 @@ public class BattleSystem : MonoBehaviour
                 Debug.Log("Attack Move");
                 currentActiveAgent = moves[i].attackingAgent;
                 targetedAgent = moves[i].targetedAgent;
-                while (!targetedAgent.isActiveAndEnabled)
+                while (!targetedAgent.isActiveAndEnabled && currentActiveAgent.GetComponent<BattleAgent>().agentIdentity == true)
                 {
-                    if (currentActiveAgent.GetComponent<BattleAgent>().agentIdentity == true)
-                    {
-                        int ran = UnityEngine.Random.Range(0, BaseEnemyCount);
-                        targetedAgent = EnemyArray[ran].GetComponent<BattleAgent>();
-
-                    }
-                    if (currentActiveAgent.GetComponent<BattleAgent>().agentIdentity == false)
-                    {
-                        int ran = UnityEngine.Random.Range(0, BasePlayerCount);
-                        targetedAgent = PlayerArray[ran].GetComponent<BattleAgent>();
-                    }
+                    int ran = UnityEngine.Random.Range(0, BaseEnemyCount);
+                    targetedAgent = EnemyArray[ran].GetComponent<BattleAgent>();
                 }
+                while (!targetedAgent.isActiveAndEnabled && currentActiveAgent.GetComponent<BattleAgent>().agentIdentity == false)
+                {
+                    int ran = UnityEngine.Random.Range(0, PlayerArray.ToArray().Length);
+                    targetedAgent = PlayerArray[ran].GetComponent<BattleAgent>();
+                }
+
                 if (currentActiveAgent.GetComponent<BattleAgent>().agentIdentity == true)
                 {
                     yield return StartCoroutine(BasicAttack(currentActiveAgent.GetComponent<BattleAgent>(), true, moves[i].attackType));

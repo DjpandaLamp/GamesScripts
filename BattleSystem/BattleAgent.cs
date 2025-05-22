@@ -58,6 +58,7 @@ public class BattleAgent : MonoBehaviour, IComparable
     public UIParticle agentUIParticle;
     public ParticleSystem agentParticleSystem;
     public AudioSource audioSource;
+    public PulseImage pulse;
 
     public bool noEN;
 
@@ -197,9 +198,23 @@ public class BattleAgent : MonoBehaviour, IComparable
         }
         agentEATKFull = agentEATKBase;
         agentEDEFFull = agentEDEFBase;
+        if (pulse != null)
+        {
+            if (system.currentActiveAgent.GetComponent<BattleAgent>() == GetComponent<BattleAgent>())
+            {
+
+                
+                pulse.AlphaStaticTarget = 0.8f;
+
+            }
+            else
+            {
+                pulse.AlphaStaticTarget = 0.25f;
+            }
+        }
     }
 
-
+    
 
 
     void UIUpdate()

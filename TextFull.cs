@@ -30,8 +30,8 @@ public class TextFull : MonoBehaviour
 
         for (int i = 0; i < strings.Length; i++)
         {
-            strings[i] = "This is an Error String Index #" + i.ToString() + ". Please report this to the game dev for Error Code TX1.";
-            stringsJP[i] = "これはテキストエラーインデックス#" + i.ToString() + "。エラー「TX0」として開発者に報告します。";
+            strings[i] = "0";
+            stringsJP[i] = "0";
 
             faces[i] = 0;
 
@@ -50,20 +50,14 @@ public class TextFull : MonoBehaviour
         faces[21] = 0.2f;
         strings[22] = "0";
 
-        strings[23] = "Long, Long ago, in a land before time had been concieved, the goddess was born.";
-        strings[24] = "Held down by the chains of chaos, she sat silently on the surface of the primordial sea, waiting.";
-        strings[25] = "One day, she saw something, a small white dot sitting on the brink of chaos and order.";
-        strings[26] = "Absurdly small, yet captivating all the same, the goddess stood and moved toward the dot.";
-        strings[27] = "Effortlessly, the chains of chaos melted away, leaving the goddess alone.";
-        strings[28] = "Moving forward, she picked up the fragile orb, observing it for a moment before cradling it.";
-        strings[29] = "It was then our world was born.";
-        strings[30] = "0";
-
         strings[499] = "Sweet Sweet atmosphere.";
         faces[499] = 0.1f;
         strings[500] = "...";
         strings[501] = "...Lets start killing some monsters!";
-        strings[502] = "0";
+        strings[502] = "To start a battle, all I need to do is run headfirst into the monster.";
+        strings[503] = "Should be easy enough.";
+        strings[504] = "Lets go!";
+        strings[505] = "0";
 
     }
 }

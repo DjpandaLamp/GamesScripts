@@ -1242,6 +1242,8 @@ public class BattleSystem : MonoBehaviour
         {
             enemyLVTotal += EnemyArray[i].GetComponent<BattleAgent>().agentLV;
         }
+        baseMenuFlavorText.fullText = "If I implemented levels, you'd get " + enemyLVTotal.ToString() + " Levels!";
+        yield return StartCoroutine(TextPrinterWait(0));
         yield return new WaitForSeconds(0.5f);
         JSONSave.LoadFromJSON(1, 0);
     }

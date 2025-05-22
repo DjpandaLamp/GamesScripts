@@ -18,14 +18,14 @@ public class AudioSetter : MonoBehaviour
         {
             config = GameObject.FindWithTag("Persistant").GetComponent<ConfigScript>();
         }
-        audioSource.volume = config.audioMaster;
+        //audioSource.volume = config.audioMaster;
         if (audioType == 0)
         {
-            audioSource.volume *= config.audioMusic;
+            //audioSource.volume *= config.audioMusic;
         }
         if (audioType == 1)
         {
-            audioSource.volume *= config.audioSFX;
+           // audioSource.volume *= config.audioSFX;
         }
     }
 }
